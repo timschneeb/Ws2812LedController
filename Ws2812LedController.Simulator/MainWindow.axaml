@@ -1,0 +1,14 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:simulator="clr-namespace:Ws2812LedController.Simulator"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="Ws2812LedController.Simulator.MainWindow"
+        Title="Ws2812LedController.Simulator">
+    <Grid RowDefinitions="Auto,8,Auto,8,Auto">
+        <simulator:LedStripControl x:Name="VirtualStrip" Grid.Row="0" />
+        <simulator:LedStripControl x:Name="VirtualSegmentA" Grid.Row="2" />
+        <simulator:LedStripControl x:Name="VirtualSegmentB" Grid.Row="4" />
+    </Grid>
+</Window>

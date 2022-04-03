@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "YzwrPqmn03iaXfsAaMEoNj3ms7Evc+jxWa4Uk0Kw4pgkwHE+eh9m9bYzHhXb/ZXRUZ2KRGywcbtyDMmVKRD2tg==",
+  "success": true,
+  "projectFilePath": "/home/tim/Development/Ws2812LedController/Ws2812LedController.PowerButton/Ws2812LedController.PowerButton.csproj",
+  "expectedPackageFiles": [
+    "/home/tim/.nuget/packages/system.device.gpio/2.1.0/system.device.gpio.2.1.0.nupkg.sha512"
+  ],
+  "logs": []
+}

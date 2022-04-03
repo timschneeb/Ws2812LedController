@@ -1,0 +1,3 @@
+/home/tim/Development/Ws2812LedController/EvDevSharp/bin/Debug/net6.0/linux-arm/publish/EvDevSharp.dll
+/home/tim/Development/Ws2812LedController/EvDevSharp/bin/Debug/net6.0/linux-arm/publish/EvDevSharp.deps.json
+/home/tim/Development/Ws2812LedController/EvDevSharp/bin/Debug/net6.0/linux-arm/publish/EvDevSharp.pdb

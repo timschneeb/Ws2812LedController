@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="ENet-CSharp" Version="2.4.8" />
+      <PackageReference Include="FftSharp" Version="1.1.5" />
+      <PackageReference Include="NumSharp" Version="0.30.0" />
+      <PackageReference Include="NWaves" Version="0.9.6" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\aubio.net\Aubio.NET\Aubio.NET.csproj" />
+      <ProjectReference Include="..\aubio.net\Aubio\Aubio.csproj" />
+      <ProjectReference Include="..\libsoundio-sharp\libsoundio-sharp\libsoundio-sharp.csproj" />
+      <ProjectReference Include="..\Ws2812LedController.UdpServer\Ws2812LedController.UdpServer.csproj" />
+    </ItemGroup>
+
+</Project>

@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "y/bEZla5Fzo2q+ouyYouF221iu8TB6MtY/Rp6NdLI5c=",
+  "Source": "Ws2812LedController.WebApi",
+  "BasePath": "_content/Ws2812LedController.WebApi",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

@@ -1,0 +1,12 @@
+/home/tim/Development/Ws2812LedController/EvDevSharp/bin/Debug/net6.0/EvDevSharp.deps.json
+/home/tim/Development/Ws2812LedController/EvDevSharp/bin/Debug/net6.0/EvDevSharp.dll
+/home/tim/Development/Ws2812LedController/EvDevSharp/bin/Debug/net6.0/EvDevSharp.pdb
+/home/tim/Development/Ws2812LedController/EvDevSharp/obj/Debug/net6.0/EvDevSharp.csproj.AssemblyReference.cache
+/home/tim/Development/Ws2812LedController/EvDevSharp/obj/Debug/net6.0/EvDevSharp.GeneratedMSBuildEditorConfig.editorconfig
+/home/tim/Development/Ws2812LedController/EvDevSharp/obj/Debug/net6.0/EvDevSharp.AssemblyInfoInputs.cache
+/home/tim/Development/Ws2812LedController/EvDevSharp/obj/Debug/net6.0/EvDevSharp.AssemblyInfo.cs
+/home/tim/Development/Ws2812LedController/EvDevSharp/obj/Debug/net6.0/EvDevSharp.csproj.CoreCompileInputs.cache
+/home/tim/Development/Ws2812LedController/EvDevSharp/obj/Debug/net6.0/EvDevSharp.dll
+/home/tim/Development/Ws2812LedController/EvDevSharp/obj/Debug/net6.0/refint/EvDevSharp.dll
+/home/tim/Development/Ws2812LedController/EvDevSharp/obj/Debug/net6.0/EvDevSharp.pdb
+/home/tim/Development/Ws2812LedController/EvDevSharp/obj/Debug/net6.0/ref/EvDevSharp.dll

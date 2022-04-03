@@ -1,0 +1,15 @@
+/home/tim/Development/Ws2812LedController/Ws2812LedController.Core/bin/Debug/net6.0/linux-arm/Ws2812LedController.Core.deps.json
+/home/tim/Development/Ws2812LedController/Ws2812LedController.Core/bin/Debug/net6.0/linux-arm/Ws2812LedController.Core.dll
+/home/tim/Development/Ws2812LedController/Ws2812LedController.Core/bin/Debug/net6.0/linux-arm/Ws2812LedController.Core.pdb
+/home/tim/Development/Ws2812LedController/Ws2812LedController.Core/obj/Debug/net6.0/linux-arm/Ws2812LedController.Core.csproj.AssemblyReference.cache
+/home/tim/Development/Ws2812LedController/Ws2812LedController.Core/obj/Debug/net6.0/linux-arm/Ws2812LedController.Core.GeneratedMSBuildEditorConfig.editorconfig
+/home/tim/Development/Ws2812LedController/Ws2812LedController.Core/obj/Debug/net6.0/linux-arm/Ws2812LedController.Core.AssemblyInfoInputs.cache
+/home/tim/Development/Ws2812LedController/Ws2812LedController.Core/obj/Debug/net6.0/linux-arm/Ws2812LedController.Core.AssemblyInfo.cs
+/home/tim/Development/Ws2812LedController/Ws2812LedController.Core/obj/Debug/net6.0/linux-arm/Ws2812LedController.Core.csproj.CoreCompileInputs.cache
+/home/tim/Development/Ws2812LedController/Ws2812LedController.Core/obj/Debug/net6.0/linux-arm/Ws2812LedController.Core.dll
+/home/tim/Development/Ws2812LedController/Ws2812LedController.Core/obj/Debug/net6.0/linux-arm/refint/Ws2812LedController.Core.dll
+/home/tim/Development/Ws2812LedController/Ws2812LedController.Core/obj/Debug/net6.0/linux-arm/Ws2812LedController.Core.pdb
+/home/tim/Development/Ws2812LedController/Ws2812LedController.Core/obj/Debug/net6.0/linux-arm/ref/Ws2812LedController.Core.dll
+/home/tim/Development/Ws2812LedController/Ws2812LedController.Core/bin/Debug/net6.0/linux-arm/RocToolkitSharp.dll
+/home/tim/Development/Ws2812LedController/Ws2812LedController.Core/bin/Debug/net6.0/linux-arm/RocToolkitSharp.pdb
+/home/tim/Development/Ws2812LedController/Ws2812LedController.Core/obj/Debug/net6.0/linux-arm/Ws2812LedController.Core.csproj.CopyComplete

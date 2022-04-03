@@ -1,0 +1,33 @@
+{
+  "version": 2,
+  "dgSpecHash": "zzwisO2izmFQTZeg/WwIzGVhzgTvQjxPsEXrS0eOZJEyeI9HLd5kSeqN+aIG+7fGtQI6Rh6w8FYHk6KN3CH3pA==",
+  "success": true,
+  "projectFilePath": "/home/tim/Development/Ws2812LedController/Ws2812LedController.Core/Ws2812LedController.Core.csproj",
+  "expectedPackageFiles": [
+    "/home/tim/.nuget/packages/iot.device.bindings/2.1.0/iot.device.bindings.2.1.0.nupkg.sha512",
+    "/home/tim/.nuget/packages/kenssamson.rpi-ws281x-csharp/1.1.0/kenssamson.rpi-ws281x-csharp.1.1.0.nupkg.sha512",
+    "/home/tim/.nuget/packages/microsoft.extensions.logging.abstractions/5.0.0/microsoft.extensions.logging.abstractions.5.0.0.nupkg.sha512",
+    "/home/tim/.nuget/packages/microsoft.netcore.platforms/5.0.0/microsoft.netcore.platforms.5.0.0.nupkg.sha512",
+    "/home/tim/.nuget/packages/microsoft.win32.registry/5.0.0/microsoft.win32.registry.5.0.0.nupkg.sha512",
+    "/home/tim/.nuget/packages/microsoft.win32.systemevents/5.0.0/microsoft.win32.systemevents.5.0.0.nupkg.sha512",
+    "/home/tim/.nuget/packages/runtime.linux-arm.runtime.native.system.io.ports/5.0.0/runtime.linux-arm.runtime.native.system.io.ports.5.0.0.nupkg.sha512",
+    "/home/tim/.nuget/packages/runtime.linux-arm64.runtime.native.system.io.ports/5.0.0/runtime.linux-arm64.runtime.native.system.io.ports.5.0.0.nupkg.sha512",
+    "/home/tim/.nuget/packages/runtime.linux-x64.runtime.native.system.io.ports/5.0.0/runtime.linux-x64.runtime.native.system.io.ports.5.0.0.nupkg.sha512",
+    "/home/tim/.nuget/packages/runtime.native.system.io.ports/5.0.1/runtime.native.system.io.ports.5.0.1.nupkg.sha512",
+    "/home/tim/.nuget/packages/runtime.osx-x64.runtime.native.system.io.ports/5.0.0/runtime.osx-x64.runtime.native.system.io.ports.5.0.0.nupkg.sha512",
+    "/home/tim/.nuget/packages/sixlabors.imagesharp/1.0.2/sixlabors.imagesharp.1.0.2.nupkg.sha512",
+    "/home/tim/.nuget/packages/system.codedom/5.0.0/system.codedom.5.0.0.nupkg.sha512",
+    "/home/tim/.nuget/packages/system.device.gpio/2.1.0/system.device.gpio.2.1.0.nupkg.sha512",
+    "/home/tim/.nuget/packages/system.drawing.common/5.0.3/system.drawing.common.5.0.3.nupkg.sha512",
+    "/home/tim/.nuget/packages/system.io.ports/5.0.1/system.io.ports.5.0.1.nupkg.sha512",
+    "/home/tim/.nuget/packages/system.management/5.0.0/system.management.5.0.0.nupkg.sha512",
+    "/home/tim/.nuget/packages/system.runtime.compilerservices.unsafe/6.0.0/system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512",
+    "/home/tim/.nuget/packages/system.security.accesscontrol/5.0.0/system.security.accesscontrol.5.0.0.nupkg.sha512",
+    "/home/tim/.nuget/packages/system.security.principal.windows/5.0.0/system.security.principal.windows.5.0.0.nupkg.sha512",
+    "/home/tim/.nuget/packages/system.text.encodings.web/6.0.0/system.text.encodings.web.6.0.0.nupkg.sha512",
+    "/home/tim/.nuget/packages/system.text.json/6.0.1/system.text.json.6.0.1.nupkg.sha512",
+    "/home/tim/.nuget/packages/system.valuetuple/4.5.0/system.valuetuple.4.5.0.nupkg.sha512",
+    "/home/tim/.nuget/packages/unitsnet/4.77.0/unitsnet.4.77.0.nupkg.sha512"
+  ],
+  "logs": []
+}

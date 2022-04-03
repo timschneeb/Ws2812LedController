@@ -1,0 +1,42 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v6.0/linux-arm",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v6.0": {},
+    ".NETCoreApp,Version=v6.0/linux-arm": {
+      "Ws2812LedController.PowerButton/1.0.0": {
+        "dependencies": {
+          "System.Device.Gpio": "2.1.0"
+        },
+        "runtime": {
+          "Ws2812LedController.PowerButton.dll": {}
+        }
+      },
+      "System.Device.Gpio/2.1.0": {
+        "runtime": {
+          "lib/net6.0/System.Device.Gpio.dll": {
+            "assemblyVersion": "2.1.0.0",
+            "fileVersion": "2.100.22.12602"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Ws2812LedController.PowerButton/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "System.Device.Gpio/2.1.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-A/9kEYPu11g0G43uBQT8KVh/6CKJfY6qVBJNrB3teWgxMOENIHy6ll8v5aXkzvyv2WYQFJeCCrZPLkZiQ/iLEw==",
+      "path": "system.device.gpio/2.1.0",
+      "hashPath": "system.device.gpio.2.1.0.nupkg.sha512"
+    }
+  }
+}

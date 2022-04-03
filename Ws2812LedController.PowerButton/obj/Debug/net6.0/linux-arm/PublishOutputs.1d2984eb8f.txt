@@ -1,0 +1,4 @@
+/home/tim/Development/Ws2812LedController/Ws2812LedController.PowerButton/bin/Debug/net6.0/linux-arm/publish/Ws2812LedController.PowerButton.dll
+/home/tim/Development/Ws2812LedController/Ws2812LedController.PowerButton/bin/Debug/net6.0/linux-arm/publish/Ws2812LedController.PowerButton.deps.json
+/home/tim/Development/Ws2812LedController/Ws2812LedController.PowerButton/bin/Debug/net6.0/linux-arm/publish/Ws2812LedController.PowerButton.pdb
+/home/tim/Development/Ws2812LedController/Ws2812LedController.PowerButton/bin/Debug/net6.0/linux-arm/publish/System.Device.Gpio.dll
