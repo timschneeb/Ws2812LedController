@@ -30,9 +30,9 @@ public static class FftExtensions
         var add = 0.0;
         foreach (var t in buffer)
         {
-            add += t;
+            add += Math.Abs(t);
         }
-
+        
         return add / (buffer.Length);
     }
     

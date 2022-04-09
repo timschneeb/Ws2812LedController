@@ -15,7 +15,7 @@ public class FlickerReactiveEffect : BaseAudioReactiveEffect
     public override int Speed { set; get; } = 1000 / 60;
 
     public Color Color { set; get; } = Color.Red;
-    public int Threshold { set; get; } = 11;
+    public double Threshold { set; get; } = 0.04;
     
     private double[] _proc = new double[1024];
     

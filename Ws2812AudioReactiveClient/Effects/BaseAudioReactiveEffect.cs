@@ -11,6 +11,7 @@ using NWaves.Filters;
 using NWaves.Filters.Fda;
 using NWaves.Signals.Builders;
 using Ws2812AudioReactiveClient.Dsp;
+using Ws2812AudioReactiveClient.Model;
 using Ws2812LedController.Core.Effects.Base;
 
 namespace Ws2812AudioReactiveClient.Effects;
@@ -55,21 +56,16 @@ public abstract class BaseAudioReactiveEffect : IEffect
         base.Reset();
     }
 
+    protected AvgSmoothingMode AvgSmoothingMode = AvgSmoothingMode.All;
+
     /* Smoothed peak detection */
     protected readonly Stopwatch _timeSinceStart = new();
-    private double _sample; // Current sample.
+    private double _sample = 0; // Current sample.
     private long[] _peakTime = new long[16 + 1];
 
    /** Volume peak check */
-    protected bool IsPeak(double sample, int squelch = 7, int triggerVolume = 11)
+    protected bool IsPeak(double triggerVolume = 0.05)
     {
-        _micLev = ((_micLev * 31) + sample) / 32;                      // Smooth it out over the last 32 samples for automatic centering.
-        sample -= _micLev;                                            // Let's center it to 0 now.
-        sample = Math.Abs(sample);                                         // And get the absolute value of each sample.
-        _sample = sample < 0.02 ? 0 : (_sample + sample) / 2;     // Using a ternary operator, the resultant sample is either 0 or it's a bit smoothed out with the last sample.
-
-        SampleAvg = ((SampleAvg * 31) + _sample) / 32;               // Smooth it out over the last 32 samples.
-        
         if (_sample > (SampleAvg + triggerVolume) && _timeSinceStart.ElapsedMilliseconds > (_peakTime[16] + 50))
         {
             _peakTime[16] = _timeSinceStart.ElapsedMilliseconds;
@@ -83,27 +79,33 @@ public abstract class BaseAudioReactiveEffect : IEffect
    //private double _sample = 0; // Used to convert returned value to have '0' as minimum.
     protected double SampleAvg = 0; // Smoothed Average.
 
+ 
     private void Smooth(ref double[] buffer)
     {
-        /*for (var index = 0; index < buffer.Length; index++)
+        switch (AvgSmoothingMode)
         {
-            _micLev = ((_micLev * 31) +  buffer[index]) / 32; 
-            // Smooth it out over the last 32 samples for automatic centering
-            buffer[index] -= _micLev; // Let's center it to 0 now
-            buffer[index] = Math.Abs( buffer[index]); // And get the absolute value of each sample
-            _sample = buffer[index];
-        }
+            case AvgSmoothingMode.Mean:
+                var sample = buffer.Mean();
+                _micLev = ((_micLev * 31) + sample) / 32.0;                      // Smooth it out over the last 32 samples for automatic centering.
+                sample -= _micLev;                                            // Let's center it to 0 now.
+                sample = Math.Abs(sample);                                         // And get the absolute value of each sample.
+                _sample =/* sample < 1e-10 ? 0 :*/ (_sample + sample) / 2.0;     // Using a ternary operator, the resultant sample is either 0 or it's a bit smoothed out with the last sample.
         
-        SampleAvg = (SampleAvg * 15 + buffer.FirstOrDefault()) / 16;*/
-        if (buffer.Length < 1)
-        {
-            return;
-        }
-        var micIn = buffer[0];                                              // Current sample starts with negative values and large values, which is why it's 16 bit signed.
-      
-  
-
+                SampleAvg = ((SampleAvg * 15) + _sample) / 16.0;               // Smooth it out over the last 32 samples.
+                break;
+            case AvgSmoothingMode.All:
+                for (var index = 0; index < buffer.Length; index++)
+                {
+                    _micLev = ((_micLev * 31) + buffer[index]) / 32; 
+                    // Smooth it out over the last 32 samples for automatic centering
+                    buffer[index] -= _micLev; // Let's center it to 0 now
+                    buffer[index] = Math.Abs( buffer[index]); // And get the absolute value of each sample
+                    _sample = buffer[index];
+                }
         
+                SampleAvg = (SampleAvg * 15 + buffer.Mean()) / 16;
+                break;
+        }
     }
     
     /* FFT calculation */
@@ -212,11 +214,13 @@ public abstract class BaseAudioReactiveEffect : IEffect
         {
             return input;
         }
+
+        _privateBuffer = input;
         
         Array.Copy(input, _privateBuffer, input.Length);
         
         // Using an exponential filter to smooth out the signal
-        _expFilter.Process(ref _privateBuffer);
+        //_expFilter.Process(ref _privateBuffer);
         
         // Calculate the current volume for silence detection
         var volume = Volume.DbSpl(_privateBuffer);
@@ -231,7 +235,7 @@ public abstract class BaseAudioReactiveEffect : IEffect
         }
         
         Smooth(ref _privateBuffer);
-        //RemoveDC(ref _privateBuffer);
+        RemoveDC(ref _privateBuffer);
         //DoFFT(_privateBuffer);
         
 
@@ -300,7 +304,7 @@ public abstract class BaseAudioReactiveEffect : IEffect
             }
             Array.Copy(samples, raw, raw.Length);
         }
-
+        
         processed = Preprocess(samples);
 
         return samples.Length;

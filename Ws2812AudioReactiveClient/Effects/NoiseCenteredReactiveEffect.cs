@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Drawing;
 using Ws2812AudioReactiveClient.Dsp;
 using Ws2812AudioReactiveClient.FastLedCompatibility;
+using Ws2812AudioReactiveClient.Model;
 using Ws2812LedController.Core;
 using Ws2812LedController.Core.Colors;
 using Ws2812LedController.Core.Effects.Base;
@@ -29,6 +30,11 @@ public class NoiseCenteredReactiveEffect : BaseAudioReactiveEffect
     private short _ydist;
     private const byte MaxChanges = 24; // Value for blending between palettes.
 
+    public NoiseCenteredReactiveEffect()
+    {
+        AvgSmoothingMode = AvgSmoothingMode.Mean;
+    }
+    
     public override void Reset()
     {
         _sampleAvg = 0;
@@ -79,11 +85,10 @@ public class NoiseCenteredReactiveEffect : BaseAudioReactiveEffect
         {
             goto NEXT_FRAME;
         }
-        
-        IsPeak(_buffer[0] * 1024);
-        _sampleAvg = SampleAvg;
 
-        if (_timerPaletteFade.ElapsedMilliseconds >= 100)
+        _sampleAvg = SampleAvg * 1024 * 1.5; //SmoothMean(_buffer) * 1024;;
+
+       if (_timerPaletteFade.ElapsedMilliseconds >= 100)
         {
             CRGBPalette16.nblendPaletteTowardPalette(_currentPalette, _targetPalette, MaxChanges);
             _timerPaletteFade.Restart();
@@ -100,7 +105,6 @@ public class NoiseCenteredReactiveEffect : BaseAudioReactiveEffect
             GenerateNextPalette();
             _timer.Restart();
         }
-
         
         CancellationMethod.NextCycle();
         

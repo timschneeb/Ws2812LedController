@@ -27,13 +27,9 @@ public class LightUpReactiveEffect : BaseAudioReactiveEffect
         {
             goto NEXT_FRAME;
         }
-
-        var isPeak = false;//IsPeak();
         
-        var strength = (int)SampleAvg.Map(200, 1024 * 5, 0, 255);
-
-        if (strength < 0) strength = 0;
-        if (strength > 255) strength = 255;
+        var isPeak = IsPeak(0.08);
+        var strength = (byte)SampleAvg.Map(0, 0.18, 0, 255);
 
         /* Fade to black by x */ 
         for(var i = 0; i < segment.Width; ++i) 

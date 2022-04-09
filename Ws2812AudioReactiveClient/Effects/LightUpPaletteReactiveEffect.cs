@@ -56,9 +56,8 @@ public class LightUpPaletteReactiveEffect : BaseAudioReactiveEffect
             goto NEXT_FRAME;
         }
 
-        var isPeak = false;//IsPeak();
-        
-        var strength = (byte)SampleAvg.Map(0, 1024, 0, 255);
+        var isPeak = IsPeak(0.08);
+        var strength = (byte)SampleAvg.Map(0, 0.18, 0, 255);
         
         /* Fade to black by x */ 
         for(var i = 0; i < segment.Width; ++i) 

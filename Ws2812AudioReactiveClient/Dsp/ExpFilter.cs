@@ -6,7 +6,7 @@ public class ExpFilter
     public double Squelch { set; get; }
     public double Value { set; get; }
 
-    public ExpFilter(double weighting = 0.2, double squelch = 0.005)
+    public ExpFilter(double weighting = 0.2, double squelch = 1e-8)
     {
         Weighting = weighting;
         Squelch = squelch;

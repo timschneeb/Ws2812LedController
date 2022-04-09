@@ -61,7 +61,7 @@ public static class Entrypoint
         }); 
         await mgr.Get("heater")!.SetEffectAsync(new MeterRainbowReactiveEffect()
         {
-            AutomaticRender = false,
+            AutomaticRender = false
             //Multiplier = 0.3
             //FluentRainbow = true
         });
@@ -76,7 +76,7 @@ public static class Entrypoint
             //AudioProviderService.Instance.InjectSamples(a);
             
             canvas.Render();
-            await Task.Delay(1000 / 50);
+            await Task.Delay(1000 / 60);
         }
     }
 }
