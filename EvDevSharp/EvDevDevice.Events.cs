@@ -1,3 +1,5 @@
+using System;
+
 namespace EvDevSharp;
 
 public unsafe sealed partial class EvDevDevice : IDisposable

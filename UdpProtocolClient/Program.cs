@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
+using System.Threading.Tasks;
 using ENet;
 using Ws2812LedController.Core.Colors;
 using Ws2812LedController.Core.Model;

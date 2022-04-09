@@ -1,3 +1,5 @@
+using System;
+
 namespace EvDevSharp;
 
 public class OnSynEventArgs : EventArgs
