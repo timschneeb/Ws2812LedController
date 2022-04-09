@@ -47,7 +47,7 @@ public class LightUpPaletteReactiveEffect : BaseAudioReactiveEffect
         base.End();
     }
     
-    private float[] _buffer = new float[1024];
+    private double[] _buffer = new double[1024];
     protected override async Task<int> PerformFrameAsync(LedSegmentGroup segment, LayerId layer)
     {
         NextSample(ref _buffer);
@@ -56,10 +56,10 @@ public class LightUpPaletteReactiveEffect : BaseAudioReactiveEffect
             goto NEXT_FRAME;
         }
 
-        var isPeak = DoSmoothedPeakCheck(_buffer, out var sampleAvg);
+        var isPeak = false;//IsPeak();
         
-        var strength = (byte)sampleAvg.Map(200, 1024 * 5, 0, 255);
-
+        var strength = (byte)SampleAvg.Map(0, 1024, 0, 255);
+        
         /* Fade to black by x */ 
         for(var i = 0; i < segment.Width; ++i) 
         {
@@ -75,13 +75,13 @@ public class LightUpPaletteReactiveEffect : BaseAudioReactiveEffect
         if (_timer100.ElapsedMilliseconds >= 100)
         {
             CRGBPalette16.nblendPaletteTowardPalette(_currentPalette, _targetPalette, MaxChanges);
-            _timer100.Reset();
+            _timer100.Restart();
         }
 
         if (_timer5000.ElapsedMilliseconds >= 5000)
         {
             GenerateNextPalette();
-            _timer5000.Reset();
+            _timer5000.Restart();
         }
 
         segment.SetPixel((int)(((_timeSinceStart.ElapsedMilliseconds & 0xFFFF) % (segment.Width-1)) +1), _currentPalette.ColorFromPalette(strength, strength, TBlendType.LinearBlend), layer);

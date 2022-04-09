@@ -22,7 +22,7 @@ public class NoiseCenteredReactiveEffect : BaseAudioReactiveEffect
     private readonly Stopwatch _timer = new();
     private readonly Stopwatch _timerPaletteFade = new();
     
-    private float _sampleAvg;
+    private double _sampleAvg;
     private readonly CRGBPalette16 _currentPalette = new(CRGBPalette16.Palette.Ocean);
     private CRGBPalette16 _targetPalette = new(CRGBPalette16.Palette.Lava);
     private short _xdist;
@@ -71,7 +71,7 @@ public class NoiseCenteredReactiveEffect : BaseAudioReactiveEffect
         _ydist = (short)(_ydist + Beat8.beatsin8(4,0,10));
     } 
     
-    private float[] _buffer = new float[1024];
+    private double[] _buffer = new double[1024];
     protected override async Task<int> PerformFrameAsync(LedSegmentGroup segment, LayerId layer)
     {
         NextSample(ref _buffer);
@@ -79,9 +79,9 @@ public class NoiseCenteredReactiveEffect : BaseAudioReactiveEffect
         {
             goto NEXT_FRAME;
         }
-
-        DoSmoothedPeakCheck(_buffer, out var sampleAvg);
-        _sampleAvg = sampleAvg;
+        
+        IsPeak(_buffer[0] * 1024);
+        _sampleAvg = SampleAvg;
 
         if (_timerPaletteFade.ElapsedMilliseconds >= 100)
         {
@@ -116,29 +116,4 @@ public class NoiseCenteredReactiveEffect : BaseAudioReactiveEffect
             Conversions.ColorFromHSV(Random.Shared.Next(0,255), 192, Random.Shared.Next(128,255)),
             Conversions.ColorFromHSV(Random.Shared.Next(0,255), 255, Random.Shared.Next(128,255)));
     }
-    
-    /*private static Color CHSV(double hue, double saturation, double value)
-    {
-        int hi = Convert.ToInt32(Math.Floor(hue / 60)) % 6;
-        double f = hue / 60 - Math.Floor(hue / 60);
-
-        value = value * 255;
-        int v = Convert.ToInt32(value);
-        int p = Convert.ToInt32(value * (1 - saturation));
-        int q = Convert.ToInt32(value * (1 - f * saturation));
-        int t = Convert.ToInt32(value * (1 - (1 - f) * saturation));
-
-        if (hi == 0)
-            return Color.FromArgb(255, v, t, p);
-        else if (hi == 1)
-            return Color.FromArgb(255, q, v, p);
-        else if (hi == 2)
-            return Color.FromArgb(255, p, v, t);
-        else if (hi == 3)
-            return Color.FromArgb(255, p, q, v);
-        else if (hi == 4)
-            return Color.FromArgb(255, t, p, v);
-        else
-            return Color.FromArgb(255, v, p, q);
-    }*/
 }

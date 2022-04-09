@@ -73,12 +73,12 @@ public class MeterRainbowReactiveEffect : BaseAudioReactiveEffect
         }
     }
 
-    private float[]? _proc = new float[1024];
+    private double[] _proc = new double[1024];
     protected override async Task<int> PerformFrameAsync(LedSegmentGroup segment, LayerId layer)
     {
         _width = segment.Width;
 
-        var count = this.NextSample(ref _proc);
+        var count = NextSample(ref _proc);
         if (count < 1)
         {
             goto NEXT_FRAME;

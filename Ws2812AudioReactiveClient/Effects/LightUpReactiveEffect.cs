@@ -19,7 +19,7 @@ public class LightUpReactiveEffect : BaseAudioReactiveEffect
     public override string Description => "Light single LEDs based on volume peaks up";
     public override int Speed { set; get; } = 1000 / 60;
     
-    private float[] _buffer = new float[1024];
+    private double[] _buffer = new double[1024];
     protected override async Task<int> PerformFrameAsync(LedSegmentGroup segment, LayerId layer)
     {
         NextSample(ref _buffer);
@@ -28,9 +28,9 @@ public class LightUpReactiveEffect : BaseAudioReactiveEffect
             goto NEXT_FRAME;
         }
 
-        var isPeak = DoSmoothedPeakCheck(_buffer, out var sampleAvg);
+        var isPeak = false;//IsPeak();
         
-        var strength = (int)sampleAvg.Map(200, 1024 * 5, 0, 255);
+        var strength = (int)SampleAvg.Map(200, 1024 * 5, 0, 255);
 
         if (strength < 0) strength = 0;
         if (strength > 255) strength = 255;

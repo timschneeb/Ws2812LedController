@@ -12,7 +12,7 @@ namespace Ws2812AudioReactiveClient
 		public string? BackendName { get; }
 		public string InputName { get; }
 		public double Latency { get; }
-		public event EventHandler<float[][]>? NewSamplesReceived;
+		public event EventHandler<double[][]>? NewSamplesReceived;
 
 		public SoundInputStream(string inputName, double latency = 0.1, string? backendName = null)
 		{
@@ -94,11 +94,12 @@ namespace Ws2812AudioReactiveClient
 		private void OnInputRead (SoundIOInStream stream, int frame_count_min, int frame_count_max)
 		{
 
-			var buffer = new float[2][];
+			var tempBuffer = new float[1];
+			var buffer = new double[2][];
 
 			var framesLeft = frame_count_max;
-			buffer[0] = new float[frame_count_max + 4];
-			buffer[1] = new float[frame_count_max + 4];
+			buffer[0] = new double[frame_count_max];
+			buffer[1] = new double[frame_count_max];
 			for (; ; ) {
 				var frameCount = framesLeft;
 
@@ -127,7 +128,9 @@ namespace Ws2812AudioReactiveClient
 							Console.WriteLine();
 							Console.WriteLine("________________");
 							Console.WriteLine(frame + " / " + frame_count_max);*/
-							Marshal.Copy(area.Pointer, buffer[0], frame, copySize);
+
+							Marshal.Copy(area.Pointer, tempBuffer, 0, 1);
+							buffer[ch][frame] = tempBuffer[0]; // quick float to double conversion
 							area.Pointer += area.Step;
 						}
 					}

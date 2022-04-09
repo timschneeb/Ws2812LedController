@@ -17,7 +17,7 @@ public class FlickerReactiveEffect : BaseAudioReactiveEffect
     public Color Color { set; get; } = Color.Red;
     public int Threshold { set; get; } = 11;
     
-    private float[] _proc = new float[1024];
+    private double[] _proc = new double[1024];
     
     protected override async Task<int> PerformFrameAsync(LedSegmentGroup segment, LayerId layer)
     {
@@ -27,7 +27,7 @@ public class FlickerReactiveEffect : BaseAudioReactiveEffect
             goto NEXT_FRAME;
         }
 
-        var isPeak = DoSmoothedPeakCheck(_proc, Threshold);
+        var isPeak = IsPeak(Threshold);
 
         /* Fade to black by x */ 
         for(var i = 0; i < segment.Width; ++i) 

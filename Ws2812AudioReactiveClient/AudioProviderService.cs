@@ -17,7 +17,7 @@ public class AudioProviderService
         Start();
     }
 
-    public event EventHandler<float[][]>? NewSamples;
+    public event EventHandler<double[][]>? NewSamples;
     
     public void Start()
     {
@@ -29,7 +29,7 @@ public class AudioProviderService
         await _sound.StopAsync();
     }
 
-    public void InjectSamples(float[][] samples)
+    public void InjectSamples(double[][] samples)
     {
         NewSamples?.Invoke(this, samples);
     }

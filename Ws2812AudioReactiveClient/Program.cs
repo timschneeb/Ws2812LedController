@@ -48,21 +48,21 @@ public static class Entrypoint
 
         var color = Color.FromArgb(0xFF, 0x20, 0x05, 0x00);
         
-        await mgr.Get("desk_left")!.SetEffectAsync(new LightUpPaletteReactiveEffect()
+        /*await mgr.Get("desk_left")!.SetEffectAsync(new MeterRainbowReactiveEffect()
         {
             AutomaticRender = false,
-            Multiplier = 0.5
-        });
-        await mgr.Get("bed")!.SetEffectAsync(new LightUpPaletteReactiveEffect()
+            Multiplier = 1.2
+        });*/
+        await mgr.Get("bed")!.SetEffectAsync(new NoiseCenteredReactiveEffect()
         {
             AutomaticRender = false,
-            Multiplier = 0.8
+            Speed = 1000/60
             //FluentRainbow = true
         }); 
-        await mgr.Get("heater")!.SetEffectAsync(new LightUpPaletteReactiveEffect()
+        await mgr.Get("heater")!.SetEffectAsync(new MeterRainbowReactiveEffect()
         {
             AutomaticRender = false,
-            Multiplier = 0.3
+            //Multiplier = 0.3
             //FluentRainbow = true
         });
         //mgr.MirrorTo("desk_left", "bed");
@@ -70,11 +70,7 @@ public static class Entrypoint
         mgr.MirrorTo("desk_left", "desk_right");
         mgr.Get("desk_left")!.SourceSegment.InvertX = true;
         mgr.Get("bed")!.SourceSegment.InvertX = true;
-
-
-        var a = new float[1][];
-        a[0] = new float[512];
-        Array.Fill(a[0], 0);
+        
         while (true)
         {
             //AudioProviderService.Instance.InjectSamples(a);
