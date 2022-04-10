@@ -11,7 +11,7 @@ public class LedStrip
 
     public event EventHandler<Color[]>? ActiveCanvasChanged; 
     
-    internal BitmapWrapper Canvas { get; }
+    public BitmapWrapper Canvas { get; }
 
     private readonly Ws28xx? _device;
     private readonly ICustomStrip? _customDevice;

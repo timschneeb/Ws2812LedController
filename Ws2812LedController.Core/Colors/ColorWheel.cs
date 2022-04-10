@@ -11,19 +11,20 @@ public static class ColorWheel
      */
     public static Color ColorAtIndex(byte pos, byte brightness = 255)
     {
+        var frac = brightness / 255.0;
         pos = (byte)(255 - pos);
         switch (pos)
         {
             case < 85:
-                return Color.FromArgb(brightness, 255 - pos * 3, 0, pos * 3);
+                return Color.FromArgb((int)((255 - pos * 3) * frac), 0, (int)(pos * 3 * frac));
                 // return (uint)(((uint)(255 - pos * 3) << 16) | ((uint)0 << 8) | (pos * 3));
             case < 170:
                 pos -= 85;
-                return Color.FromArgb(brightness, 0, pos * 3, 255 - pos * 3);
+                return Color.FromArgb(0, (int)(pos * 3 * frac), (int)((255 - pos * 3) * frac));
                 // return (uint)(((uint)0 << 16) | ((uint)(pos * 3) << 8) | (255 - pos * 3));
             default:
                 pos -= 170;
-                return Color.FromArgb(brightness, pos * 3, 255 - pos * 3, 0);
+                return Color.FromArgb((int)(pos * 3 * frac), (int)((255 - pos * 3) * frac), 0);
                 // return ((uint)(pos * 3) << 16) | ((uint)(255 - pos * 3) << 8) | (0);
         }
     }

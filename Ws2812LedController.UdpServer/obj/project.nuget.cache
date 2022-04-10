@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "D1WO+12xc9KBoxWEkIS0/vt/lKZPSFMvxEzZtBigZPFqIMSJZSrfbWhVZraDmFTtTCX+NfIEFY4OfNf6sQ3kCQ==",
+  "dgSpecHash": "hPgG8uf8LQJ3vxFD+dJ1fr64qAu3pY5vwXF0jSjDSNh8Ez5+J7tj5vME5UGvHw4FyR7nhIlahPOoPNb+TW9USg==",
   "success": true,
   "projectFilePath": "/home/tim/Development/Ws2812LedController/Ws2812LedController.UdpServer/Ws2812LedController.UdpServer.csproj",
   "expectedPackageFiles": [

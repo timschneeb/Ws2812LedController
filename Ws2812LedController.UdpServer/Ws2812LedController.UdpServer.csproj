@@ -13,5 +13,5 @@
     <ItemGroup>
       <ProjectReference Include="..\Ws2812LedController.Core\Ws2812LedController.Core.csproj" />
     </ItemGroup>
-
+    
 </Project>

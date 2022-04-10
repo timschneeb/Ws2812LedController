@@ -408,22 +408,11 @@
           "lib/netstandard2.0/UnitsNet.dll": {}
         }
       },
-      "RocToolkitSharp/1.0.0": {
-        "type": "project",
-        "framework": ".NETCoreApp,Version=v6.0",
-        "compile": {
-          "bin/placeholder/RocToolkitSharp.dll": {}
-        },
-        "runtime": {
-          "bin/placeholder/RocToolkitSharp.dll": {}
-        }
-      },
       "Ws2812LedController.Core/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v6.0",
         "dependencies": {
           "Iot.Device.Bindings": "2.1.0",
-          "RocToolkitSharp": "1.0.0",
           "kenssamson.rpi-ws281x-csharp": "1.1.0"
         },
         "compile": {
@@ -1225,11 +1214,6 @@
         "unitsnet.4.77.0.nupkg.sha512",
         "unitsnet.nuspec"
       ]
-    },
-    "RocToolkitSharp/1.0.0": {
-      "type": "project",
-      "path": "../RocToolkitSharp/RocToolkitSharp.csproj",
-      "msbuildProject": "../RocToolkitSharp/RocToolkitSharp.csproj"
     },
     "Ws2812LedController.Core/1.0.0": {
       "type": "project",

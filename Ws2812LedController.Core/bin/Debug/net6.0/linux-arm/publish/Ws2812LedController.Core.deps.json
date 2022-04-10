@@ -10,7 +10,6 @@
       "Ws2812LedController.Core/1.0.0": {
         "dependencies": {
           "Iot.Device.Bindings": "2.1.0",
-          "RocToolkitSharp": "1.0.0",
           "kenssamson.rpi-ws281x-csharp": "1.1.0"
         },
         "runtime": {
@@ -182,11 +181,6 @@
             "assemblyVersion": "4.0.0.0",
             "fileVersion": "4.0.0.0"
           }
-        }
-      },
-      "RocToolkitSharp/1.0.0": {
-        "runtime": {
-          "RocToolkitSharp.dll": {}
         }
       }
     }
@@ -364,11 +358,6 @@
       "sha512": "sha512-S4rErosYZ+M7N2f76mx3DEZL/biGaUr1SJKfT8lTj7swFpyElcTcJG93rb2jTxzTKrSBDMFpLlYjpbCPEK/gfw==",
       "path": "unitsnet/4.77.0",
       "hashPath": "unitsnet.4.77.0.nupkg.sha512"
-    },
-    "RocToolkitSharp/1.0.0": {
-      "type": "project",
-      "serviceable": false,
-      "sha512": ""
     }
   }
 }

@@ -48,5 +48,3 @@
 /home/tim/Development/Ws2812LedController/Ws2812LedController.WebApi/obj/Debug/net6.0/Ws2812LedController.WebApi.pdb
 /home/tim/Development/Ws2812LedController/Ws2812LedController.WebApi/obj/Debug/net6.0/Ws2812LedController.WebApi.genruntimeconfig.cache
 /home/tim/Development/Ws2812LedController/Ws2812LedController.WebApi/obj/Debug/net6.0/ref/Ws2812LedController.WebApi.dll
-/home/tim/Development/Ws2812LedController/Ws2812LedController.WebApi/bin/Debug/net6.0/RocToolkitSharp.dll
-/home/tim/Development/Ws2812LedController/Ws2812LedController.WebApi/bin/Debug/net6.0/RocToolkitSharp.pdb

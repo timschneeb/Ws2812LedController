@@ -15,8 +15,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\aubio.net\Aubio.NET\Aubio.NET.csproj" />
-      <ProjectReference Include="..\aubio.net\Aubio\Aubio.csproj" />
       <ProjectReference Include="..\libsoundio-sharp\libsoundio-sharp\libsoundio-sharp.csproj" />
       <ProjectReference Include="..\Ws2812LedController.UdpServer\Ws2812LedController.UdpServer.csproj" />
     </ItemGroup>

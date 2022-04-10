@@ -18,6 +18,7 @@ public class LedSegment
     public string Id => $"{RelStart}..{RelEnd}";
     public Color[] State => Strip.Canvas.State[RelStart..RelEnd];
 
+    public bool Enabled { set; get; } = true;
     public LedLayer[] Layers { get; } = new LedLayer[typeof(LayerId).GetEnumNames().Length];
 
     /* Configurable properties */
@@ -64,6 +65,11 @@ public class LedSegment
 
     public void ProcessLayers()
     {
+        if (!Enabled)
+        {
+            return;
+        }
+        
         for (var i = 0; i < Width; i++)
         {
             var pixel = Layers[0].LayerState[i];
@@ -83,7 +89,12 @@ public class LedSegment
     }
 
     public void Render()
-    {
+    {  
+        if (!Enabled)
+        {
+            return;
+        }
+
         Strip.Render();
     }
 }

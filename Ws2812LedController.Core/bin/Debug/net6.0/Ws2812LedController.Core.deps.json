@@ -9,7 +9,6 @@
       "Ws2812LedController.Core/1.0.0": {
         "dependencies": {
           "Iot.Device.Bindings": "2.1.0",
-          "RocToolkitSharp": "1.0.0",
           "kenssamson.rpi-ws281x-csharp": "1.1.0"
         },
         "runtime": {

@@ -20,6 +20,7 @@ namespace Ws2812LedController.Console
         private static LedManager _mgr = null!;
         private static WebApiManager _webApiManager = null!;
         private static EnetServer _enetServer = null!;
+        private static SynchronizedLedReceiver _syncLedReceiver = null!;
         
         private static async Task Main(string[] args)
         {
@@ -41,6 +42,7 @@ namespace Ws2812LedController.Console
             _mgr.RegisterSegment("heater", segmentHeater);
             
             _webApiManager = new WebApiManager(new Ref<LedManager>(() => _mgr));
+            _syncLedReceiver = new SynchronizedLedReceiver(new Ref<LedStrip>(() => strip), new Ref<LedManager>(() => _mgr));
 
             //_mgr.RegisterSegment("b", segmentB);
 
@@ -127,25 +129,31 @@ namespace Ws2812LedController.Console
                 case PacketTypeId.PaintInstruction:
                     if (arg is PaintInstructionPacket paint)
                     {
-                        var _ = Task.Run((() =>
+                        if (paint.RenderMode == RenderMode.AnonymousTask)
                         {
-                            switch (paint.PaintInstructionMode)
+                            Task.Run(() =>
                             {
-                                case PaintInstructionMode.Full:
-                                    for (var i = 0; i < paint.Colors.Length; i++)
-                                    {
-                                        _mgr.Get("full")!.SegmentGroup.SetPixel(i, paint.Colors[i].ToColor(), paint.Layer);
-                                    }
-                                    break;
-                                case PaintInstructionMode.Selective:
-                                    for (var i = 0; i < paint.Indices.Length; i++)
-                                    {
-                                        _mgr.Get("full")!.SegmentGroup.SetPixel(paint.Indices[i], paint.Colors[i].ToColor(), paint.Layer);
-                                    }
-                                    break;
-                            }
-                            _mgr.Get("full")!.SegmentGroup.Render();
-                        }));
+                                switch (paint.PaintInstructionMode)
+                                {
+                                    case PaintInstructionMode.Full:
+                                        for (var i = 0; i < paint.Colors.Length; i++)
+                                        {
+                                            _mgr.Get("full")!.SegmentGroup.SetPixel(i, paint.Colors[i].ToColor(), paint.Layer);
+                                        }
+                                        break;
+                                    case PaintInstructionMode.Selective:
+                                        for (var i = 0; i < paint.Indices.Length; i++)
+                                        {
+                                            _mgr.Get("full")!.SegmentGroup.SetPixel(paint.Indices[i], paint.Colors[i].ToColor(), paint.Layer);
+                                        }
+                                        break;
+                                }
+                                _mgr.Get("full")!.SegmentGroup.Render();
+                            });
+                            break;
+                        }
+                        
+                        _syncLedReceiver.EnqueuePacket(paint);
                     }
                     break;
             }
@@ -230,7 +238,7 @@ namespace Ws2812LedController.Console
                 default:
                     goto HandleSpecialButtons;
             }
-
+            
             _mgr.Get("full")?.SegmentGroup.Clear(Color.FromArgb(0,0,0,0), LayerId.ExclusiveEnetLayer);
             await segment.SetEffectAsync(new Static()
             {

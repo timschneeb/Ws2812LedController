@@ -32,7 +32,7 @@ public class NoiseCenteredReactiveEffect : BaseAudioReactiveEffect
 
     public NoiseCenteredReactiveEffect()
     {
-        AvgSmoothingMode = AvgSmoothingMode.Mean;
+        AvgSmoothingMode = AvgSmoothingMode.All;
     }
     
     public override void Reset()
@@ -77,11 +77,10 @@ public class NoiseCenteredReactiveEffect : BaseAudioReactiveEffect
         _ydist = (short)(_ydist + Beat8.beatsin8(4,0,10));
     } 
     
-    private double[] _buffer = new double[1024];
     protected override async Task<int> PerformFrameAsync(LedSegmentGroup segment, LayerId layer)
     {
-        NextSample(ref _buffer);
-        if (_buffer.Length < 1)
+        var length = NextSample();
+        if (length < 1)
         {
             goto NEXT_FRAME;
         }

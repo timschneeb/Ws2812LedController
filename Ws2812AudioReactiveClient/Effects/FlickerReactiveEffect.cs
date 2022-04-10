@@ -14,14 +14,12 @@ public class FlickerReactiveEffect : BaseAudioReactiveEffect
     public override string Description => "Flicker LEDs based on volume peaks";
     public override int Speed { set; get; } = 1000 / 60;
 
-    public Color Color { set; get; } = Color.Red;
-    public double Threshold { set; get; } = 0.04;
-    
-    private double[] _proc = new double[1024];
+    public Color Color { set; get; } = Color.DarkRed;
+    public double Threshold { set; get; } = 130;
     
     protected override async Task<int> PerformFrameAsync(LedSegmentGroup segment, LayerId layer)
     {
-        var count = this.NextSample(ref _proc);
+        var count = NextSample();
         if (count < 1)
         {
             goto NEXT_FRAME;

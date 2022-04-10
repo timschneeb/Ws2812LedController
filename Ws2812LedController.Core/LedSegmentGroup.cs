@@ -90,12 +90,17 @@ public class LedSegmentGroup
         }
     }
     
-    public void Clear(Color? color = null, LayerId layer = LayerId.BaseLayer)
+    public void Clear(Color? color, LayerId layer)
     {
         foreach (var segment in Segments)
         {
             segment.Layers[(int)layer].Clear(color);
         }
+    }
+    
+    public void Clear(LayerId layer)
+    {
+        Clear(null, layer);
     }
     
     /* We expect all the segments to carry the same data, so just take the master strip */

@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Drawing;
+using Ws2812AudioReactiveClient.Dsp;
 using Ws2812LedController.Core;
 using Ws2812LedController.Core.Colors;
 using Ws2812LedController.Core.Effects.Base;
@@ -13,6 +14,7 @@ public class MeterRainbowReactiveEffect : BaseAudioReactiveEffect
 {
     public override string Description => "Expand LEDs based on volume peaks";
     public override int Speed { set; get; } = 1000 / 60;
+    public FftBinSelector? FftBinSelector { set; get; }
     /** Only non-fluent rainbow */
     public int ColorWheelSpeed { set; get; } = 3;
     public int DecayFrameTimeout { set; get; } = 0;
@@ -73,7 +75,7 @@ public class MeterRainbowReactiveEffect : BaseAudioReactiveEffect
         }
     }
 
-    private double[] _proc = new double[1024];
+    private double[] _proc = Array.Empty<double>();
     protected override async Task<int> PerformFrameAsync(LedSegmentGroup segment, LayerId layer)
     {
         _width = segment.Width;
@@ -83,8 +85,8 @@ public class MeterRainbowReactiveEffect : BaseAudioReactiveEffect
         {
             goto NEXT_FRAME;
         }
-        
-        var maxSample = FindMaxSample(_proc);
+
+        var maxSample = FftBinSelector?.Mean(FftBins) ?? FindMaxSample(_proc);
         if (maxSample > _maxSampleEver)
         {
             _maxSampleEver = maxSample;
@@ -92,7 +94,7 @@ public class MeterRainbowReactiveEffect : BaseAudioReactiveEffect
         
         if (maxSample > 0)
         {
-            _preReact = (long)(segment.Width * maxSample);
+            _preReact = (long)maxSample.Map(0, _maxSampleEver, 0, segment.Width);
             if (_preReact > _react) 
                 _react = _preReact;
         }

@@ -1,23 +1,26 @@
 ﻿using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Drawing;
+using Iot.Device.Amg88xx;
+using Ws2812AudioReactiveClient.Dsp;
 using Ws2812AudioReactiveClient.Effects;
 using Ws2812LedController.Core;
 using Ws2812LedController.Core.Effects.Chase;
 using Ws2812LedController.Core.Model;
 using Ws2812LedController.Core.Utils;
 using Ws2812LedController.UdpServer;
+using Ws2812LedController.UdpServer.Packets;
 
 namespace Ws2812AudioReactiveClient;
 
 public static class Entrypoint
 {
-
+    private const int FrameRate = 60;
     
     public static async Task Main()
     {
         
-        var canvas = new RemoteLedCanvas(LayerId.ExclusiveEnetLayer, 0, 363);
+        var canvas = new RemoteLedCanvas(LayerId.ExclusiveEnetLayer, 0, 363, RenderMode.ManagedTask);
 
         var mgr = new LedManager();
         var remote = new LedStrip(new RemoteLedStrip(canvas));
@@ -48,20 +51,21 @@ public static class Entrypoint
 
         var color = Color.FromArgb(0xFF, 0x20, 0x05, 0x00);
         
-        /*await mgr.Get("desk_left")!.SetEffectAsync(new MeterRainbowReactiveEffect()
+        await mgr.Get("desk_left")!.SetEffectAsync(new MeterRainbowReactiveEffect()
         {
             AutomaticRender = false,
-            Multiplier = 1.2
-        });*/
-        await mgr.Get("bed")!.SetEffectAsync(new NoiseCenteredReactiveEffect()
+            Multiplier = 2,
+        });
+        await mgr.Get("bed")!.SetEffectAsync(new WaterfallReactiveEffect()
         {
             AutomaticRender = false,
-            Speed = 1000/60
+            Speed = 1000/FrameRate
             //FluentRainbow = true
-        }); 
+        });
         await mgr.Get("heater")!.SetEffectAsync(new MeterRainbowReactiveEffect()
         {
-            AutomaticRender = false
+            AutomaticRender = false,
+            FftBinSelector = new FftBinSelector(0)
             //Multiplier = 0.3
             //FluentRainbow = true
         });
@@ -69,14 +73,15 @@ public static class Entrypoint
         //mgr.MirrorTo("desk_left", "heater");
         mgr.MirrorTo("desk_left", "desk_right");
         mgr.Get("desk_left")!.SourceSegment.InvertX = true;
-        mgr.Get("bed")!.SourceSegment.InvertX = true;
-        
+        //mgr.Get("bed")!.SourceSegment.InvertX = true;
+
+
         while (true)
         {
             //AudioProviderService.Instance.InjectSamples(a);
             
             canvas.Render();
-            await Task.Delay(1000 / 60);
+            await Task.Delay(1000 / FrameRate);
         }
     }
 }

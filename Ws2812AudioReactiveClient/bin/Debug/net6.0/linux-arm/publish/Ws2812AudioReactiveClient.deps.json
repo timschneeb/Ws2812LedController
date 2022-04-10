@@ -11,7 +11,8 @@
         "dependencies": {
           "ENet-CSharp": "2.4.8",
           "FftSharp": "1.1.5",
-          "Numpy": "3.7.1.28",
+          "NWaves": "0.9.6",
+          "NumSharp": "0.30.0",
           "Ws2812LedController.UdpServer": "1.0.0",
           "libsoundio-sharp": "1.0.0"
         },
@@ -66,7 +67,6 @@
           }
         }
       },
-      "Microsoft.CSharp/4.5.0": {},
       "Microsoft.Extensions.Logging.Abstractions/5.0.0": {
         "runtime": {
           "lib/netstandard2.0/Microsoft.Extensions.Logging.Abstractions.dll": {
@@ -93,43 +93,22 @@
           }
         }
       },
-      "Numpy/3.7.1.28": {
+      "NumSharp/0.30.0": {
         "dependencies": {
-          "Microsoft.CSharp": "4.5.0",
-          "Python.Included": "3.7.3.13"
+          "System.Memory": "4.5.4"
         },
         "runtime": {
-          "lib/netstandard2.0/Numpy.dll": {
-            "assemblyVersion": "3.7.1.28",
-            "fileVersion": "3.7.1.28"
+          "lib/netstandard2.0/NumSharp.dll": {
+            "assemblyVersion": "0.30.0.0",
+            "fileVersion": "0.30.0.0"
           }
         }
       },
-      "Python.Deployment/1.2.0": {
+      "NWaves/0.9.6": {
         "runtime": {
-          "lib/netstandard2.0/Python.Deployment.dll": {
-            "assemblyVersion": "1.2.0.0",
-            "fileVersion": "1.2.0.0"
-          }
-        }
-      },
-      "Python.Included/3.7.3.13": {
-        "dependencies": {
-          "Python.Deployment": "1.2.0",
-          "pythonnet_netstandard_py37_win": "2.5.1"
-        },
-        "runtime": {
-          "lib/netstandard2.0/Python.Included.dll": {
-            "assemblyVersion": "3.7.3.13",
-            "fileVersion": "3.7.3.13"
-          }
-        }
-      },
-      "pythonnet_netstandard_py37_win/2.5.1": {
-        "runtime": {
-          "lib/netstandard2.0/Python.Runtime.dll": {
-            "assemblyVersion": "2.5.1.0",
-            "fileVersion": "0.0.0.0"
+          "lib/net5.0/NWaves.dll": {
+            "assemblyVersion": "0.9.6.0",
+            "fileVersion": "0.9.6.0"
           }
         }
       },
@@ -211,6 +190,7 @@
           }
         }
       },
+      "System.Memory/4.5.4": {},
       "System.Runtime.CompilerServices.Unsafe/6.0.0": {},
       "System.Security.AccessControl/5.0.0": {
         "dependencies": {
@@ -253,15 +233,9 @@
           "libsoundio-sharp.dll": {}
         }
       },
-      "RocToolkitSharp/1.0.0": {
-        "runtime": {
-          "RocToolkitSharp.dll": {}
-        }
-      },
       "Ws2812LedController.Core/1.0.0": {
         "dependencies": {
           "Iot.Device.Bindings": "2.1.0",
-          "RocToolkitSharp": "1.0.0",
           "kenssamson.rpi-ws281x-csharp": "1.1.0"
         },
         "runtime": {
@@ -313,13 +287,6 @@
       "path": "kenssamson.rpi-ws281x-csharp/1.1.0",
       "hashPath": "kenssamson.rpi-ws281x-csharp.1.1.0.nupkg.sha512"
     },
-    "Microsoft.CSharp/4.5.0": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-kaj6Wb4qoMuH3HySFJhxwQfe8R/sJsNJnANrvv8WdFPMoNbKY5htfNscv+LHCu5ipz+49m2e+WQXpLXr9XYemQ==",
-      "path": "microsoft.csharp/4.5.0",
-      "hashPath": "microsoft.csharp.4.5.0.nupkg.sha512"
-    },
     "Microsoft.Extensions.Logging.Abstractions/5.0.0": {
       "type": "package",
       "serviceable": true,
@@ -348,33 +315,19 @@
       "path": "microsoft.win32.systemevents/5.0.0",
       "hashPath": "microsoft.win32.systemevents.5.0.0.nupkg.sha512"
     },
-    "Numpy/3.7.1.28": {
+    "NumSharp/0.30.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-Sbk+wez7rAPE3AHPE74+fxjvmikEiR+V3+PxDSc85GEhWJX7orBDdy9r3xT0Jd3PS/yjyhT4JXwFWkILk9mDJg==",
-      "path": "numpy/3.7.1.28",
-      "hashPath": "numpy.3.7.1.28.nupkg.sha512"
+      "sha512": "sha512-1f8m2B/m/ZSsICaqLszspCyA9/sTHK7wBKEH5KsxGg/r3QCYTc2HnfYOGMeCytvo8/j0v/umn5umLOLhdExlFA==",
+      "path": "numsharp/0.30.0",
+      "hashPath": "numsharp.0.30.0.nupkg.sha512"
     },
-    "Python.Deployment/1.2.0": {
+    "NWaves/0.9.6": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-g5US41l+hftiUrnPwNp5dtp/Dql16Bn3csyqgXo/pTvyAqCbZim6zUUvUUO1YasxzxY4F/16ughKR2lG21PhuA==",
-      "path": "python.deployment/1.2.0",
-      "hashPath": "python.deployment.1.2.0.nupkg.sha512"
-    },
-    "Python.Included/3.7.3.13": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-FYao1eP0dpMDgsKplYPIujP4r9zB6UZvOX0nwiMYiZg65a/AQGDTfbOBQwbFVsNhKpFGPVxHKWfoIhDv7NASuA==",
-      "path": "python.included/3.7.3.13",
-      "hashPath": "python.included.3.7.3.13.nupkg.sha512"
-    },
-    "pythonnet_netstandard_py37_win/2.5.1": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-RMsXNGdWfq8eCSmrA/lWXXiB2j8fT/IkXANTtAh7z0jN9ydN5JJQ+EGdAw8g+GvG4WBxEjyv4TUqDERuMN826Q==",
-      "path": "pythonnet_netstandard_py37_win/2.5.1",
-      "hashPath": "pythonnet_netstandard_py37_win.2.5.1.nupkg.sha512"
+      "sha512": "sha512-LoVqwy6zgeF9l7Yj9rihWtnbbytZOLtU/lFqjnZRFqOCLJQj60NLFPA4nfvAdzK3PsHeShIw7AuJZKSElcYOGg==",
+      "path": "nwaves/0.9.6",
+      "hashPath": "nwaves.0.9.6.nupkg.sha512"
     },
     "runtime.linux-arm.runtime.native.System.IO.Ports/5.0.0": {
       "type": "package",
@@ -453,6 +406,13 @@
       "path": "system.management/5.0.0",
       "hashPath": "system.management.5.0.0.nupkg.sha512"
     },
+    "System.Memory/4.5.4": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-1MbJTHS1lZ4bS4FmsJjnuGJOu88ZzTT2rLvrhW7Ygic+pC0NWA+3hgAen0HRdsocuQXCkUTdFn9yHJJhsijDXw==",
+      "path": "system.memory/4.5.4",
+      "hashPath": "system.memory.4.5.4.nupkg.sha512"
+    },
     "System.Runtime.CompilerServices.Unsafe/6.0.0": {
       "type": "package",
       "serviceable": true,
@@ -503,11 +463,6 @@
       "hashPath": "unitsnet.4.77.0.nupkg.sha512"
     },
     "libsoundio-sharp/1.0.0": {
-      "type": "project",
-      "serviceable": false,
-      "sha512": ""
-    },
-    "RocToolkitSharp/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

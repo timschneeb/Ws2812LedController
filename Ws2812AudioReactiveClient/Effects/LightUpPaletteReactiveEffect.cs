@@ -47,16 +47,15 @@ public class LightUpPaletteReactiveEffect : BaseAudioReactiveEffect
         base.End();
     }
     
-    private double[] _buffer = new double[1024];
     protected override async Task<int> PerformFrameAsync(LedSegmentGroup segment, LayerId layer)
     {
-        NextSample(ref _buffer);
-        if (_buffer.Length < 1)
+        var length = NextSample();
+        if (length < 1)
         {
             goto NEXT_FRAME;
         }
 
-        var isPeak = IsPeak(0.08);
+        var isPeak = IsPeak(0.2);
         var strength = (byte)SampleAvg.Map(0, 0.18, 0, 255);
         
         /* Fade to black by x */ 

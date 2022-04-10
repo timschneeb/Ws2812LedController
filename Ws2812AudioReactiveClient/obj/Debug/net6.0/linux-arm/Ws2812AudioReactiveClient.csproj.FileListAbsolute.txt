@@ -20,11 +20,9 @@
 /home/tim/Development/Ws2812LedController/Ws2812AudioReactiveClient/bin/Debug/net6.0/linux-arm/System.Text.Json.dll
 /home/tim/Development/Ws2812LedController/Ws2812AudioReactiveClient/bin/Debug/net6.0/linux-arm/UnitsNet.dll
 /home/tim/Development/Ws2812LedController/Ws2812AudioReactiveClient/bin/Debug/net6.0/linux-arm/libSystem.IO.Ports.Native.so
-/home/tim/Development/Ws2812LedController/Ws2812AudioReactiveClient/bin/Debug/net6.0/linux-arm/RocToolkitSharp.dll
 /home/tim/Development/Ws2812LedController/Ws2812AudioReactiveClient/bin/Debug/net6.0/linux-arm/Ws2812LedController.Core.dll
 /home/tim/Development/Ws2812LedController/Ws2812AudioReactiveClient/bin/Debug/net6.0/linux-arm/Ws2812LedController.UdpServer.dll
 /home/tim/Development/Ws2812LedController/Ws2812AudioReactiveClient/bin/Debug/net6.0/linux-arm/Ws2812LedController.UdpServer.pdb
-/home/tim/Development/Ws2812LedController/Ws2812AudioReactiveClient/bin/Debug/net6.0/linux-arm/RocToolkitSharp.pdb
 /home/tim/Development/Ws2812LedController/Ws2812AudioReactiveClient/bin/Debug/net6.0/linux-arm/Ws2812LedController.Core.pdb
 /home/tim/Development/Ws2812LedController/Ws2812AudioReactiveClient/obj/Debug/net6.0/linux-arm/Ws2812AudioReactiveClient.csproj.AssemblyReference.cache
 /home/tim/Development/Ws2812LedController/Ws2812AudioReactiveClient/obj/Debug/net6.0/linux-arm/Ws2812AudioReactiveClient.GeneratedMSBuildEditorConfig.editorconfig
@@ -41,8 +39,6 @@
 /home/tim/Development/Ws2812LedController/Ws2812AudioReactiveClient/bin/Debug/net6.0/linux-arm/libsoundio.dylib
 /home/tim/Development/Ws2812LedController/Ws2812AudioReactiveClient/bin/Debug/net6.0/linux-arm/libsoundio-sharp.dll
 /home/tim/Development/Ws2812LedController/Ws2812AudioReactiveClient/bin/Debug/net6.0/linux-arm/libsoundio-sharp.pdb
-/home/tim/Development/Ws2812LedController/Ws2812AudioReactiveClient/bin/Debug/net6.0/linux-arm/Numpy.dll
-/home/tim/Development/Ws2812LedController/Ws2812AudioReactiveClient/bin/Debug/net6.0/linux-arm/Python.Deployment.dll
-/home/tim/Development/Ws2812LedController/Ws2812AudioReactiveClient/bin/Debug/net6.0/linux-arm/Python.Included.dll
-/home/tim/Development/Ws2812LedController/Ws2812AudioReactiveClient/bin/Debug/net6.0/linux-arm/Python.Runtime.dll
 /home/tim/Development/Ws2812LedController/Ws2812AudioReactiveClient/bin/Debug/net6.0/linux-arm/FftSharp.dll
+/home/tim/Development/Ws2812LedController/Ws2812AudioReactiveClient/bin/Debug/net6.0/linux-arm/NumSharp.dll
+/home/tim/Development/Ws2812LedController/Ws2812AudioReactiveClient/bin/Debug/net6.0/linux-arm/NWaves.dll

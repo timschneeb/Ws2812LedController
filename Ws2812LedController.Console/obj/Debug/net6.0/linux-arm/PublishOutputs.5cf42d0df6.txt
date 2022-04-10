@@ -28,7 +28,6 @@
 /home/tim/Development/Ws2812LedController/Ws2812LedController.Console/bin/Debug/net6.0/linux-arm/publish/UnitsNet.dll
 /home/tim/Development/Ws2812LedController/Ws2812LedController.Console/bin/Debug/net6.0/linux-arm/publish/libSystem.IO.Ports.Native.so
 /home/tim/Development/Ws2812LedController/Ws2812LedController.Console/bin/Debug/net6.0/linux-arm/publish/EvDevSharp.dll
-/home/tim/Development/Ws2812LedController/Ws2812LedController.Console/bin/Debug/net6.0/linux-arm/publish/RocToolkitSharp.dll
 /home/tim/Development/Ws2812LedController/Ws2812LedController.Console/bin/Debug/net6.0/linux-arm/publish/Ws2812LedController.Core.dll
 /home/tim/Development/Ws2812LedController/Ws2812LedController.Console/bin/Debug/net6.0/linux-arm/publish/Ws2812LedController.Lirc.dll
 /home/tim/Development/Ws2812LedController/Ws2812LedController.Console/bin/Debug/net6.0/linux-arm/publish/Ws2812LedController.PowerButton.dll
@@ -40,4 +39,3 @@
 /home/tim/Development/Ws2812LedController/Ws2812LedController.Console/bin/Debug/net6.0/linux-arm/publish/Ws2812LedController.UdpServer.pdb
 /home/tim/Development/Ws2812LedController/Ws2812LedController.Console/bin/Debug/net6.0/linux-arm/publish/Ws2812LedController.WebApi.pdb
 /home/tim/Development/Ws2812LedController/Ws2812LedController.Console/bin/Debug/net6.0/linux-arm/publish/EvDevSharp.pdb
-/home/tim/Development/Ws2812LedController/Ws2812LedController.Console/bin/Debug/net6.0/linux-arm/publish/RocToolkitSharp.pdb

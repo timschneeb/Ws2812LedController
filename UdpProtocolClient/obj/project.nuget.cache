@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "WZccMiYFHP8j+W8crWuozK/2fCJ435mkyLQBOE6r6fGtnoUJU3TIqOoqwUSQFxdwc2Wr2RoOA0m73SUnkpk10g==",
+  "dgSpecHash": "dso+qij0CzzQsIH1Lkvo1MWIDtXiIFAbcUiWJwpxCXmjzlT7MTGKMIyPD0XCKCoLHIYqWAiprRcJ4J8chxj4lw==",
   "success": true,
   "projectFilePath": "/home/tim/Development/Ws2812LedController/UdpProtocolClient/UdpProtocolClient.csproj",
   "expectedPackageFiles": [

@@ -93,8 +93,6 @@ namespace Ws2812AudioReactiveClient
 		
 		private void OnInputRead (SoundIOInStream stream, int frame_count_min, int frame_count_max)
 		{
-
-			var tempBuffer = new float[1];
 			var buffer = new double[2][];
 
 			var framesLeft = frame_count_max;
@@ -129,8 +127,8 @@ namespace Ws2812AudioReactiveClient
 							Console.WriteLine("________________");
 							Console.WriteLine(frame + " / " + frame_count_max);*/
 
-							Marshal.Copy(area.Pointer, tempBuffer, 0, 1);
-							buffer[ch][frame] = tempBuffer[0]; // quick float to double conversion
+							Marshal.Copy(area.Pointer, _tempBuffer, 0, 1);
+							buffer[ch][frame] = _tempBuffer[0]; // quick float to double conversion
 							area.Pointer += area.Step;
 						}
 					}
@@ -179,5 +177,6 @@ namespace Ws2812AudioReactiveClient
 			0,
 		};
 
+		private readonly float[] _tempBuffer = new float[1];
 	}
 }

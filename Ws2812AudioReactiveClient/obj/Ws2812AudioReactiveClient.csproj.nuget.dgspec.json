@@ -4,58 +4,6 @@
     "/home/tim/Development/Ws2812LedController/Ws2812AudioReactiveClient/Ws2812AudioReactiveClient.csproj": {}
   },
   "projects": {
-    "/home/tim/Development/Ws2812LedController/RocToolkitSharp/RocToolkitSharp.csproj": {
-      "version": "1.0.0",
-      "restore": {
-        "projectUniqueName": "/home/tim/Development/Ws2812LedController/RocToolkitSharp/RocToolkitSharp.csproj",
-        "projectName": "RocToolkitSharp",
-        "projectPath": "/home/tim/Development/Ws2812LedController/RocToolkitSharp/RocToolkitSharp.csproj",
-        "packagesPath": "/home/tim/.nuget/packages/",
-        "outputPath": "/home/tim/Development/Ws2812LedController/RocToolkitSharp/obj/",
-        "projectStyle": "PackageReference",
-        "configFilePaths": [
-          "/home/tim/.nuget/NuGet/NuGet.Config"
-        ],
-        "originalTargetFrameworks": [
-          "net6.0"
-        ],
-        "sources": {
-          "https://api.nuget.org/v3/index.json": {}
-        },
-        "frameworks": {
-          "net6.0": {
-            "targetAlias": "net6.0",
-            "projectReferences": {}
-          }
-        },
-        "warningProperties": {
-          "warnAsError": [
-            "NU1605"
-          ]
-        }
-      },
-      "frameworks": {
-        "net6.0": {
-          "targetAlias": "net6.0",
-          "imports": [
-            "net461",
-            "net462",
-            "net47",
-            "net471",
-            "net472",
-            "net48"
-          ],
-          "assetTargetFallback": true,
-          "warn": true,
-          "frameworkReferences": {
-            "Microsoft.NETCore.App": {
-              "privateAssets": "all"
-            }
-          },
-          "runtimeIdentifierGraphPath": "/home/tim/.dotnet/sdk/6.0.200/RuntimeIdentifierGraph.json"
-        }
-      }
-    },
     "/home/tim/Development/Ws2812LedController/Ws2812AudioReactiveClient/Ws2812AudioReactiveClient.csproj": {
       "version": "1.0.0",
       "restore": {
@@ -80,12 +28,6 @@
             "projectReferences": {
               "/home/tim/Development/Ws2812LedController/Ws2812LedController.UdpServer/Ws2812LedController.UdpServer.csproj": {
                 "projectPath": "/home/tim/Development/Ws2812LedController/Ws2812LedController.UdpServer/Ws2812LedController.UdpServer.csproj"
-              },
-              "/home/tim/Development/Ws2812LedController/aubio.net/Aubio.NET/Aubio.NET.csproj": {
-                "projectPath": "/home/tim/Development/Ws2812LedController/aubio.net/Aubio.NET/Aubio.NET.csproj"
-              },
-              "/home/tim/Development/Ws2812LedController/aubio.net/Aubio/Aubio.csproj": {
-                "projectPath": "/home/tim/Development/Ws2812LedController/aubio.net/Aubio/Aubio.csproj"
               },
               "/home/tim/Development/Ws2812LedController/libsoundio-sharp/libsoundio-sharp/libsoundio-sharp.csproj": {
                 "projectPath": "/home/tim/Development/Ws2812LedController/libsoundio-sharp/libsoundio-sharp/libsoundio-sharp.csproj"
@@ -160,11 +102,7 @@
         "frameworks": {
           "net6.0": {
             "targetAlias": "net6.0",
-            "projectReferences": {
-              "/home/tim/Development/Ws2812LedController/RocToolkitSharp/RocToolkitSharp.csproj": {
-                "projectPath": "/home/tim/Development/Ws2812LedController/RocToolkitSharp/RocToolkitSharp.csproj"
-              }
-            }
+            "projectReferences": {}
           }
         },
         "warningProperties": {
@@ -263,132 +201,6 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/home/tim/.dotnet/sdk/6.0.200/RuntimeIdentifierGraph.json"
-        }
-      }
-    },
-    "/home/tim/Development/Ws2812LedController/aubio.net/Aubio.NET/Aubio.NET.csproj": {
-      "version": "1.0.0",
-      "restore": {
-        "projectUniqueName": "/home/tim/Development/Ws2812LedController/aubio.net/Aubio.NET/Aubio.NET.csproj",
-        "projectName": "Aubio.NET",
-        "projectPath": "/home/tim/Development/Ws2812LedController/aubio.net/Aubio.NET/Aubio.NET.csproj",
-        "packagesPath": "/home/tim/.nuget/packages/",
-        "outputPath": "/home/tim/Development/Ws2812LedController/aubio.net/Aubio.NET/obj/",
-        "projectStyle": "PackageReference",
-        "configFilePaths": [
-          "/home/tim/.nuget/NuGet/NuGet.Config"
-        ],
-        "originalTargetFrameworks": [
-          "netstandard2.0"
-        ],
-        "sources": {
-          "https://api.nuget.org/v3/index.json": {}
-        },
-        "frameworks": {
-          "netstandard2.0": {
-            "targetAlias": "netstandard2.0",
-            "projectReferences": {}
-          }
-        },
-        "warningProperties": {
-          "warnAsError": [
-            "NU1605"
-          ]
-        }
-      },
-      "frameworks": {
-        "netstandard2.0": {
-          "targetAlias": "netstandard2.0",
-          "dependencies": {
-            "JetBrains.Annotations": {
-              "target": "Package",
-              "version": "[11.1.0, )"
-            },
-            "NETStandard.Library": {
-              "suppressParent": "All",
-              "target": "Package",
-              "version": "[2.0.3, )",
-              "autoReferenced": true
-            }
-          },
-          "imports": [
-            "net461",
-            "net462",
-            "net47",
-            "net471",
-            "net472",
-            "net48"
-          ],
-          "assetTargetFallback": true,
-          "warn": true,
-          "runtimeIdentifierGraphPath": "/home/tim/.dotnet/sdk/6.0.200/RuntimeIdentifierGraph.json"
-        }
-      }
-    },
-    "/home/tim/Development/Ws2812LedController/aubio.net/Aubio/Aubio.csproj": {
-      "version": "1.0.0",
-      "restore": {
-        "projectUniqueName": "/home/tim/Development/Ws2812LedController/aubio.net/Aubio/Aubio.csproj",
-        "projectName": "Aubio",
-        "projectPath": "/home/tim/Development/Ws2812LedController/aubio.net/Aubio/Aubio.csproj",
-        "packagesPath": "/home/tim/.nuget/packages/",
-        "outputPath": "/home/tim/Development/Ws2812LedController/aubio.net/Aubio/obj/",
-        "projectStyle": "PackageReference",
-        "configFilePaths": [
-          "/home/tim/.nuget/NuGet/NuGet.Config"
-        ],
-        "originalTargetFrameworks": [
-          "netstandard2.0"
-        ],
-        "sources": {
-          "https://api.nuget.org/v3/index.json": {}
-        },
-        "frameworks": {
-          "netstandard2.0": {
-            "targetAlias": "netstandard2.0",
-            "projectReferences": {}
-          }
-        },
-        "warningProperties": {
-          "warnAsError": [
-            "NU1605"
-          ]
-        }
-      },
-      "frameworks": {
-        "netstandard2.0": {
-          "targetAlias": "netstandard2.0",
-          "dependencies": {
-            "JetBrains.Annotations": {
-              "target": "Package",
-              "version": "[11.1.0, )"
-            },
-            "NETStandard.Library": {
-              "suppressParent": "All",
-              "target": "Package",
-              "version": "[2.0.3, )",
-              "autoReferenced": true
-            },
-            "System.ComponentModel": {
-              "target": "Package",
-              "version": "[4.3.0, )"
-            },
-            "System.ComponentModel.Primitives": {
-              "target": "Package",
-              "version": "[4.3.0, )"
-            }
-          },
-          "imports": [
-            "net461",
-            "net462",
-            "net47",
-            "net471",
-            "net472",
-            "net48"
-          ],
-          "assetTargetFallback": true,
-          "warn": true,
           "runtimeIdentifierGraphPath": "/home/tim/.dotnet/sdk/6.0.200/RuntimeIdentifierGraph.json"
         }
       }

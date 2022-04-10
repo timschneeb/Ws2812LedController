@@ -19,11 +19,10 @@ public class LightUpReactiveEffect : BaseAudioReactiveEffect
     public override string Description => "Light single LEDs based on volume peaks up";
     public override int Speed { set; get; } = 1000 / 60;
     
-    private double[] _buffer = new double[1024];
     protected override async Task<int> PerformFrameAsync(LedSegmentGroup segment, LayerId layer)
     {
-        NextSample(ref _buffer);
-        if (_buffer.Length < 1)
+        var length = NextSample();
+        if (length < 1)
         {
             goto NEXT_FRAME;
         }

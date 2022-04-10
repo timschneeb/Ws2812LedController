@@ -11,6 +11,7 @@ public class BitmapWrapper
     protected readonly BitmapImage? Image;
     protected readonly Color[] VirtualCopy;
 
+    public bool ExclusiveMode { set; get; } = false;
     public int Width { get; }
     public Color[] State => VirtualCopy;
 
@@ -30,8 +31,13 @@ public class BitmapWrapper
         Clear();
     }
 
-    public void SetPixel(int i, Color color, byte brightness = 255, bool gammaCorrection = false)
+    public void SetPixel(int i, Color color, byte brightness = 255, bool gammaCorrection = false, bool isExclusive = false)
     {
+        if (!isExclusive && ExclusiveMode)
+        {
+            return;
+        }
+        
         color = gammaCorrection ? GammaCorrection.Gamma(color) : color;
 
         var colorWithBrightness = Color.FromArgb(color.A, (color.R * brightness) >> 8, (color.G * brightness) >> 8, (color.B * brightness) >> 8);
@@ -54,8 +60,13 @@ public class BitmapWrapper
         return VirtualCopy[i];
     }
 
-    public void Clear(Color? color = null)
+    public void Clear(Color? color = null, bool isExclusive = false)
     {
+        if (!isExclusive && ExclusiveMode)
+        {
+            return;
+        }
+        
         Image?.Clear(color ?? Color.Black);
         VirtualCopy.Populate(color ?? Color.Black);
     }

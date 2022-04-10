@@ -105,6 +105,8 @@ public class LedSegmentController : IDisposable
 
     public async Task SetEffectAsync(IEffect effect, CancelMode cancelMode = CancelMode.Now, bool noPowerOn = false, LayerId layer = LayerId.BaseLayer)
     {
+        SegmentGroup.MasterSegment.Strip.Canvas.ExclusiveMode = false;
+        
         if (cancelMode != CancelMode.Enqueue)
         {
             lock (_queue)

@@ -34,6 +34,22 @@ public static class FftExtensions
         }
         
         return add / (buffer.Length);
+    }  
+    
+    public static double MeanSpan(this double[] buffer, int start, int end)
+    {
+        if (buffer.Length < 1)
+        {
+            return 0;
+        }
+        
+        var add = 0.0;
+        foreach (var t in buffer.AsSpan()[start..end])
+        {
+            add += Math.Abs(t);
+        }
+        
+        return add / (buffer.Length);
     }
     
     public static double[] FftMeanWithFreq(this double[] buffer, int from, int to, double[]? freq = null)

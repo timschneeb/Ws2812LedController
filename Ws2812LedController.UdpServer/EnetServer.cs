@@ -48,7 +48,7 @@ public class EnetServer
             {
                 if (_server.CheckEvents(out var netEvent) <= 0) 
                 {
-                    if (_server.Service(10, out netEvent) <= 0)
+                    if (_server.Service(5, out netEvent) <= 0)
                         break;
 
                     polled = true;

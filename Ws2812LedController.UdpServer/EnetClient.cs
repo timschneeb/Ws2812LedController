@@ -26,7 +26,7 @@ public class EnetClient
         _address.Port = port;
         _client.Create();
     }
-
+    
     public void Connect()
     {
         _cancelSource.Cancel();
@@ -76,7 +76,7 @@ public class EnetClient
 
                 if (_client.CheckEvents(out var netEvent) <= 0) 
                 {
-                    if (_client.Service(15, out netEvent) <= 0)
+                    if (_client.Service(5, out netEvent) <= 0)
                     {
                         break;
                     }
