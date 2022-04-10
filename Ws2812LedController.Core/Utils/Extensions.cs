@@ -4,14 +4,22 @@ namespace Ws2812LedController.Core.Utils;
 
 public static class Extensions
 {
-    public static T Map<T>(this T value, dynamic fromSource, dynamic toSource, dynamic fromTarget, dynamic toTarget)
+    public static T Map<T>(this T value, dynamic fromSource, dynamic toSource, dynamic fromTarget, dynamic toTarget, bool clamp = false)
     {
         if (fromSource == toSource)
         {
             return (T)fromSource;
         }
-        
-        return (T)((value - fromSource) / (toSource - fromSource) * (toTarget - fromTarget) + fromTarget);
+
+        var mapped = (T)((double)(value - fromSource) / (toSource - fromSource) * (toTarget - fromTarget) + fromTarget);
+        mapped = clamp switch
+        {
+            true when mapped < fromTarget => fromTarget,
+            true when mapped > toTarget => toTarget,
+            _ => mapped
+        };
+
+        return mapped;
     }
     
     public static void Populate<T>(this T[] arr, T value ) 

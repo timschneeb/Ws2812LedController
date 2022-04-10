@@ -13,7 +13,7 @@ public static class Fireworks
     
     public static void DoFrame(LedSegmentGroup segment, Color[] colors, Color backgroundColor, FadeRate fadeOutRate, SizeOption particleSize, bool triggered = false, LayerId layer = LayerId.BaseLayer)
     {
-        Debug.Assert(colors.Length > 0);
+        Debug.Assert(colors.Length > 0, "Color array must not be empty");
         FadeOut.DoFrame(segment, backgroundColor, fadeOutRate, layer);
 
         var color = colors[Random.Shared.Next(colors.Length)];

@@ -41,7 +41,7 @@ public class BitmapWrapper
         color = gammaCorrection ? GammaCorrection.Gamma(color) : color;
 
         var colorWithBrightness = Color.FromArgb(color.A, (color.R * brightness) >> 8, (color.G * brightness) >> 8, (color.B * brightness) >> 8);
-        Debug.Assert(i >= 0 && i < Width);
+        Debug.Assert(i >= 0 && i < Width, "Out of range");
         Image?.SetPixel(i, 0, colorWithBrightness);
         VirtualCopy[i] = color;
     }
@@ -56,7 +56,7 @@ public class BitmapWrapper
 
     public Color PixelAt(int i)
     {
-        Debug.Assert(i >= 0 && i < Width);
+        Debug.Assert(i >= 0 && i < Width, "Out of range");
         return VirtualCopy[i];
     }
 

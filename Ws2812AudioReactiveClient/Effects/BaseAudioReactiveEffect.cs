@@ -99,6 +99,7 @@ public abstract class BaseAudioReactiveEffect : IEffect
 
     private void Smooth(ref double[] buffer)
     {
+        // TODO refactor this
         switch (AvgSmoothingMode)
         {
             case AvgSmoothingMode.Mean:
@@ -189,7 +190,7 @@ public abstract class BaseAudioReactiveEffect : IEffect
             //Console.WriteLine("No major peak");
         }
         
-        _fftBinBuffer[0] = (fftMag.FftMeanWithFreq(1,2,freq));       // 93 - 187 (48000Hz only)
+        _fftBinBuffer[0] = (fftMag.FftMeanWithFreq(1,2,freq));       // 93 - 187 (48000Hz SR only)
         _fftBinBuffer[1] = (fftMag.FftMeanWithFreq(2,3,freq));       // 187 - 280
         _fftBinBuffer[2] = (fftMag.FftMeanWithFreq(3,5,freq));       // 280 - 467
         _fftBinBuffer[3] = (fftMag.FftMeanWithFreq(5,7,freq));       // 467 - 654

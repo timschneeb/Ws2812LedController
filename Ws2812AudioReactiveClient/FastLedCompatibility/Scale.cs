@@ -28,4 +28,16 @@ public static class Scale
 //#endif
 
     }
+    
+    public static ushort scale16(ushort i, ushort scale)
+    {
+        ushort result;
+//#if FASTLED_SCALE8_FIXED == 1
+        result = (ushort)(((uint)(i) * (1 + (uint)(scale))) / 65536);
+//#else
+	//result = (ushort)(((uint)(i) * (uint)(scale)) / 65536);
+//#endif
+        return result;
+    }
+
 }

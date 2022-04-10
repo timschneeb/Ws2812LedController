@@ -33,7 +33,7 @@ public static class GammaCorrection
     
     public static byte Gamma8(int x)
     {
-        Debug.Assert(x is >= byte.MinValue and <= byte.MaxValue);
+        Debug.Assert(x is >= byte.MinValue and <= byte.MaxValue, "Out of range");
         return NeoPixelGammaTable[(byte)x];
     }
 

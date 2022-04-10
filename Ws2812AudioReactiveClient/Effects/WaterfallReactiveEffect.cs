@@ -21,12 +21,6 @@ public class WaterfallReactiveEffect : BaseAudioReactiveEffect
     public int StartFrequency { set; get; } = 93;
     public int EndFrequency { set; get; } = 5120;
     
-    private long _lastSecondHand = 0;
-    public override void Reset()
-    {
-        _lastSecondHand = 0;
-        base.Reset();
-    }
 
     protected override async Task<int> PerformFrameAsync(LedSegmentGroup segment, LayerId layer)
     {
@@ -41,42 +35,34 @@ public class WaterfallReactiveEffect : BaseAudioReactiveEffect
             goto NEXT_FRAME;
         }
 
-       
-        var secondHand = _timeSinceStart.ElapsedMilliseconds * 1000 / (256-/*speed*/192)/500 + 1 % 16;
 
-        //if (_lastSecondHand != secondHand)
+        Color pixCol;
+        var fftNoData = FftMajorPeak[0] <= 0 || FftMajorPeak[1] <= 0;
+        if (fftNoData)
         {
-            _lastSecondHand = secondHand;
-            
-            Color pixCol;
-            var fftNoData = FftMajorPeak[0] <= 0 || FftMajorPeak[1] <= 0;
-            if (fftNoData)
-            {
-                pixCol = Color.Black;
-            }
-            else
-            {
-                pixCol = ColorWheel.ColorAtIndex((byte)((Math.Log10((int)FftMajorPeak[0]) - Math.Log10(StartFrequency)) * 255.0/(Math.Log10(EndFrequency)-Math.Log10(StartFrequency))), 
-                    (byte)((int)FftMajorPeak[1] >> 4));
-            }
-            
-            if (!fftNoData && IsFftPeak(FftBinSelector, MaxVolume))
-            {
-                segment.SetPixel(segment.Width - 1, Conversions.ColorFromHSV(92, 92, 92), layer);
-            }
-            else
-            {
-                var color = ColorBasedOnHz ? pixCol : Conversions.ColorFromHSV(92, 92,((int)FftMajorPeak[1] >> 8).Map(0, 255, 0, 92));
-                segment.SetPixel(segment.Width - 1, color, layer);
-            }
-            
-            for (var i = 0; i < segment.Width-1; i++)
-            {
-                segment.SetPixel(i, segment.PixelAt(i + 1, layer), layer);
-            }
+            pixCol = Color.Black;
+        }
+        else
+        {
+            pixCol = ColorWheel.ColorAtIndex((byte)((Math.Log10((int)FftMajorPeak[0]) - Math.Log10(StartFrequency)) * 255.0/(Math.Log10(EndFrequency)-Math.Log10(StartFrequency))), 
+                (byte)((int)FftMajorPeak[1] >> 4));
         }
         
-       
+        if (!fftNoData && IsFftPeak(FftBinSelector, MaxVolume))
+        {
+            segment.SetPixel(segment.Width - 1, Conversions.ColorFromHSV(92, 92, 92), layer);
+        }
+        else
+        {
+            var color = ColorBasedOnHz ? pixCol : Conversions.ColorFromHSV(92, 92,((int)FftMajorPeak[1] >> 8).Map(0, 255, 0, 92));
+            segment.SetPixel(segment.Width - 1, color, layer);
+        }
+        
+        for (var i = 0; i < segment.Width-1; i++)
+        {
+            segment.SetPixel(i, segment.PixelAt(i + 1, layer), layer);
+        }
+
         CancellationMethod.NextCycle();
         
         NEXT_FRAME:

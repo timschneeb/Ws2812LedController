@@ -1,6 +1,6 @@
 namespace Ws2812AudioReactiveClient.FastLedCompatibility;
 
-public static class Noise8
+public static class Noise
 {
     private static byte[] P = {151, 160, 137, 91, 90, 15, 131, 13, 201, 95, 96, 53, 194, 233, 7, 225, 140, 36, 103, 30, 69, 142, 8, 99, 37, 240, 21, 10, 23, 190, 6, 148, 247, 120, 234, 75, 0, 26, 197, 62, 94, 252, 219, 203, 117, 35, 11, 32, 57, 177, 33, 88, 237, 149, 56, 87, 174, 20, 125, 136, 171, 168, 68, 175, 74, 165, 71, 134, 139, 48, 27, 166, 77, 146, 158, 231, 83, 111, 229, 122, 60, 211, 133, 230, 220, 105, 92, 41, 55, 46, 245, 40, 244, 102, 143, 54, 65, 25, 63, 161, 1, 216, 80, 73, 209, 76, 132, 187, 208, 89, 18, 169, 200, 196, 135, 130, 116, 188, 159, 86, 164, 100, 109, 198, 173, 186, 3, 64, 52, 217, 226, 250, 124, 123, 5, 202, 38, 147, 118, 126, 255, 82, 85, 212, 207, 206, 59, 227, 47, 16, 58, 17, 182, 189, 28, 42, 223, 183, 170, 213, 119, 248, 152, 2, 44, 154, 163, 70, 221, 153, 101, 155, 167, 43, 172, 9, 129, 22, 39, 253, 19, 98, 108, 110, 79, 113, 224, 232, 178, 185, 112, 104, 218, 246, 97, 228, 251, 34, 242, 193, 238, 210, 144, 12, 191, 179, 162, 241, 81, 51, 145, 235, 249, 14, 239, 107, 49, 192, 214, 31, 181, 199, 106, 157, 184, 84, 204, 176, 115, 121, 50, 45, 127, 4, 150, 254, 138, 236, 205, 93, 222, 114, 67, 29, 24, 72, 243, 141, 128, 195, 78, 66, 215, 61, 156, 180, 151};
 
@@ -70,6 +70,120 @@ public static class Noise8
         return result;
     }
 
+    public static short inoise16_raw(uint x, uint y)
+    {
+        // Find the unit cube containing the point
+        byte X = (byte)(x >> 16);
+        byte Y = (byte)(y >> 16);
+
+        // Hash cube corner coordinates
+        byte A = (byte)(P[X] + Y);
+        byte AA = P[A];
+        byte AB = P[A + 1];
+        byte B = (byte)(P[X + 1] + Y);
+        byte BA = P[B];
+        byte BB = P[B + 1];
+
+        // Get the relative position of the point in the cube
+        ushort u = (ushort)(x & 0xFFFF);
+        ushort v = (ushort)(y & 0xFFFF);
+
+        // Get a signed version of the above for the grad function
+        short xx = (short)((u >> 1) & 0x7FFF);
+        short yy = (short)((v >> 1) & 0x7FFF);
+        ushort N = 0x8000;
+
+        u = ease16InOutQuad(u);
+        v = ease16InOutQuad(v);
+
+        short X1 = lerp15by16(grad16(P[AA], xx, yy), grad16(P[BA], (short)(xx - N), yy), u);
+        short X2 = lerp15by16(grad16(P[AB], xx, (short)(yy - N)), grad16(P[BB], (short)(xx - N), (short)(yy - N)), u);
+
+        short ans = lerp15by16(X1,X2,v);
+
+        return ans;
+    }
+
+    public static ushort inoise16(uint x, uint y)
+    {
+        int ans = inoise16_raw(x, y);
+        ans = ans + 17308;
+        uint pan = (uint)ans;
+        // pan = (ans * 242L) >> 7.  That's the same as:
+        // pan = (ans * 484L) >> 8.  And this way avoids a 7X four-byte shift-loop on AVR.
+        // Identical math, except for the highest bit, which we don't care about anyway,
+        // since we're returning the 'middle' 16 out of a 32-bit value anyway.
+        pan *= 484;
+        return (ushort)(pan >> 8);
+
+        // return (uint32_t)(((int32_t)inoise16_raw(x,y)+(uint32_t)17308)*242)>>7;
+        // return scale16by8(inoise16_raw(x,y)+17308,242)<<1;
+    }
+    
+    public static ushort ease16InOutQuad(ushort i)
+    {
+        ushort j = i;
+        if ((j & 0x8000) != 0)
+        {
+            j = (ushort)(65535 - j);
+        }
+        ushort jj = Scale.scale16(j, j);
+        ushort jj2 = (ushort)(jj << 1);
+        if ((i & 0x8000) != 0)
+        {
+            jj2 = (ushort)(65535 - jj2);
+        }
+        return jj2;
+    }
+
+    
+    public static short lerp15by16(short a, short b, ushort frac)
+    {
+        short result;
+        if (b > a)
+        {
+            ushort delta = (ushort)(b - a);
+            ushort scaled = Scale.scale16(delta, frac);
+            result = (short)(a + scaled);
+        }
+        else
+        {
+            ushort delta = (ushort)(a - b);
+            ushort scaled = Scale.scale16(delta, frac);
+            result = (short)(a - scaled);
+        }
+        return result;
+    }
+
+
+    public static short grad16(byte hash, short x, short y)
+    {
+        hash = (byte)(hash & 7);
+        short u;
+        short v;
+        if (hash < 4)
+        {
+            u = x;
+            v = y;
+        }
+        else
+        {
+            u = y;
+            v = x;
+        }
+        if ((hash & 1) != 0)
+        {
+            u = (short)(-u);
+        }
+        if ((hash & 2) != 0)
+        {
+            v = (short)(-v);
+        }
+
+        return (short)((u+v) >> 1);
+    }
+
+    
     
     public static byte ease8InOutQuad(byte i)
     {

@@ -25,8 +25,7 @@ public class SynchronizedLedReceiver
     {
         if (_instructionQueue.Count > 5)
         {
-            // Can't keep up
-            Console.WriteLine("SynchronizedLedReceiver: Can't keep up with remote, clearing queued instructions. Is the target frame-rate correctly set?");
+            Console.WriteLine("SynchronizedLedReceiver: Can't keep up with remote, clearing queued instructions");
             _instructionQueue.Clear();
         }
         

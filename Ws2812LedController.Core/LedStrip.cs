@@ -48,7 +48,7 @@ public class LedStrip
     
     public LedSegment CreateSegment(int start, int length)
     {
-        Debug.Assert(start + length <= Canvas.Width);
+        Debug.Assert(start + length <= Canvas.Width, "Start/length are out of range");
         return new LedSegment(start, length, this);
     }
     

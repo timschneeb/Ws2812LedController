@@ -40,7 +40,7 @@ public class LedManager
         var targetCtrl = _segments.FirstOrDefault(x => x.Name == target);
         var sourceCtrl = _segments.FirstOrDefault(x => x.Name == source);
             
-        Debug.Assert(targetCtrl != null && sourceCtrl != null);
+        Debug.Assert(targetCtrl != null && sourceCtrl != null, "Source/target not found");
         
         sourceCtrl.MirrorTo(targetCtrl);
     }

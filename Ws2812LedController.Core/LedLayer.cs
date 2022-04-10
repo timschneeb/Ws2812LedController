@@ -38,7 +38,7 @@ public class LedLayer
 
     private void SetPixelInternal(int i, Color color)
     {
-        Debug.Assert(i >= 0 && i < Width);
+        Debug.Assert(i >= 0 && i < Width, "Out of range");
         LayerState[i] = color;
     }
 
@@ -48,7 +48,7 @@ public class LedLayer
         {
             i = AbsEnd - i;
         }
-        Debug.Assert(i >= 0 && i < Width);
+        Debug.Assert(i >= 0 && i < Width, "Out of range");
         return LayerState[i];
     }
     
@@ -148,7 +148,7 @@ public class LedLayer
             return;
         }
         
-        Debug.Assert(bytes.Length % 4 == 0);
+        Debug.Assert(bytes.Length % 4 == 0, "Byte array must contain a multiple of 4 bytes");
         
         for(var index = 0; index < Width; index++)
         {

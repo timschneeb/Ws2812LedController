@@ -69,12 +69,12 @@ public class NoiseCenteredReactiveEffect : BaseAudioReactiveEffect
         for (int i = (segmentGroup.Width - maxLen) / 2; i < (segmentGroup.Width + maxLen + 1) / 2; i++)
         { 
             // The louder the sound, the wider the soundbar.
-            byte index = Noise8.inoise8((ushort)(i * _sampleAvg + _xdist), (ushort)(_ydist + i * _sampleAvg)); // Get a value from the noise function. I'm using both x and y axis.
+            byte index = Noise.inoise8((ushort)(i * _sampleAvg + _xdist), (ushort)(_ydist + i * _sampleAvg)); // Get a value from the noise function. I'm using both x and y axis.
             segmentGroup.SetPixel(i, _currentPalette.ColorFromPalette(index, 255, TBlendType.LinearBlend), layer); // With that value, look up the 8 bit colour palette value and assign it to the current LED.
         }
 
-        _xdist = (short)(_xdist + Beat8.beatsin8(5,0,10));
-        _ydist = (short)(_ydist + Beat8.beatsin8(4,0,10));
+        _xdist = (short)(_xdist + Beat.beatsin8(5,0,10));
+        _ydist = (short)(_ydist + Beat.beatsin8(4,0,10));
     } 
     
     protected override async Task<int> PerformFrameAsync(LedSegmentGroup segment, LayerId layer)

@@ -32,7 +32,7 @@ public class Sine
     
     public static byte Sine8(int x)
     {
-        Debug.Assert(x is >= byte.MinValue and <= byte.MaxValue);
+        Debug.Assert(x is >= byte.MinValue and <= byte.MaxValue, "Out of range");
         return NeoPixelSineTable[(byte)x];
     }
 }

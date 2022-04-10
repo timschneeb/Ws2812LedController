@@ -42,9 +42,7 @@ public static class Entrypoint
         client.Connect();
         
         await Task.Delay(500);
-        
-        //canvasFull.Bitmap.Clear();
-        // canvasFull.Render();
+
         canvas.Bitmap.Clear();
         canvas.Render();
         //await mgr.Get("bed")!.SetEffectAsync(new MeterRainbowReactiveEffect());
@@ -56,19 +54,19 @@ public static class Entrypoint
             AutomaticRender = false,
             Multiplier = 2,
         });
-        await mgr.Get("bed")!.SetEffectAsync(new WaterfallReactiveEffect()
+        await mgr.Get("bed")!.SetEffectAsync(new NoiseMoveReactiveEffect()
         {
             AutomaticRender = false,
             Speed = 1000/FrameRate
             //FluentRainbow = true
         });
-        await mgr.Get("heater")!.SetEffectAsync(new MeterRainbowReactiveEffect()
+        /*await mgr.Get("heater")!.SetEffectAsync(new MeterRainbowReactiveEffect()
         {
             AutomaticRender = false,
             FftBinSelector = new FftBinSelector(0)
             //Multiplier = 0.3
             //FluentRainbow = true
-        });
+        });*/
         //mgr.MirrorTo("desk_left", "bed");
         //mgr.MirrorTo("desk_left", "heater");
         mgr.MirrorTo("desk_left", "desk_right");

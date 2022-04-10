@@ -10,7 +10,7 @@ public class CancellationTimeoutMethod : ICancellationMethod
     
     public CancellationTimeoutMethod(int timeout)
     {
-        Debug.Assert(timeout >= 500);
+        Debug.Assert(timeout >= 500, "Timeout must be equal or greater than 500 due to timing issues");
 
         Timeout = timeout;
         _timer.Interval = timeout;

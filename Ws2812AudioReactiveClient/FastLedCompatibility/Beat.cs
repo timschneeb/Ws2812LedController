@@ -1,6 +1,6 @@
 namespace Ws2812AudioReactiveClient.FastLedCompatibility;
 
-public static class Beat8
+public static class Beat
 {
     private static byte[] sine_wave = new byte[]{
         0x80, 0x83, 0x86, 0x89, 0x8C, 0x90, 0x93, 0x96,
@@ -40,20 +40,43 @@ public static class Beat8
     public static byte beatsin8(ushort beats_per_minute, byte lowest = 0, byte highest = 255, uint timebase = 0, byte phase_offset = 0)
     {
         byte beat = beat8(beats_per_minute, timebase);
-        byte beatsin = sine_wave[beat + phase_offset];
+        byte beatsin = sine_wave[(byte)(beat + phase_offset)];
         byte rangewidth = (byte)(highest - lowest);
         byte scaledbeat = Scale.scale8(beatsin, rangewidth);
         byte result = (byte)(lowest + scaledbeat);
         return result;
     }
     
+    public static ushort beatsin88(ushort beats_per_minute_88, ushort lowest = 0, ushort highest = 65535, uint timebase = 0, ushort phase_offset = 0)
+    {
+        ushort beat = beat88(beats_per_minute_88, timebase);
+        ushort beatsin = (ushort)(Math8.Sin16((ushort)(beat + phase_offset)) + 32768);
+        ushort rangewidth = (ushort)(highest - lowest);
+        ushort scaledbeat = Scale.scale16(beatsin, rangewidth);
+        ushort result = (ushort)(lowest + scaledbeat);
+        return result;
+    }
+
+    /// beatsin16 generates a 16-bit sine wave at a given BPM,
+    ///           that oscillates within a given range.
+    public static ushort beatsin16(ushort beats_per_minute, ushort lowest = 0, ushort highest = 65535, uint timebase = 0, ushort phase_offset = 0)
+    {
+        ushort beat = beat16(beats_per_minute, timebase);
+        ushort beatsin = (ushort)(Math8.Sin16((ushort)(beat + phase_offset)) + 32768);
+        ushort rangewidth = (ushort)(highest - lowest);
+        ushort scaledbeat = Scale.scale16(beatsin, rangewidth);
+        ushort result = (ushort)(lowest + scaledbeat);
+        return result;
+    }
+
+    
     /// beat8 generates an 8-bit 'sawtooth' wave at a given BPM
     public static byte beat8(ushort beats_per_minute, uint timebase = 0)
     {
-        return (byte)(beat16(beats_per_minute, timebase) >> 8);
+        return (byte)(beat16(beats_per_minute, timebase) >> 8 );
     }
     
-    public static byte beat88( ushort beats_per_minute_88, uint timebase = 0)
+    public static ushort beat88( ushort beats_per_minute_88, uint timebase = 0)
     {
         // BPM is 'beats per minute', or 'beats per 60000ms'.
         // To avoid using the (slower) division operator, we
@@ -63,10 +86,8 @@ public static class Beat8
         // The ratio 65536:60000 is 279.620266667:256; we'll call it 280:256.
         // The conversion is accurate to about 0.05%, more or less,
         // e.g. if you ask for "120 BPM", you'll get about "119.93".
-        var unixTime = DateTime.Now.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc))
-            .TotalMilliseconds; // TODO
-        
-        return (byte)((((long)unixTime - timebase) * beats_per_minute_88 * 280) >> 16);
+        var unixTime = (uint)(DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
+        return (ushort)(((unixTime - timebase) * beats_per_minute_88 * 280) >> 16);
     }
 
     /// beat16 generates a 16-bit 'sawtooth' wave at a given BPM

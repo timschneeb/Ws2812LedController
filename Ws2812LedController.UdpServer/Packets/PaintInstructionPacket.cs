@@ -38,7 +38,7 @@ public class PaintInstructionPacket : IPacket
     {
         if (PaintInstructionMode == PaintInstructionMode.Selective)
         {
-            Debug.Assert(Indices.Length == Colors.Length);
+            Debug.Assert(Indices.Length == Colors.Length, "Indices and colors have different counts");
         }
 
         var pixelCount = (ushort)Colors.Length;
