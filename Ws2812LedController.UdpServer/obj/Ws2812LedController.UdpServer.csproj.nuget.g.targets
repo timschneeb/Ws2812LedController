@@ -1,7 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
-<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ImportGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
-    <Import Project="$(NuGetPackageRoot)system.device.gpio/2.1.0/buildTransitive/net5.0/System.Device.Gpio.targets" Condition="Exists('$(NuGetPackageRoot)system.device.gpio/2.1.0/buildTransitive/net5.0/System.Device.Gpio.targets')" />
-    <Import Project="$(NuGetPackageRoot)enet-csharp/2.4.8/build/ENet-CSharp.targets" Condition="Exists('$(NuGetPackageRoot)enet-csharp/2.4.8/build/ENet-CSharp.targets')" />
-  </ImportGroup>
-</Project>

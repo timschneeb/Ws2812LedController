@@ -1,5 +1,0 @@
-/home/tim/Development/Ws2812LedController/Ws2812LedController.Lirc/bin/Debug/net6.0/linux-arm/publish/Ws2812LedController.Lirc.dll
-/home/tim/Development/Ws2812LedController/Ws2812LedController.Lirc/bin/Debug/net6.0/linux-arm/publish/Ws2812LedController.Lirc.deps.json
-/home/tim/Development/Ws2812LedController/Ws2812LedController.Lirc/bin/Debug/net6.0/linux-arm/publish/Ws2812LedController.Lirc.pdb
-/home/tim/Development/Ws2812LedController/Ws2812LedController.Lirc/bin/Debug/net6.0/linux-arm/publish/EvDevSharp.dll
-/home/tim/Development/Ws2812LedController/Ws2812LedController.Lirc/bin/Debug/net6.0/linux-arm/publish/EvDevSharp.pdb
