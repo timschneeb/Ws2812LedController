@@ -12,7 +12,7 @@ public static class Extensions
         }
 
         var mapped = (T)((double)(value - fromSource) / (toSource - fromSource) * (toTarget - fromTarget) + fromTarget);
-        mapped = clamp switch
+        mapped = clamp switch // TODO clamp doesn't handle reversed from/to values properly
         {
             true when mapped < fromTarget => fromTarget,
             true when mapped > toTarget => toTarget,
@@ -20,6 +20,20 @@ public static class Extensions
         };
 
         return mapped;
+    }
+    
+    public static T Clamp<T>(this T value, dynamic min, dynamic max)
+    {
+        if (value > max)
+        {
+            return max;
+        }
+        if (value < min)
+        {
+            return min;
+        }
+
+        return value;
     }
     
     public static void Populate<T>(this T[] arr, T value ) 

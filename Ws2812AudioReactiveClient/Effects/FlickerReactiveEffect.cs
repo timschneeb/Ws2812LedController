@@ -4,6 +4,7 @@ using System.Drawing;
 using Ws2812AudioReactiveClient.FastLedCompatibility;
 using Ws2812LedController.Core;
 using Ws2812LedController.Core.Effects.Base;
+using Ws2812LedController.Core.FastLedCompatibility;
 using Ws2812LedController.Core.Model;
 using Ws2812LedController.Core.Utils;
 
@@ -15,7 +16,7 @@ public class FlickerReactiveEffect : BaseAudioReactiveEffect
     public override int Speed { set; get; } = 1000 / 60;
 
     public Color Color { set; get; } = Color.DarkRed;
-    public double Threshold { set; get; } = 130;
+    public double Threshold { set; get; } = 0.05;
     
     protected override async Task<int> PerformFrameAsync(LedSegmentGroup segment, LayerId layer)
     {

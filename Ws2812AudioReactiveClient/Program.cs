@@ -15,7 +15,7 @@ namespace Ws2812AudioReactiveClient;
 
 public static class Entrypoint
 {
-    private const int FrameRate = 60;
+    private const int FrameRate = 50;
     
     public static async Task Main()
     {
@@ -49,28 +49,29 @@ public static class Entrypoint
 
         var color = Color.FromArgb(0xFF, 0x20, 0x05, 0x00);
         
-        await mgr.Get("desk_left")!.SetEffectAsync(new MeterRainbowReactiveEffect()
+        /*await mgr.Get("desk_left")!.SetEffectAsync(new MeterRainbowReactiveEffect()
         {
             AutomaticRender = false,
             Multiplier = 2,
-        });
-        await mgr.Get("bed")!.SetEffectAsync(new NoiseMoveReactiveEffect()
+        });*/
+        await mgr.Get("bed")!.SetEffectAsync(new BinMapReactiveEffect()
         {
             AutomaticRender = false,
-            Speed = 1000/FrameRate
-            //FluentRainbow = true
+            Speed = 1000/FrameRate,
+            /*FadeStrength = 15,
+            StartFromEdge = Edge.None*/
         });
-        /*await mgr.Get("heater")!.SetEffectAsync(new MeterRainbowReactiveEffect()
+        /*await mgr.Get("heater")!.SetEffectAsync(new GravityFreqReactiveEffect()
         {
             AutomaticRender = false,
-            FftBinSelector = new FftBinSelector(0)
+           // FftBinSelector = new FftBinSelector(0)
             //Multiplier = 0.3
             //FluentRainbow = true
         });*/
         //mgr.MirrorTo("desk_left", "bed");
         //mgr.MirrorTo("desk_left", "heater");
-        mgr.MirrorTo("desk_left", "desk_right");
-        mgr.Get("desk_left")!.SourceSegment.InvertX = true;
+        //mgr.MirrorTo("desk_left", "desk_right");
+        //mgr.Get("desk_left")!.SourceSegment.InvertX = true;
         //mgr.Get("bed")!.SourceSegment.InvertX = true;
 
 

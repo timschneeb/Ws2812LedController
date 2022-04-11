@@ -16,7 +16,7 @@ public enum RenderMode
 { 
     /** Fire and forget on anonymous task */
     AnonymousTask = 0,
-    /** Feed to managed task */
+    /** Feed to managed task via queue */
     ManagedTask = 1,
     /** Exclusive mode: Draws directly on main canvas; Other effects and layers are ignored */
     Direct = 2

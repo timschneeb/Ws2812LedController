@@ -55,7 +55,7 @@ public abstract class BaseAudioReactiveEffect : IEffect
     private long[] _peakTime = new long[16 + 1];
 
     /** Volume peak check */
-    protected bool IsFftPeak(FftBinSelector selector, double triggerVolume = 100, bool smootheWithAvg = true)
+    protected bool IsFftPeak(FftCBinSelector selector, double triggerVolume = 100, bool smootheWithAvg = true)
     {
         for (var i = selector.Start; i <= selector.End; i++)
         {
@@ -69,10 +69,10 @@ public abstract class BaseAudioReactiveEffect : IEffect
     }
     protected bool IsFftPeak(int fftBin, double triggerVolume = 100, bool smootheWithAvg = true)
     {
-        Console.WriteLine($"BIN {fftBin}:\t{FftBins[0]};\tAVG: {FftAvg[0]}");
+        Console.WriteLine($"BIN {fftBin}:\t{FftCompressedBins[0]};\tAVG: {FftAvg[0]}");
         
         var minDetect = smootheWithAvg ? (FftAvg[fftBin] + triggerVolume) : triggerVolume;
-        if (FftBins[fftBin] > minDetect && _timeSinceStart.ElapsedMilliseconds > (_peakTime[fftBin] + 50))
+        if (FftCompressedBins[fftBin] > minDetect && _timeSinceStart.ElapsedMilliseconds > (_peakTime[fftBin] + 50))
         {
             _peakTime[fftBin] = _timeSinceStart.ElapsedMilliseconds;
             return true;
@@ -96,6 +96,7 @@ public abstract class BaseAudioReactiveEffect : IEffect
    private double _micLev = 0; // Used to convert returned value to have '0' as minimum.
    //private double _sample = 0; // Used to convert returned value to have '0' as minimum.
     protected double SampleAvg = 0; // Smoothed Average.
+    protected double SampleAvg16 => SampleAvg * 65536;
 
     private void Smooth(ref double[] buffer)
     {
@@ -139,8 +140,9 @@ public abstract class BaseAudioReactiveEffect : IEffect
     protected FftOptions? FftOptions;
 
     protected readonly double[] FftMajorPeak = new double[2];
-    protected readonly double[] FftBins = new double[16];
+    protected readonly double[] FftCompressedBins = new double[16];
     protected readonly double[] FftAvg = new double[16];
+    protected double[] FftBins = new double[256];
     
     private readonly double[][] _fftBinBuffer = new double[16][];
     private readonly double[] _fftPinkAdj =
@@ -174,11 +176,11 @@ public abstract class BaseAudioReactiveEffect : IEffect
         window.ApplyInPlace(_fftSampleBuffer);
 
         // magnitude (units²) as real numbers
-        var fftMag = Transform.FFTmagnitude(_fftSampleBuffer);
-        var freq = Transform.FFTfreq(48000, fftMag.Length);
+        FftBins = Transform.FFTmagnitude(_fftSampleBuffer);
+        var freq = Transform.FFTfreq(48000, FftBins.Length);
 
         double f = 0, v = 0;
-        var found = fftMag.MajorPeak(_fftSampleBuffer.Length - 1, 48000, ref f, ref v);
+        var found = FftBins.MajorPeak(_fftSampleBuffer.Length - 1, 48000, ref f, ref v);
         FftMajorPeak[0] = found ? f : 0;
         FftMajorPeak[1] = found ? v : 0;
         if (found)
@@ -190,22 +192,22 @@ public abstract class BaseAudioReactiveEffect : IEffect
             //Console.WriteLine("No major peak");
         }
         
-        _fftBinBuffer[0] = (fftMag.FftMeanWithFreq(1,2,freq));       // 93 - 187 (48000Hz SR only)
-        _fftBinBuffer[1] = (fftMag.FftMeanWithFreq(2,3,freq));       // 187 - 280
-        _fftBinBuffer[2] = (fftMag.FftMeanWithFreq(3,5,freq));       // 280 - 467
-        _fftBinBuffer[3] = (fftMag.FftMeanWithFreq(5,7,freq));       // 467 - 654
-        _fftBinBuffer[4] = (fftMag.FftMeanWithFreq(7,10,freq));      // 654 - 934
-        _fftBinBuffer[5] = (fftMag.FftMeanWithFreq(10,14,freq));     // 934 - 1307
-        _fftBinBuffer[6] = (fftMag.FftMeanWithFreq(14,19,freq));     // 1307 - 1774
-        _fftBinBuffer[7] = (fftMag.FftMeanWithFreq(19,26,freq));     // 1774 - 2428
-        _fftBinBuffer[8] = (fftMag.FftMeanWithFreq(26,35,freq));     // 2428 - 3268
-        _fftBinBuffer[9] = (fftMag.FftMeanWithFreq(35,46,freq));     // 3268 - 4296
-        _fftBinBuffer[10] = (fftMag.FftMeanWithFreq(46,62,freq));    // 4296 - 5790
-        _fftBinBuffer[11] = (fftMag.FftMeanWithFreq(62,82,freq));    // 5790 - 7658
-        _fftBinBuffer[12] = (fftMag.FftMeanWithFreq(82,109,freq));   // 7658 - 10179
-        _fftBinBuffer[13] = (fftMag.FftMeanWithFreq(109,145,freq));  // 10179 - 13541
-        _fftBinBuffer[14] = (fftMag.FftMeanWithFreq(145,192,freq));  // 13541 - 17930
-        _fftBinBuffer[15] = (fftMag.FftMeanWithFreq(192, 255,freq)); // 17930 - 23813
+        _fftBinBuffer[0] = (FftBins.FftMeanWithFreq(1,2,freq));       // 93 - 187 (48000Hz SR only)
+        _fftBinBuffer[1] = (FftBins.FftMeanWithFreq(2,3,freq));       // 187 - 280
+        _fftBinBuffer[2] = (FftBins.FftMeanWithFreq(3,5,freq));       // 280 - 467
+        _fftBinBuffer[3] = (FftBins.FftMeanWithFreq(5,7,freq));       // 467 - 654
+        _fftBinBuffer[4] = (FftBins.FftMeanWithFreq(7,10,freq));      // 654 - 934
+        _fftBinBuffer[5] = (FftBins.FftMeanWithFreq(10,14,freq));     // 934 - 1307
+        _fftBinBuffer[6] = (FftBins.FftMeanWithFreq(14,19,freq));     // 1307 - 1774
+        _fftBinBuffer[7] = (FftBins.FftMeanWithFreq(19,26,freq));     // 1774 - 2428
+        _fftBinBuffer[8] = (FftBins.FftMeanWithFreq(26,35,freq));     // 2428 - 3268
+        _fftBinBuffer[9] = (FftBins.FftMeanWithFreq(35,46,freq));     // 3268 - 4296
+        _fftBinBuffer[10] = (FftBins.FftMeanWithFreq(46,62,freq));    // 4296 - 5790
+        _fftBinBuffer[11] = (FftBins.FftMeanWithFreq(62,82,freq));    // 5790 - 7658
+        _fftBinBuffer[12] = (FftBins.FftMeanWithFreq(82,109,freq));   // 7658 - 10179
+        _fftBinBuffer[13] = (FftBins.FftMeanWithFreq(109,145,freq));  // 10179 - 13541
+        _fftBinBuffer[14] = (FftBins.FftMeanWithFreq(145,192,freq));  // 13541 - 17930
+        _fftBinBuffer[15] = (FftBins.FftMeanWithFreq(192, 255,freq)); // 17930 - 23813
         
         for (var i=0; i<16; i++)
         {
@@ -215,11 +217,9 @@ public abstract class BaseAudioReactiveEffect : IEffect
 
         for (var i=0; i < 16; i++) 
         {
-            FftBins[i] = _fftBinBuffer[i][0];
-            FftAvg[i] = FftBins[i]*.05 + (1-.05)*FftAvg[i];
-        }
-
-        for (var index = 0; index < _fftBinBuffer.Length; index += 1)
+            FftCompressedBins[i] = _fftBinBuffer[i][0];
+            FftAvg[i] = FftCompressedBins[i]*.05 + (1-.05)*FftAvg[i];
+        } for (var index = 0; index < _fftBinBuffer.Length; index += 1)
        {
            //Console.WriteLine($"[{index}]\t{Math.Round(_fftBinBuffer[index][1])}..{Math.Round(_fftBinBuffer[index][2])}Hz\t=\t{Math.Round(_fftBinBuffer[index][0], 4)}");
        }

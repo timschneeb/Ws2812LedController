@@ -1,6 +1,6 @@
 using System.Drawing;
 
-namespace Ws2812AudioReactiveClient.FastLedCompatibility;
+namespace Ws2812LedController.Core.FastLedCompatibility;
 
 public static class Scale
 {

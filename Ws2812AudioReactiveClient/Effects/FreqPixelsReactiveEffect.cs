@@ -5,6 +5,7 @@ using Ws2812AudioReactiveClient.FastLedCompatibility;
 using Ws2812LedController.Core;
 using Ws2812LedController.Core.Colors;
 using Ws2812LedController.Core.Effects.Base;
+using Ws2812LedController.Core.FastLedCompatibility;
 using Ws2812LedController.Core.Model;
 using Ws2812LedController.Core.Utils;
 
@@ -31,7 +32,7 @@ public class FreqPixelsReactiveEffect : BaseAudioReactiveEffect
             segment.SetPixel(i, Scale.nscale8x3(segment.PixelAt(i, layer), 255 - /*fadeBy*/ 20),layer);
         }
         
-        if (FftMajorPeak[0] <= 0 || FftMajorPeak[1] <= 0)
+        if (FftMajorPeak[0] <= 0 || FftMajorPeak[1] <= 0) // TODO verify all of these statements 
         {
             goto NEXT_FRAME;
         }

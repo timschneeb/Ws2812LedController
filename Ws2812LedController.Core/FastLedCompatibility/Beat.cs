@@ -1,4 +1,6 @@
-namespace Ws2812AudioReactiveClient.FastLedCompatibility;
+using Ws2812LedController.Core.Utils;
+
+namespace Ws2812LedController.Core.FastLedCompatibility;
 
 public static class Beat
 {
@@ -86,8 +88,7 @@ public static class Beat
         // The ratio 65536:60000 is 279.620266667:256; we'll call it 280:256.
         // The conversion is accurate to about 0.05%, more or less,
         // e.g. if you ask for "120 BPM", you'll get about "119.93".
-        var unixTime = (uint)(DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
-        return (ushort)(((unixTime - timebase) * beats_per_minute_88 * 280) >> 16);
+        return (ushort)(((Time.Millis() - timebase) * beats_per_minute_88 * 280) >> 16);
     }
 
     /// beat16 generates a 16-bit 'sawtooth' wave at a given BPM

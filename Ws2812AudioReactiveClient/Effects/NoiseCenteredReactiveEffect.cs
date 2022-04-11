@@ -7,6 +7,7 @@ using Ws2812AudioReactiveClient.Model;
 using Ws2812LedController.Core;
 using Ws2812LedController.Core.Colors;
 using Ws2812LedController.Core.Effects.Base;
+using Ws2812LedController.Core.FastLedCompatibility;
 using Ws2812LedController.Core.Model;
 using Ws2812LedController.Core.Utils;
 

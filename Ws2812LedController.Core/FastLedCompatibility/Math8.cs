@@ -1,4 +1,6 @@
-namespace Ws2812AudioReactiveClient.FastLedCompatibility;
+using System.Drawing;
+
+namespace Ws2812LedController.Core.FastLedCompatibility;
 
 public static class Math8
 {
@@ -9,6 +11,16 @@ public static class Math8
         if (t < 0) t = 0;
         return (byte)t;
     }
+    
+    public static Color AddColor(Color color, Color newColor)
+    {
+        var r = qadd8(color.R, newColor.R);
+        var g = qadd8(color.G, newColor.G);
+        var b = qadd8(color.B, newColor.B);
+        return Color.FromArgb(r,g,b);
+    }
+
+
     
     public static sbyte avg7(sbyte i, sbyte j)
     {

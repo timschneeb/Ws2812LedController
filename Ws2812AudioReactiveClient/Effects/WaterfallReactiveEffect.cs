@@ -15,7 +15,7 @@ public class WaterfallReactiveEffect : BaseAudioReactiveEffect
 {
     public override string Description => "FFT version of a Waterfall";
     public override int Speed { set; get; } = 1000 / 60;
-    public FftBinSelector FftBinSelector { set; get; } = new(0);
+    public FftCBinSelector FftCBinSelector { set; get; } = new(0);
     public bool ColorBasedOnHz { set; get; } = false;
     public int MaxVolume { set; get; } = 128;
     public int StartFrequency { set; get; } = 93;
@@ -48,7 +48,7 @@ public class WaterfallReactiveEffect : BaseAudioReactiveEffect
                 (byte)((int)FftMajorPeak[1] >> 4));
         }
         
-        if (!fftNoData && IsFftPeak(FftBinSelector, MaxVolume))
+        if (!fftNoData && IsFftPeak(FftCBinSelector, MaxVolume))
         {
             segment.SetPixel(segment.Width - 1, Conversions.ColorFromHSV(92, 92, 92), layer);
         }

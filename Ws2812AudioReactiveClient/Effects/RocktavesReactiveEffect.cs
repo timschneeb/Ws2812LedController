@@ -5,6 +5,7 @@ using Ws2812AudioReactiveClient.FastLedCompatibility;
 using Ws2812LedController.Core;
 using Ws2812LedController.Core.Colors;
 using Ws2812LedController.Core.Effects.Base;
+using Ws2812LedController.Core.FastLedCompatibility;
 using Ws2812LedController.Core.Model;
 using Ws2812LedController.Core.Utils;
 
@@ -45,11 +46,7 @@ public class RocktavesReactiveEffect : BaseAudioReactiveEffect
         // Console.WriteLine($"Octave count: {octCount}\tFrTemp: {frTemp}\tBeat: {loc}\tPhase offset: {(byte)(octCount*8)} \tBPM: {(ushort)(8 + octCount * 4)}");
 
         var newColor = Conversions.ColorFromHSV((byte)frTemp, 255, volTemp);
-        var r = Math8.qadd8(segment.PixelAt(loc, layer).R, newColor.R);
-        var g = Math8.qadd8(segment.PixelAt(loc, layer).G, newColor.G);
-        var b = Math8.qadd8(segment.PixelAt(loc, layer).B, newColor.B);
-        
-        segment.SetPixel(loc, Color.FromArgb(r,g,b), layer);
+        segment.SetPixel(loc, Math8.AddColor(segment.PixelAt(loc, layer), newColor), layer);
       
         CancellationMethod.NextCycle();
         

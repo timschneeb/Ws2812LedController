@@ -14,7 +14,7 @@ public class MeterRainbowReactiveEffect : BaseAudioReactiveEffect
 {
     public override string Description => "Expand LEDs based on volume peaks";
     public override int Speed { set; get; } = 1000 / 60;
-    public FftBinSelector? FftBinSelector { set; get; }
+    public FftCBinSelector? FftBinSelector { set; get; }
     /** Only non-fluent rainbow */
     public int ColorWheelSpeed { set; get; } = 3;
     public int DecayFrameTimeout { set; get; } = 0;
@@ -86,7 +86,7 @@ public class MeterRainbowReactiveEffect : BaseAudioReactiveEffect
             goto NEXT_FRAME;
         }
 
-        var maxSample = FftBinSelector?.Mean(FftBins) ?? FindMaxSample(_proc);
+        var maxSample = FftBinSelector?.Mean(FftCompressedBins) ?? FindMaxSample(_proc);
         if (maxSample > _maxSampleEver)
         {
             _maxSampleEver = maxSample;

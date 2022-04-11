@@ -1,6 +1,6 @@
 using System.Drawing;
 
-namespace Ws2812AudioReactiveClient.FastLedCompatibility;
+namespace Ws2812LedController.Core.FastLedCompatibility;
 
 public enum TBlendType
 {
@@ -174,24 +174,29 @@ public class CRGBPalette16
 		fill_gradient_RGB( 16, c1, c2, c3, c4);
 	}
 
-	public CRGBPalette16(Color c00, Color c01, Color c02, Color c03, Color c04, Color c05, Color c06, Color c07, Color c08, Color c09, Color c10, Color c11, Color c12, Color c13, Color c14, Color c15)
+	public CRGBPalette16(params Color[] colors)
 	{
-		entries[0] = c00;
-		entries[1] = c01;
-		entries[2] = c02;
-		entries[3] = c03;
-		entries[4] = c04;
-		entries[5] = c05;
-		entries[6] = c06;
-		entries[7] = c07;
-		entries[8] = c08;
-		entries[9] = c09;
-		entries[10] = c10;
-		entries[11] = c11;
-		entries[12] = c12;
-		entries[13] = c13;
-		entries[14] = c14;
-		entries[15] = c15;
+		if (colors.Length == entries.Length)
+		{
+			entries = colors;
+			return;
+		}
+
+		var temp = new Color[16];
+		var count = 0;
+		while (count < 16)
+		{
+			for (var i = 0; i < colors.Length; i++)
+			{
+				temp[count] = colors[i];
+				count++;
+
+				if (count >= 16)
+					break;
+			}
+		}
+
+		entries = temp;
 	}
 	
 	public void fill_gradient_RGB(ushort numLeds, Color c1, Color c2, Color c3, Color c4)
