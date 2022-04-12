@@ -61,5 +61,70 @@ public static class Math8
 
         return y;
     }
+    
+    /// triwave8: triangle (sawtooth) wave generator.  Useful for
+    ///           turning a one-byte ever-increasing value into a
+    ///           one-byte value that oscillates up and down.
+    ///
+    ///           input         output
+    ///           0..127        0..254 (positive slope)
+    ///           128..255      254..0 (negative slope)
+    public static byte triwave8(byte @in)
+    {
+        if ((@in & 0x80) != 0)
+        {
+            @in = (byte)(255 - @in);
+        }
+        return (byte)(@in << 1);
+    }
+    
+    /// quadwave8: quadratic waveform generator
+    public static byte quadwave8(byte @in)
+    {
+        return ease8InOutQuad(triwave8(@in));
+    }
+    
+    /// cubicwave8: cubic waveform generator.  Spends visibly more time
+    ///             at the limits than 'sine' does.
+    public static byte cubicwave8(byte @in)
+    {
+        return ease8InOutCubic(triwave8(@in));
+    }
+
+    /// ease8InOutCubic: 8-bit cubic ease-in / ease-out function
+    ///                 Takes around 18 cycles on AVR
+    public static byte ease8InOutCubic(byte i)
+    {
+        var ii = Scale.scale8(i, i);
+        var iii = Scale.scale8(ii, i);
+
+        var result = (byte)((3 * ii) - (2 * iii));
+
+        // if we got "256", return 255:
+        if ((result & 0x100) != 0)
+        {
+            result = 255;
+        }
+        return result;
+    }
+
+    
+    /// ease8InOutQuad: 8-bit quadratic ease-in / ease-out function
+    ///                Takes around 13 cycles on AVR
+    public static byte ease8InOutQuad(byte i)
+    {
+        var j = i;
+        if ((j & 0x80) != 0)
+        {
+            j = (byte)(255 - j);
+        }
+        var jj = Scale.scale8(j, j);
+        var jj2 = (byte)(jj << 1);
+        if ((i & 0x80) != 0)
+        {
+            jj2 = (byte)(255 - jj2);
+        }
+        return jj2;
+    }
 
 }

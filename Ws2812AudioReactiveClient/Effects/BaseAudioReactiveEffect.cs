@@ -40,7 +40,7 @@ public abstract class BaseAudioReactiveEffect : IEffect
     public override void Reset()
     {
         SampleAvg = 0;
-        _sample = 0;
+        Sample = 0;
         _micLev = 0;
         Array.Fill(_peakTime, 0);
         _timeSinceStart.Reset();
@@ -51,8 +51,8 @@ public abstract class BaseAudioReactiveEffect : IEffect
 
     /* Smoothed peak detection */
     protected readonly Stopwatch _timeSinceStart = new();
-    private double _sample = 0; // Current sample.
-    private long[] _peakTime = new long[16 + 1];
+    protected double Sample = 0; // Current sample.
+    private readonly long[] _peakTime = new long[16 + 1];
 
     /** Volume peak check */
     protected bool IsFftPeak(FftCBinSelector selector, double triggerVolume = 100, bool smootheWithAvg = true)
@@ -69,7 +69,6 @@ public abstract class BaseAudioReactiveEffect : IEffect
     }
     protected bool IsFftPeak(int fftBin, double triggerVolume = 100, bool smootheWithAvg = true)
     {
-        Console.WriteLine($"BIN {fftBin}:\t{FftCompressedBins[0]};\tAVG: {FftAvg[0]}");
         
         var minDetect = smootheWithAvg ? (FftAvg[fftBin] + triggerVolume) : triggerVolume;
         if (FftCompressedBins[fftBin] > minDetect && _timeSinceStart.ElapsedMilliseconds > (_peakTime[fftBin] + 50))
@@ -77,14 +76,14 @@ public abstract class BaseAudioReactiveEffect : IEffect
             _peakTime[fftBin] = _timeSinceStart.ElapsedMilliseconds;
             return true;
         }
-        
+
         return false;
     }   
     
     protected bool IsPeak(double triggerVolume = 0.05, bool smootheWithAvg = true)
     {
         var minDetect = smootheWithAvg ? (SampleAvg + triggerVolume) : triggerVolume;
-        if (_sample > minDetect && _timeSinceStart.ElapsedMilliseconds > (_peakTime[16] + 50))
+        if (Sample > minDetect && _timeSinceStart.ElapsedMilliseconds > (_peakTime[16] + 50))
         {
             _peakTime[16] = _timeSinceStart.ElapsedMilliseconds;
             return true;
@@ -92,8 +91,8 @@ public abstract class BaseAudioReactiveEffect : IEffect
         
         return false;
     }
-
-   private double _micLev = 0; // Used to convert returned value to have '0' as minimum.
+    
+    private double _micLev = 0; // Used to convert returned value to have '0' as minimum.
    //private double _sample = 0; // Used to convert returned value to have '0' as minimum.
     protected double SampleAvg = 0; // Smoothed Average.
     protected double SampleAvg16 => SampleAvg * 65536;
@@ -108,9 +107,9 @@ public abstract class BaseAudioReactiveEffect : IEffect
                 _micLev = ((_micLev * 31) + sample) / 32.0;                      // Smooth it out over the last 32 samples for automatic centering.
                 sample -= _micLev;                                            // Let's center it to 0 now.
                 sample = Math.Abs(sample);                                         // And get the absolute value of each sample.
-                _sample =/* sample < 1e-10 ? 0 :*/ (_sample + sample) / 2.0;     // Using a ternary operator, the resultant sample is either 0 or it's a bit smoothed out with the last sample.
+                Sample =/* sample < 1e-10 ? 0 :*/ (Sample + sample) / 2.0;     // Using a ternary operator, the resultant sample is either 0 or it's a bit smoothed out with the last sample.
         
-                SampleAvg = ((SampleAvg * 15) + _sample) / 16.0; // Smooth it out over the last 32 samples.
+                SampleAvg = ((SampleAvg * 15) + Sample) / 16.0; // Smooth it out over the last 32 samples.
                 
                 /* We still need to smooth the buffer itself properly */
                 for (var index = 0; index < buffer.Length; index++)
@@ -128,7 +127,7 @@ public abstract class BaseAudioReactiveEffect : IEffect
                     // Smooth it out over the last 32 samples for automatic centering
                     buffer[index] -= _micLev; // Let's center it to 0 now
                     buffer[index] = Math.Abs( buffer[index]); // And get the absolute value of each sample
-                    _sample = buffer[index];
+                    Sample = buffer[index];
                 }
         
                 SampleAvg = (SampleAvg * 15 + buffer.Mean()) / 16;
@@ -159,7 +158,7 @@ public abstract class BaseAudioReactiveEffect : IEffect
             return;
         }
         
-        Array.Copy(buffer, _fftSampleBuffer, _fftSampleBuffer.Length);
+        Array.Copy(buffer, _fftSampleBuffer, Math.Min(_fftSampleBuffer.Length, buffer.Length));
         
         if (FftOptions == null)
         {
@@ -219,10 +218,12 @@ public abstract class BaseAudioReactiveEffect : IEffect
         {
             FftCompressedBins[i] = _fftBinBuffer[i][0];
             FftAvg[i] = FftCompressedBins[i]*.05 + (1-.05)*FftAvg[i];
-        } for (var index = 0; index < _fftBinBuffer.Length; index += 1)
-       {
+        }
+        
+        for (var index = 0; index < _fftBinBuffer.Length; index += 1)
+        {
            //Console.WriteLine($"[{index}]\t{Math.Round(_fftBinBuffer[index][1])}..{Math.Round(_fftBinBuffer[index][2])}Hz\t=\t{Math.Round(_fftBinBuffer[index][0], 4)}");
-       }
+        }
        //Console.WriteLine("-------------------");
 
     }
@@ -348,15 +349,7 @@ public abstract class BaseAudioReactiveEffect : IEffect
             Array.Copy(samples, raw, raw.Length);
         }
 
-        if (processed.Length > 0)
-        {
-            processed = Preprocess(samples);
-        }
-        else
-        {
-            Preprocess(samples);
-        }
-
+        processed = Preprocess(samples);
         return samples.Length;
     }
 

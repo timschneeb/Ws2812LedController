@@ -22,10 +22,7 @@ public class NoiseMoveReactiveEffect : BaseAudioReactiveEffect
     protected override async Task<int> PerformFrameAsync(LedSegmentGroup segment, LayerId layer)
     {
         var count = NextSample();
-        if (count < 1)
-        {
-            goto NEXT_FRAME;
-        }
+
 
         /* Fade to black by x */ 
         for(var i = 0; i < segment.Width; ++i) 

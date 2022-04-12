@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ws2812LedController.Console", "Ws2812LedController.Console\Ws2812LedController.Console.csproj", "{56D3DF76-4E18-42D7-863C-4253901D1E61}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ws2812LedController.Server", "Ws2812LedController.Server\Ws2812LedController.Server.csproj", "{56D3DF76-4E18-42D7-863C-4253901D1E61}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ws2812LedController.WebApi", "Ws2812LedController.WebApi\Ws2812LedController.WebApi.csproj", "{4D5A7A5F-4446-411C-A46C-915708D8BF15}"
 EndProject

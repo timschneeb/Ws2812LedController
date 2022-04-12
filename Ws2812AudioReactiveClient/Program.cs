@@ -54,17 +54,17 @@ public static class Entrypoint
             AutomaticRender = false,
             Multiplier = 2,
         });*/
-        await mgr.Get("bed")!.SetEffectAsync(new BinMapReactiveEffect()
+        await mgr.Get("bed")!.SetEffectAsync(new PixelsReactiveEffect()
         {
             AutomaticRender = false,
             Speed = 1000/FrameRate,
             /*FadeStrength = 15,
             StartFromEdge = Edge.None*/
         });
-        /*await mgr.Get("heater")!.SetEffectAsync(new GravityFreqReactiveEffect()
+        /*await mgr.Get("heater")!.SetEffectAsync(new MeterRainbowReactiveEffect()
         {
             AutomaticRender = false,
-           // FftBinSelector = new FftBinSelector(0)
+            FftBinSelector = new FftCBinSelector(0)
             //Multiplier = 0.3
             //FluentRainbow = true
         });*/

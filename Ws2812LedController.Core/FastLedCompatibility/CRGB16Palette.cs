@@ -12,10 +12,10 @@ public class CRGBPalette16
 {
 	public Color ColorFromPalette(byte index, byte brightness, TBlendType blendType)
 	{
-		//      hi4 = index >> 4;
-		byte hi4 = (byte)(index >> 4);
-		byte lo4 = (byte)(index & 0x0F);
-
+		// Note: switched hi4 and lo4
+		byte hi4 = (byte)(index & 0x0F);
+		byte lo4 = (byte)(index >> 4);
+		
 		Color entry = this[hi4];
 		bool blend = lo4 > 0 && (blendType != TBlendType.None);
 
@@ -23,7 +23,8 @@ public class CRGBPalette16
 		byte green1 = entry.G;
 		byte blue1 = entry.B;
 
-
+		// Console.WriteLine($"index={index}\thi4={hi4}\tlo4={lo4} -> {entry}");
+		
 		if (blend)
 		{
 
@@ -135,7 +136,7 @@ public class CRGBPalette16
 					Color.FromArgb(0x64,0x95,0xED),
 
 					Color.FromArgb(0x7F,0xFF,0xD4),
-					Color.FromArgb(0x2E,0x8B,0x57),					Color.FromArgb(0x00,0x00,0x00),
+					Color.FromArgb(0x2E,0x8B,0x57),
 					Color.FromArgb(0x00,0xFF,0xFF),
 					Color.FromArgb(0x87,0xCE,0xFA),
 				};
