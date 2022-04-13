@@ -4,6 +4,7 @@ using FftSharp;
 using Ws2812AudioReactiveClient.Dsp;
 using Ws2812AudioReactiveClient.Model;
 using Ws2812LedController.Core.Effects.Base;
+using Ws2812LedController.Core.Utils;
 
 namespace Ws2812AudioReactiveClient.Effects;
 
@@ -80,7 +81,7 @@ public abstract class BaseAudioReactiveEffect : IEffect
         return false;
     }   
     
-    protected bool IsPeak(double triggerVolume = 0.05, bool smootheWithAvg = true)
+    protected bool IsPeak(double triggerVolume = 100, bool smootheWithAvg = true)
     {
         var minDetect = smootheWithAvg ? (SampleAvg + triggerVolume) : triggerVolume;
         if (Sample > minDetect && _timeSinceStart.ElapsedMilliseconds > (_peakTime[16] + 50))
@@ -95,7 +96,6 @@ public abstract class BaseAudioReactiveEffect : IEffect
     private double _micLev = 0; // Used to convert returned value to have '0' as minimum.
    //private double _sample = 0; // Used to convert returned value to have '0' as minimum.
     protected double SampleAvg = 0; // Smoothed Average.
-    protected double SampleAvg16 => SampleAvg * 65536;
 
     private void Smooth(ref double[] buffer)
     {
@@ -135,14 +135,27 @@ public abstract class BaseAudioReactiveEffect : IEffect
         }
     }
     
+    private double _multAgc;                                  // sample * multAgc = sampleAgc. Our multiplier
+    private int _targetAgc = 60; // This is our setPoint at 20% of max for the adjusted output
+    protected int SampleAgc;
+    private void DoAgcAverage()
+    {
+        _multAgc = (SampleAvg < 1) ? _targetAgc : _targetAgc / SampleAvg;  // Make the multiplier so that sampleAvg * multiplier = setpoint
+        var tmpAgc = (int)(Sample * _multAgc);
+        SampleAgc = tmpAgc;  
+    }
+    
     /* FFT calculation */
     protected FftOptions? FftOptions;
 
     protected readonly double[] FftMajorPeak = new double[2];
+    protected readonly Range[] FftCompressedFreqRanges = new Range[16];
     protected readonly double[] FftCompressedBins = new double[16];
     protected readonly double[] FftAvg = new double[16];
     protected double[] FftBins = new double[256];
-    
+    protected double[] FftFreq = new double[256];
+
+    private int _lastFftBinLength = 0;
     private readonly double[][] _fftBinBuffer = new double[16][];
     private readonly double[] _fftPinkAdj =
     {
@@ -164,49 +177,39 @@ public abstract class BaseAudioReactiveEffect : IEffect
         {
             // return;
         }
-
-        // Let's work with u16 values in this area, so I don't need to rewrite existing stuff
-        for (var i = 0; i < _fftSampleBuffer.Length; i++)
-        {
-            _fftSampleBuffer[i] *= 65536;
-        }
         
         var window = new FftSharp.Windows.Hanning();
         window.ApplyInPlace(_fftSampleBuffer);
 
         // magnitude (units²) as real numbers
         FftBins = Transform.FFTmagnitude(_fftSampleBuffer);
-        var freq = Transform.FFTfreq(48000, FftBins.Length);
+        if (_lastFftBinLength != FftBins.Length)
+        {
+            FftFreq = Transform.FFTfreq(48000, FftBins.Length);
+            _lastFftBinLength = FftBins.Length;
+        }
 
         double f = 0, v = 0;
         var found = FftBins.MajorPeak(_fftSampleBuffer.Length - 1, 48000, ref f, ref v);
         FftMajorPeak[0] = found ? f : 0;
         FftMajorPeak[1] = found ? v : 0;
-        if (found)
-        {
-            //Console.WriteLine($"{Math.Round(f,4)}Hz\t\t=\t{Math.Round(v,4)}");
-        }
-        else
-        {
-            //Console.WriteLine("No major peak");
-        }
         
-        _fftBinBuffer[0] = (FftBins.FftMeanWithFreq(1,2,freq));       // 93 - 187 (48000Hz SR only)
-        _fftBinBuffer[1] = (FftBins.FftMeanWithFreq(2,3,freq));       // 187 - 280
-        _fftBinBuffer[2] = (FftBins.FftMeanWithFreq(3,5,freq));       // 280 - 467
-        _fftBinBuffer[3] = (FftBins.FftMeanWithFreq(5,7,freq));       // 467 - 654
-        _fftBinBuffer[4] = (FftBins.FftMeanWithFreq(7,10,freq));      // 654 - 934
-        _fftBinBuffer[5] = (FftBins.FftMeanWithFreq(10,14,freq));     // 934 - 1307
-        _fftBinBuffer[6] = (FftBins.FftMeanWithFreq(14,19,freq));     // 1307 - 1774
-        _fftBinBuffer[7] = (FftBins.FftMeanWithFreq(19,26,freq));     // 1774 - 2428
-        _fftBinBuffer[8] = (FftBins.FftMeanWithFreq(26,35,freq));     // 2428 - 3268
-        _fftBinBuffer[9] = (FftBins.FftMeanWithFreq(35,46,freq));     // 3268 - 4296
-        _fftBinBuffer[10] = (FftBins.FftMeanWithFreq(46,62,freq));    // 4296 - 5790
-        _fftBinBuffer[11] = (FftBins.FftMeanWithFreq(62,82,freq));    // 5790 - 7658
-        _fftBinBuffer[12] = (FftBins.FftMeanWithFreq(82,109,freq));   // 7658 - 10179
-        _fftBinBuffer[13] = (FftBins.FftMeanWithFreq(109,145,freq));  // 10179 - 13541
-        _fftBinBuffer[14] = (FftBins.FftMeanWithFreq(145,192,freq));  // 13541 - 17930
-        _fftBinBuffer[15] = (FftBins.FftMeanWithFreq(192, 255,freq)); // 17930 - 23813
+        _fftBinBuffer[0] = (FftBins.FftMeanWithFreq(1,2,FftFreq));       // 93 - 187 (48000Hz SR only)
+        _fftBinBuffer[1] = (FftBins.FftMeanWithFreq(2,3,FftFreq));       // 187 - 280
+        _fftBinBuffer[2] = (FftBins.FftMeanWithFreq(3,5,FftFreq));       // 280 - 467
+        _fftBinBuffer[3] = (FftBins.FftMeanWithFreq(5,7,FftFreq));       // 467 - 654
+        _fftBinBuffer[4] = (FftBins.FftMeanWithFreq(7,10,FftFreq));      // 654 - 934
+        _fftBinBuffer[5] = (FftBins.FftMeanWithFreq(10,14,FftFreq));     // 934 - 1307
+        _fftBinBuffer[6] = (FftBins.FftMeanWithFreq(14,19,FftFreq));     // 1307 - 1774
+        _fftBinBuffer[7] = (FftBins.FftMeanWithFreq(19,26,FftFreq));     // 1774 - 2428
+        _fftBinBuffer[8] = (FftBins.FftMeanWithFreq(26,35,FftFreq));     // 2428 - 3268
+        _fftBinBuffer[9] = (FftBins.FftMeanWithFreq(35,46,FftFreq));     // 3268 - 4296
+        _fftBinBuffer[10] = (FftBins.FftMeanWithFreq(46,62,FftFreq));    // 4296 - 5790
+        _fftBinBuffer[11] = (FftBins.FftMeanWithFreq(62,82,FftFreq));    // 5790 - 7658
+        _fftBinBuffer[12] = (FftBins.FftMeanWithFreq(82,109,FftFreq));   // 7658 - 10179
+        _fftBinBuffer[13] = (FftBins.FftMeanWithFreq(109,145,FftFreq));  // 10179 - 13541
+        _fftBinBuffer[14] = (FftBins.FftMeanWithFreq(145,192,FftFreq));  // 13541 - 17930
+        _fftBinBuffer[15] = (FftBins.FftMeanWithFreq(192, 255,FftFreq)); // 17930 - 23813
         
         for (var i=0; i<16; i++)
         {
@@ -214,8 +217,9 @@ public abstract class BaseAudioReactiveEffect : IEffect
             _fftBinBuffer[i][0] = _fftBinBuffer[i][0] * 1 /* multiplier/gain */ / 40 + _fftBinBuffer[i][0]/16.0;
         }
 
-        for (var i=0; i < 16; i++) 
+        for (var i=0; i < 16; i++)
         {
+            FftCompressedFreqRanges[i] = new Range((Index)_fftBinBuffer[i][1], (Index)_fftBinBuffer[i][2]);
             FftCompressedBins[i] = _fftBinBuffer[i][0];
             FftAvg[i] = FftCompressedBins[i]*.05 + (1-.05)*FftAvg[i];
         }
@@ -271,11 +275,19 @@ public abstract class BaseAudioReactiveEffect : IEffect
             Array.Fill(_privateBuffer, 0);
         }
         
+        // Let's work with u16 values in this area, so I don't need to rewrite existing stuff
+        for (var i = 0; i < _privateBuffer.Length; i++)
+        {
+            _privateBuffer[i] *= 65536;
+        }
+
         RemoveDC(ref _privateBuffer);
         DoFFT(_privateBuffer);
         
         Smooth(ref _privateBuffer);
-       
+        DoAgcAverage();
+        
+
         // SampleAvg = (SampleAvg * 15 + _privateBuffer.Mean()) / 16;
 
         // Apply multiplier
@@ -346,9 +358,9 @@ public abstract class BaseAudioReactiveEffect : IEffect
             {
                 Console.WriteLine("NextSample: raw target array too small");
             }
-            Array.Copy(samples, raw, raw.Length);
+            Array.Copy(samples, raw, Math.Min(raw.Length, samples.Length));
         }
-
+        
         processed = Preprocess(samples);
         return samples.Length;
     }

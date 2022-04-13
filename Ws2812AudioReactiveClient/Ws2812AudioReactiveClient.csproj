@@ -8,10 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="ENet-CSharp" Version="2.4.8" />
       <PackageReference Include="FftSharp" Version="1.1.5" />
-      <PackageReference Include="NumSharp" Version="0.30.0" />
-      <PackageReference Include="NWaves" Version="0.9.6" />
     </ItemGroup>
 
     <ItemGroup>

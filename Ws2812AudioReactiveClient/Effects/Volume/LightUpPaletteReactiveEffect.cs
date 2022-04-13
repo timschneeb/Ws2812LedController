@@ -19,6 +19,10 @@ public class LightUpPaletteReactiveEffect : BaseAudioReactiveEffect
 {
     public override string Description => "Light single LEDs based on volume peaks up. Use colors from randomized palettes";
     public override int Speed { set; get; } = 1000 / 60;
+    public double Threshold { set; get; } = 1500;
+    public int FadeSpeed { set; get; } = 6;
+    public int MinPeakMagnitude { set; get; } = 100;
+    public int MaxPeakMagnitude { set; get; } = 8000;
     
     private readonly CRGBPalette16 _currentPalette = new(CRGBPalette16.Palette.Ocean);
     private CRGBPalette16 _targetPalette = new(CRGBPalette16.Palette.Lava);
@@ -56,19 +60,18 @@ public class LightUpPaletteReactiveEffect : BaseAudioReactiveEffect
             goto NEXT_FRAME;
         }
 
-        var isPeak = IsPeak(0.2);
-        var strength = (byte)SampleAvg.Map(0, 0.18, 0, 255);
+        var isPeak = IsPeak(Threshold);
+        var strength = (byte)SampleAvg.Map(MinPeakMagnitude, MaxPeakMagnitude, 0, 255);
         
         /* Fade to black by x */ 
         for(var i = 0; i < segment.Width; ++i) 
         {
-            segment.SetPixel(i, Scale.nscale8x3(segment.PixelAt(i, layer), 255 - /*fadeBy*/ 4),layer);
+            segment.SetPixel(i, Scale.nscale8x3(segment.PixelAt(i, layer), (short)(255 - /*fadeBy*/ FadeSpeed)),layer);
         } 
-        segment.SetPixel(0, Scale.nscale8x3(segment.PixelAt(0, layer), 255 - /*fadeBy*/ 32),layer);
-        
+
         if (isPeak)
         {
-            segment.SetPixel(0, Color.FromArgb(0xA9,0xA9,0xA9), layer);
+            segment.SetPixel((int)(((_timeSinceStart.ElapsedMilliseconds & 0xFFFF) % (segment.Width-1)) +1), _currentPalette.ColorFromPalette(strength, strength, TBlendType.LinearBlend), layer);
         }
 
         if (_timer100.ElapsedMilliseconds >= 100)
@@ -82,8 +85,6 @@ public class LightUpPaletteReactiveEffect : BaseAudioReactiveEffect
             GenerateNextPalette();
             _timer5000.Restart();
         }
-
-        segment.SetPixel((int)(((_timeSinceStart.ElapsedMilliseconds & 0xFFFF) % (segment.Width-1)) +1), _currentPalette.ColorFromPalette(strength, strength, TBlendType.LinearBlend), layer);
         
         CancellationMethod.NextCycle();
         

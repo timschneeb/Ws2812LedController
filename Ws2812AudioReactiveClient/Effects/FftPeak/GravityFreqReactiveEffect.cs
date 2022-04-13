@@ -46,7 +46,7 @@ public class GravityFreqReactiveEffect : BaseAudioReactiveEffect
             segment.SetPixel(i, Scale.nscale8x3(segment.PixelAt(i, layer), 255 - /*fadeBy*/ 128 /*64*/),layer);
         }
 
-        var segmentSampleAvg = (SampleAvg16 / 2 * Intensity / 255);
+        var segmentSampleAvg = (SampleAvg / 2 * Intensity / 255);
         var tempsamp = (int)segmentSampleAvg.Clamp(0, segment.Width / 2); // Keep the sample from overflowing.
         var gravity = (byte)(8 - AnimationSpeed / 32);
 

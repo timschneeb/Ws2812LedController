@@ -45,7 +45,7 @@ public class PlasmoidReactiveEffect : BaseAudioReactiveEffect
             thisbright = (int)(thisbright + Math.Cos((i * 117) + _thatPhase) / 2.0); // Let's munge the brightness a bit and animate it all with the phases.
             var colorIndex = thisbright;
 
-            var tmpSound = SampleAvg16;//(soundAgc) ? sampleAgc : sampleAvg;
+            var tmpSound = SampleAvg;//(soundAgc) ? sampleAgc : sampleAvg;
             if (tmpSound * Intensity / 128 < thisbright)
             {
                 thisbright = 0;

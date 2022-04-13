@@ -54,7 +54,7 @@ public static class Entrypoint
             AutomaticRender = false,
             Multiplier = 2,
         });*/
-        await mgr.Get("bed")!.SetEffectAsync(new PixelsReactiveEffect()
+        await mgr.Get("bed")!.SetEffectAsync(new LightUpPaletteReactiveEffect()
         {
             AutomaticRender = false,
             Speed = 1000/FrameRate,

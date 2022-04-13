@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Drawing;
+using Ws2812AudioReactiveClient.Dsp;
 using Ws2812AudioReactiveClient.FastLedCompatibility;
 using Ws2812LedController.Core;
 using Ws2812LedController.Core.Colors;
@@ -11,38 +12,38 @@ using Ws2812LedController.Core.Utils;
 
 namespace Ws2812AudioReactiveClient.Effects;
 
-public class PixelsReactiveEffect : BaseAudioReactiveEffect
+/**
+ * Adopted from https://github.com/atuline/FastLED-SoundReactive
+ */
+public class LightUpReactiveEffect : BaseAudioReactiveEffect
 {
-    public override string Description => "Random pixels based on volume peaks";
+    public override string Description => "Light single LEDs based on volume peaks up";
     public override int Speed { set; get; } = 1000 / 60;
-    public byte FadeSpeed { set; get; } = 60;
-    public byte Intensity { set; get; } = 1;
+    public double Threshold { set; get; } = 1500;
+    public int FadeSpeed { set; get; } = 6;
     public int MinPeakMagnitude { set; get; } = 100;
-    public int MaxPeakMagnitude { set; get; } = 1800;
-    public CRGBPalette16 Palette { set; get; } = new(CRGBPalette16.Palette.Lava);
-
-    private double[] _proc = new double[32];
+    public int MaxPeakMagnitude { set; get; } = 8000;
+    
     protected override async Task<int> PerformFrameAsync(LedSegmentGroup segment, LayerId layer)
     {
-        var count = NextSample(ref _proc);
-        if (count < 1 || _proc.Length < 1)
+        var length = NextSample();
+        if (length < 1)
         {
             goto NEXT_FRAME;
         }
+        
+        var isPeak = IsPeak(Threshold);
+        var strength = (byte)SampleAvg.Map(MinPeakMagnitude, MaxPeakMagnitude, 0, 255);
 
         /* Fade to black by x */ 
         for(var i = 0; i < segment.Width; ++i) 
         {
             segment.SetPixel(i, Scale.nscale8x3(segment.PixelAt(i, layer), (short)(255 - /*fadeBy*/ FadeSpeed)),layer);
         }
-
-        for (var i = 0; i < Intensity; i++)
+        
+        if (isPeak)
         {
-            var segLoc = Random.Shared.Next(segment.Width); // 16 bit for larger strands of LED's.
-            var bright = (byte)SampleAvg16.Map(MinPeakMagnitude, MaxPeakMagnitude, 0, 255, true);
-            var idx = (byte)(_proc[Random.Shared.Next(0, _proc.Length)] * 65536 + i * 4);
-
-            segment.SetPixel(segLoc, ColorBlend.Blend(Color.Black, Palette.ColorFromPalette(idx, 255, TBlendType.None), bright), layer);
+            segment.SetPixel((int)(((_timeSinceStart.ElapsedMilliseconds & 0xFFFF) % (segment.Width-1)) +1), Conversions.ColorFromHSV(strength, 255, strength), layer);
         }
         
         CancellationMethod.NextCycle();

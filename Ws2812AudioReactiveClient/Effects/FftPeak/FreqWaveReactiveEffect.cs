@@ -40,7 +40,7 @@ public class FreqWaveReactiveEffect : BaseAudioReactiveEffect
         }
 
         var sensitivity = Sensitivity.Map(1, 255, 1, 10);
-        var pixVal = (int)(SampleAvg16 * Intensity / 256 * sensitivity);
+        var pixVal = (int)(SampleAvg * Intensity / 256 * sensitivity);
         if (pixVal > 255)
         {
             pixVal = 255;
