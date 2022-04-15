@@ -69,7 +69,7 @@ public class EnetClient
                     
                     /* Debug stuff */
                     /*var hex = new StringBuilder(payload.Length * 2);
-                    foreach (byte b in payload)
+                    foreach (byte b in payload.AsSpan((362*4)-(80*4),80*4))
                         hex.AppendFormat("{0:x2}", b);
                     Console.WriteLine(hex.ToString());*/
                 }

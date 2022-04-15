@@ -30,7 +30,7 @@ public class ColorWipe : IEffect
             var ledOffset = StepCounter;
             if (Reverse)
             {
-                segment.SetPixel(segment.AbsEnd - ledOffset, StartColor, layer);
+                segment.SetPixel(segment.RelEnd - ledOffset, StartColor, layer);
             }
             else
             {
@@ -42,7 +42,7 @@ public class ColorWipe : IEffect
             var ledOffset = StepCounter - segment.Width;
             if ((Reverse && !Alternate) || (!Reverse && Alternate))
             {
-                segment.SetPixel(segment.AbsEnd - ledOffset, EndColor, layer);
+                segment.SetPixel(segment.RelEnd - ledOffset, EndColor, layer);
             }
             else
             {

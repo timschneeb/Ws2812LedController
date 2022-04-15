@@ -22,7 +22,7 @@ public class LightUpReactiveEffect : BaseAudioReactiveEffect
     public double Threshold { set; get; } = 1500;
     public int FadeSpeed { set; get; } = 6;
     public int MinPeakMagnitude { set; get; } = 100;
-    public int MaxPeakMagnitude { set; get; } = 8000;
+    public int MaxPeakMagnitude { set; get; } = 1000;
     
     protected override async Task<int> PerformFrameAsync(LedSegmentGroup segment, LayerId layer)
     {

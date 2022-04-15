@@ -8,7 +8,6 @@ public class Scan : IEffect
 {
     public override string Description => "Runs a block of pixels back and forth.";
     public override int Speed { get; set; } = 500;
-    
     public bool Dual { get; set; } = false;
     public SizeOption Size { get; set; } = SizeOption.Small;
     public Color ScanColor { set; get; } = Color.White;

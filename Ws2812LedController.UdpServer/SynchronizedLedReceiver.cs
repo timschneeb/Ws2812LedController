@@ -34,7 +34,6 @@ public class SynchronizedLedReceiver
 
     public async void ServiceLoop()
     {
-        var stopwatch = new Stopwatch();
         while (!_cancelSource.IsCancellationRequested)
         {
             if (_instructionQueue.TryDequeue(out var packet))
@@ -70,23 +69,10 @@ public class SynchronizedLedReceiver
                         }
                         break;
                 }
-                
-                if (packet.RenderMode == RenderMode.Direct)
-                {
-                    _strip.Value.Render();
-                }
-                else
-                {
-                    _mgr.Value.Get("full")?.SegmentGroup.Render();
-                }
-                
-                //await Task.Delay(1);
-                //await Task.Delay(Math.Max((int)((1000 / (TargetFramerate + 20))), 0));
-                //stopwatch.Restart();
             }
             else
             {
-                //await Task.Delay(1);
+                await Task.Delay(4);
             }
         }
     }

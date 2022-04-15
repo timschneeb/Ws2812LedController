@@ -28,7 +28,7 @@ public class WipePowerEffect : BasePowerEffect
             var ledOffset = _stepCounter;
             if (!Invert && TargetState == PowerState.On || Invert && TargetState == PowerState.Off)
             {
-                segment.SetPixel(Alternate ? segment.AbsEnd - ledOffset : ledOffset, color, layer);
+                segment.SetPixel(Alternate ? segment.RelEnd - ledOffset : ledOffset, color, layer);
             }
             else
             {

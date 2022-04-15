@@ -32,7 +32,7 @@ public class LarsonScanner : IEffect
         {
             if (Reverse)
             {
-                segment.SetPixel(segment.AbsEnd - _stepCounter, ForegroundColor, layer);
+                segment.SetPixel(segment.RelEnd - _stepCounter, ForegroundColor, layer);
             }
             else
             {
@@ -44,7 +44,7 @@ public class LarsonScanner : IEffect
             var index = (segment.Width * 2) - _stepCounter - 2;
             if (Reverse)
             {
-                segment.SetPixel(segment.AbsEnd - index, ForegroundColor, layer);
+                segment.SetPixel(segment.RelEnd - index, ForegroundColor, layer);
             }
             else
             {

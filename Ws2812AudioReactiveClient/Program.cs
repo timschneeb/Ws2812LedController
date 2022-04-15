@@ -5,6 +5,7 @@ using Iot.Device.Amg88xx;
 using Ws2812AudioReactiveClient.Dsp;
 using Ws2812AudioReactiveClient.Effects;
 using Ws2812LedController.Core;
+using Ws2812LedController.Core.Effects;
 using Ws2812LedController.Core.Effects.Chase;
 using Ws2812LedController.Core.Model;
 using Ws2812LedController.Core.Utils;
@@ -15,7 +16,7 @@ namespace Ws2812AudioReactiveClient;
 
 public static class Entrypoint
 {
-    private const int FrameRate = 50;
+    private const int FrameRate = 60;
     
     public static async Task Main()
     {
@@ -41,33 +42,31 @@ public static class Entrypoint
         canvas.NewPacketAvailable += (_, packet) => client.Queue.Enqueue(packet); 
         client.Connect();
         
-        await Task.Delay(500);
+        await Task.Delay(100);
 
         canvas.Bitmap.Clear();
         canvas.Render();
+        
         //await mgr.Get("bed")!.SetEffectAsync(new MeterRainbowReactiveEffect());
 
         var color = Color.FromArgb(0xFF, 0x20, 0x05, 0x00);
         
         /*await mgr.Get("desk_left")!.SetEffectAsync(new MeterRainbowReactiveEffect()
         {
-            AutomaticRender = false,
             Multiplier = 2,
         });*/
-        await mgr.Get("bed")!.SetEffectAsync(new LightUpPaletteReactiveEffect()
+        await mgr.Get("bed")!.SetEffectAsync(new FreqMapReactiveEffect()
         {
-            AutomaticRender = false,
             Speed = 1000/FrameRate,
-            /*FadeStrength = 15,
-            StartFromEdge = Edge.None*/
+            //FadeStrength = 15,
+            //StartFromEdge = Edge.None
         });
-        /*await mgr.Get("heater")!.SetEffectAsync(new MeterRainbowReactiveEffect()
+        await mgr.Get("heater")!.SetEffectAsync(new FreqMapReactiveEffect()
         {
-            AutomaticRender = false,
-            FftBinSelector = new FftCBinSelector(0)
+            //FftBinSelector = new FftCBinSelector(0,3)
             //Multiplier = 0.3
             //FluentRainbow = true
-        });*/
+        });
         //mgr.MirrorTo("desk_left", "bed");
         //mgr.MirrorTo("desk_left", "heater");
         //mgr.MirrorTo("desk_left", "desk_right");
@@ -77,10 +76,7 @@ public static class Entrypoint
 
         while (true)
         {
-            //AudioProviderService.Instance.InjectSamples(a);
-            
-            canvas.Render();
-            await Task.Delay(1000 / FrameRate);
+            await Task.Delay(1000);
         }
     }
 }

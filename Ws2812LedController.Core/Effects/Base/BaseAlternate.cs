@@ -30,7 +30,7 @@ public abstract class BaseAlternate : IEffect
         if (Reverse)
         {
             segment.CopyPixels(0, 1, segment.Width - 1, layer);
-            segment.SetPixel(segment.AbsEnd, color, layer);
+            segment.SetPixel(segment.RelEnd, color, layer);
         }
         else
         {

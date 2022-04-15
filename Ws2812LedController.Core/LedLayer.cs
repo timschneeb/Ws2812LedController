@@ -9,7 +9,7 @@ public class LedLayer
     public bool InvertX { set; get; }
     public LedMask? Mask { set; get; }
 
-    public int AbsEnd => Width - 1;
+    public int RelEnd => Width - 1;
     public int Width { get; }
     public Color[] LayerState { get; }
     
@@ -29,7 +29,7 @@ public class LedLayer
         
         if (InvertX)
         {
-            i = AbsEnd - i;
+            i = RelEnd - i;
         }
 
         var finalColor = Mask?.Condition(color, i, Width) ?? color;
@@ -46,7 +46,7 @@ public class LedLayer
     {
         if (InvertX)
         {
-            i = AbsEnd - i;
+            i = RelEnd - i;
         }
         Debug.Assert(i >= 0 && i < Width, "Out of range");
         return LayerState[i];
@@ -61,8 +61,8 @@ public class LedLayer
         
         if (InvertX)
         {
-            destIndex = AbsEnd - destIndex - length;
-            srcIndex = AbsEnd - srcIndex - length;
+            destIndex = RelEnd - destIndex - length;
+            srcIndex = RelEnd - srcIndex - length;
         }
         
         var buffer = new Color[srcIndex + length];
@@ -103,7 +103,7 @@ public class LedLayer
         
         if (InvertX)
         {
-            start = AbsEnd - start - length;
+            start = RelEnd - start - length;
         }
         
         for (var i = start; i < start + length; i++)

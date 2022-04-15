@@ -24,7 +24,7 @@ public class FftCBinSelector
     
     public double Mean(double[] fftBins)
     {
-        return Start == End ? fftBins[Start] : fftBins.MeanSpan(Start, End);
+        return Start == End ? fftBins[Start] : fftBins.Rms(Start, End);
     }
 
     public int Start { set; get; }

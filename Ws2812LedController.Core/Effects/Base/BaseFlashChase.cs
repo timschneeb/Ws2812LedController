@@ -36,8 +36,8 @@ public abstract class BaseFlashChase : IEffect
             var m = (_stepCounter + 1) % segment.Width;
             if (Reverse)
             {
-                segment.SetPixel(segment.AbsEnd - n, color, layer);
-                segment.SetPixel(segment.AbsEnd - m, color, layer);
+                segment.SetPixel(segment.RelEnd - n, color, layer);
+                segment.SetPixel(segment.RelEnd - m, color, layer);
             }
             else
             {

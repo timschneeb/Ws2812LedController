@@ -18,39 +18,28 @@ public static class FftExtensions
     {
         var add = FftAdd(buffer, from, to);
         return add / (to - from + 1);
-    }  
-    
-    public static double Mean(this double[] buffer)
-    {
-        if (buffer.Length < 1)
-        {
-            return 0;
-        }
-        
-        var add = 0.0;
-        foreach (var t in buffer)
-        {
-            add += Math.Abs(t);
-        }
-        
-        return add / (buffer.Length);
-    }  
-    
-    public static double MeanSpan(this double[] buffer, int start, int end)
-    {
-        if (buffer.Length < 1)
-        {
-            return 0;
-        }
-        
-        var add = 0.0;
-        foreach (var t in buffer.AsSpan()[start..end])
-        {
-            add += Math.Abs(t);
-        }
-        
-        return add / (buffer.Length);
     }
+
+    public static double Rms(this double[] buffer, int? start = null, int? end = null)
+    {
+        if (buffer.Length < 1)
+        {
+            return 0;
+        }
+        
+        var square = 0.0;
+        var root = 0.0;
+
+        var limit = (int)((end == null || start == null) ? buffer.Length : end - start + 1);
+        for (var i = start ?? 0; i < limit; i++)
+        {
+            square += Math.Pow(buffer[i], 2);
+        }
+        
+        var mean = (square / buffer.Length);
+        root = Math.Sqrt(mean);
+        return root;
+    }  
     
     public static double[] FftMeanWithFreq(this double[] buffer, int from, int to, double[]? freq = null)
     {

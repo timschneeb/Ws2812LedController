@@ -56,7 +56,7 @@ public abstract class BaseTricolorChase : IEffect
             }
             else
             {
-                segment.SetPixel(segment.AbsEnd - i, color, layer);
+                segment.SetPixel(segment.RelEnd - i, color, layer);
             }
         }
 

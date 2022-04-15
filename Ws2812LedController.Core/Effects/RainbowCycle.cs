@@ -28,7 +28,7 @@ public class RainbowCycle : IEffect
             var color = ColorWheel.ColorAtIndex((byte)(((i * 256 / segment.Width) + _stepCounter) & 0xFF));
             if (Reverse)
             {
-                segment.SetPixel(segment.AbsEnd - i, color, layer);
+                segment.SetPixel(segment.RelEnd - i, color, layer);
             }
             else
             {

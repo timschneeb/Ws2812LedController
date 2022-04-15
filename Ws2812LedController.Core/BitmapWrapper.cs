@@ -15,11 +15,13 @@ public class BitmapWrapper
     public int Width { get; }
     public Color[] State => VirtualCopy;
 
+    public bool[] MutedPixels { get; }
     public BitmapWrapper(BitmapImage image)
     {
         Image = image;
         Width = image.Width;
         VirtualCopy = new Color[image.Width];
+        MutedPixels = new bool[image.Width];
         Clear();
     }
 
@@ -28,12 +30,13 @@ public class BitmapWrapper
     {
         Width = width;
         VirtualCopy = new Color[width];
+        MutedPixels = new bool[width];
         Clear();
     }
 
     public void SetPixel(int i, Color color, byte brightness = 255, bool gammaCorrection = false, bool isExclusive = false)
     {
-        if (!isExclusive && ExclusiveMode)
+        if (!isExclusive && ExclusiveMode || MutedPixels[i])
         {
             return;
         }
@@ -43,7 +46,7 @@ public class BitmapWrapper
         var colorWithBrightness = Color.FromArgb(color.A, (color.R * brightness) >> 8, (color.G * brightness) >> 8, (color.B * brightness) >> 8);
         Debug.Assert(i >= 0 && i < Width, "Out of range");
         Image?.SetPixel(i, 0, colorWithBrightness);
-        VirtualCopy[i] = color;
+        VirtualCopy[i] = colorWithBrightness;
     }
 
     public void RedrawBuffer(int start, int length, byte brightness)
@@ -51,6 +54,22 @@ public class BitmapWrapper
         for(var i = start; i < start + length; i++)
         {
             SetPixel(i, VirtualCopy[i], brightness);
+        }
+    }
+
+    // TODO does not respect muted pixels
+    public void CopyFrom(BitmapWrapper canvas, int start, int length, bool blend)
+    {
+        for (var i = 0; i < length; i++)
+        {
+            var color = canvas.PixelAt(i);
+            if (blend)
+            {
+                color = ColorBlend.Blend(VirtualCopy[start + i], color, color.A, true);
+            }
+            
+            Image?.SetPixel(start + i, 0, color);
+            VirtualCopy[start + i] = color;
         }
     }
 
@@ -62,12 +81,10 @@ public class BitmapWrapper
 
     public void Clear(Color? color = null, bool isExclusive = false)
     {
-        if (!isExclusive && ExclusiveMode)
+
+        for (var i = 0; i < Width; i++)
         {
-            return;
+            SetPixel(i, color ?? Color.Black);
         }
-        
-        Image?.Clear(color ?? Color.Black);
-        VirtualCopy.Populate(color ?? Color.Black);
     }
 }

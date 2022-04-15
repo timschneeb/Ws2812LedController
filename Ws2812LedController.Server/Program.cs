@@ -3,6 +3,7 @@ using System.Drawing;
 using Ws2812LedController.Core;
 using Ws2812LedController.Core.CancellationMethod;
 using Ws2812LedController.Core.Effects;
+using Ws2812LedController.Core.Effects.Firework;
 using Ws2812LedController.Core.Effects.PowerEffects;
 using Ws2812LedController.Core.Model;
 using Ws2812LedController.Core.Utils;
@@ -56,6 +57,7 @@ namespace Ws2812LedController.Console
             ctrl.PowerEffect = new FadePowerEffect();
             //await Task.Delay(2000);
             //await ctrl.SetEffectAsync(new BaseAudioReactiveEffect());
+            //ctrl.SourceSegment.MuteSection(true, 0, 124, true);
             await ctrl.SetEffectAsync(new RainbowCycle());
            /* await ctrl.SetEffectAsync(new LarsonScanner()
             {
@@ -123,7 +125,6 @@ namespace Ws2812LedController.Console
                     if (arg is ClearCanvasPacket clr)
                     {
                         _mgr.Get("full")!.SegmentGroup.Clear(clr.Color.ToColor(), clr.Layer);
-                        _mgr.Get("full")!.SegmentGroup.Render();
                     }
                     break;
                 case PacketTypeId.PaintInstruction:
@@ -148,7 +149,6 @@ namespace Ws2812LedController.Console
                                         }
                                         break;
                                 }
-                                _mgr.Get("full")!.SegmentGroup.Render();
                             });
                             break;
                         }
@@ -265,17 +265,20 @@ namespace Ws2812LedController.Console
                         (byte)(segment.SegmentGroup.MasterSegment.MaxBrightness - 30);
                     break;
                 case KeyAction.Flash:
-                    await segment.SetEffectAsync(new ColorWipeRandom()
+                    await segment.SetEffectAsync(new Firework()
                     {
-                        Alternate = true,
-                        CancellationMethod = new CancellationCycleMethod(1)
-                    }, CancelMode.Now);
+                        Speed = 5000,
+                        FadeRate = FadeRate.None
+                    });
                     break;
                 case KeyAction.Strobe:
-                    await segment.SetEffectAsync(new MultiStrobe());
+                    await segment.SetEffectAsync(new FireFlicker());
                     break;
                 case KeyAction.Fade:
-                    await segment.SetEffectAsync(new Rainbow());
+                    await segment.SetEffectAsync(new Rainbow()
+                    {
+                        Speed = 10000
+                    });
                     break;
                 case KeyAction.Smooth:
                     await segment.SetEffectAsync(new RainbowCycle());

@@ -21,7 +21,7 @@ public static class Fireworks
         
         var pixels = segment.DumpBytes(layer);
         const int bytesPerPixel = 4;
-        var stopPixel = segment.AbsEnd * bytesPerPixel;
+        var stopPixel = segment.RelEnd * bytesPerPixel;
         
         for (var i = bytesPerPixel; i < stopPixel; i++)
         {

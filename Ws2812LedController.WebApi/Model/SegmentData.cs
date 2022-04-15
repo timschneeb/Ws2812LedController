@@ -9,7 +9,7 @@ public class SegmentData
     public SegmentData(LedSegmentController segment, Ref<LedManager> mgr)
     {
         Name = segment.Name;
-        Start = segment.SourceSegment.RelStart;
+        Start = segment.SourceSegment.AbsStart;
         Width = segment.SourceSegment.Width;
         UseGammaCorrection = segment.SourceSegment.UseGammaCorrection;
         Brightness = segment.SourceSegment.MaxBrightness;

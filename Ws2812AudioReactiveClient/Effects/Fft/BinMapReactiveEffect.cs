@@ -17,7 +17,7 @@ public class BinMapReactiveEffect : BaseAudioReactiveEffect
     public override int Speed { set; get; } = 1000 / 60;
     public int FirstBin { set; get; } = 2;
     public int LastBin { set; get; } = 100;
-    public int SoundSquelch { set; get; } = 10;
+    public int SoundSquelch { set; get; } = 50;
     public CRGBPalette16 Palette { set; get; } = new(CRGBPalette16.Palette.Lava);
 
     protected override async Task<int> PerformFrameAsync(LedSegmentGroup segment, LayerId layer)

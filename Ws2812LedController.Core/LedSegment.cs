@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Drawing;
 using Ws2812LedController.Core.Colors;
 using Ws2812LedController.Core.Model;
@@ -7,16 +8,15 @@ namespace Ws2812LedController.Core;
 
 public class LedSegment
 {
-    /* Start index relative to the complete strip */
-    public int RelStart { get; }
-    /* AbsEnd index in relation to the complete strip */
-    public int RelEnd => RelStart + Width;
-    
+    /* Absolute start index relative to the complete strip */
+    public int AbsStart { get; }
     /* Absolute end index */
-    public int AbsEnd => Width - 1;
+    public int AbsEnd => AbsStart + Width - 1;
+    
     public int Width { get; }
-    public string Id => $"{RelStart}..{RelEnd}";
-    public Color[] State => Strip.Canvas.State[RelStart..RelEnd];
+    public string Id => $"{AbsStart}..{AbsEnd}";
+    public Color[] State => Strip.Canvas.State[AbsStart..AbsEnd];
+    public BitmapWrapper Canvas { get; }
 
     public bool Enabled { set; get; } = true;
     public LedLayer[] Layers { get; } = new LedLayer[typeof(LayerId).GetEnumNames().Length];
@@ -39,8 +39,7 @@ public class LedSegment
         set
         {
             _maxBrightness = value;
-            Strip.Canvas.RedrawBuffer(RelStart, Width, value);
-            Strip.Render();
+            Strip.Canvas.RedrawBuffer(AbsStart, Width, value);
         }
         get => _maxBrightness;
     }
@@ -48,14 +47,13 @@ public class LedSegment
     public LedStrip Strip { get; }
 
     private byte _maxBrightness = 255;
-    private Color[] _colorMergeBuffer;
 
-    public LedSegment(int relStart, int length, LedStrip strip)
+    public LedSegment(int absStart, int length, LedStrip strip)
     {
-        RelStart = relStart;
+        AbsStart = absStart;
         Width = length;
         Strip = strip;
-        _colorMergeBuffer = new Color[length];
+        Canvas = new BitmapWrapper(Width);
 
         for (var i = 0; i < Layers.Length; i++)
         {
@@ -63,38 +61,33 @@ public class LedSegment
         }
     }
 
-    public void ProcessLayers()
+    public void MuteSection(bool mute, int start, int end, bool absolute)
     {
-        if (!Enabled)
+        if (absolute)
         {
-            return;
+            start = ToRelativeIndex(start);
+            end = ToRelativeIndex(end);
         }
-        
-        for (var i = 0; i < Width; i++)
-        {
-            var pixel = Layers[0].LayerState[i];
-            for (var j = 1; j < Layers.Length; j++)
-            {
-                if (!Layers[j].IsActive)
-                {
-                    continue;
-                }
-                
-                var next = Layers[j].LayerState[i];
-                pixel = ColorBlend.Blend(pixel, next, next.A, true);
-            }
 
-            Strip.Canvas.SetPixel(RelStart + i, pixel, MaxBrightness, UseGammaCorrection);
+        for (var i = start; i <= end; i++)
+        {
+            Canvas.MutedPixels[i] = mute;
         }
+    }  
+    
+    public bool ContainsAbsolutePixel(int absoluteIndex)
+    {
+        return absoluteIndex >= AbsStart && absoluteIndex <= AbsEnd;
     }
 
-    public void Render()
-    {  
-        if (!Enabled)
-        {
-            return;
-        }
-
-        Strip.Render();
+    public int ToAbsoluteIndex(int relativeIndex)
+    {
+        return AbsStart + relativeIndex;
+    }
+    
+    public int ToRelativeIndex(int absoluteIndex)
+    {
+        Debug.Assert(ContainsAbsolutePixel(absoluteIndex), $"Absolute index '{absoluteIndex}' is out of range for this segment ({Id})");
+        return absoluteIndex - AbsStart;
     }
 }

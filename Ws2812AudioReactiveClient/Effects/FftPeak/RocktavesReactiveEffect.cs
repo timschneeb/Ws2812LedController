@@ -32,7 +32,8 @@ public class RocktavesReactiveEffect : BaseAudioReactiveEffect
         
         var frTemp = FftMajorPeak[0];
         byte octCount = 0; 
-        var volTemp = FftMajorPeak[1].Map(400, 600, 100, 255);
+        Console.WriteLine(FftMajorPeak[1]);
+        var volTemp = FftMajorPeak[1].Map(3000, 8000, 100, 255);
 
         while (frTemp > 249) {
             octCount++;    // This should go up to 5.

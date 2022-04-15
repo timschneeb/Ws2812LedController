@@ -30,7 +30,7 @@ public class Comet : IEffect
 
         if(Reverse) 
         {
-            segment.SetPixel(segment.AbsEnd - _stepCounter, ForegroundColor, layer);
+            segment.SetPixel(segment.RelEnd - _stepCounter, ForegroundColor, layer);
         } 
         else 
         {

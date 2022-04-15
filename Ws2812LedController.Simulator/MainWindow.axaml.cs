@@ -45,7 +45,6 @@ namespace Ws2812LedController.Simulator
             _controlSegmentB = this.FindControl<LedStripControl>("VirtualSegmentB");
             
             _strip.ActiveCanvasChanged += OnActiveCanvasChanged;
-            _strip.Render();
 
             _control.PixelSize = PixelSize;
             _control.Colors = segmentFull.State;
@@ -103,7 +102,6 @@ namespace Ws2812LedController.Simulator
                     if (arg is ClearCanvasPacket clr)
                     {
                         _mgr.Get("full")!.SegmentGroup.Clear(clr.Color.ToColor(), clr.Layer);
-                        _mgr.Get("full")!.SegmentGroup.Render();
                     }
                     break;
                 case PacketTypeId.PaintInstruction:
@@ -126,7 +124,6 @@ namespace Ws2812LedController.Simulator
                                     }
                                     break;
                             }
-                            _mgr.Get("full")!.SegmentGroup.Render();
                         }));
                     }
                     break;
@@ -148,8 +145,8 @@ namespace Ws2812LedController.Simulator
         private async void Init()
         {
             _mgr.RegisterSegment("full", _strip.FullSegment);
-            //_mgr.RegisterSegment("a", _segmentA);
-            //_mgr.RegisterSegment("b", _segmentB);
+            _mgr.RegisterSegment("a", _segmentA);
+            _mgr.RegisterSegment("b", _segmentB);
 
             /*_mgr.Get("b")!.SourceSegment.InvertX = true;
             _mgr.MirrorTo("a", "b");
@@ -159,6 +156,7 @@ namespace Ws2812LedController.Simulator
             //ctrl.SourceSegment.Mask = new LedMask((color, i, width) => (i % 3 != 0) ? Color.DarkSlateGray : color);
 
             await ctrl.SetEffectAsync(new RainbowCycle());
+            await _mgr.Get("a")!.SetEffectAsync(new ScanSine());
             
             /*await ctrl.SetEffectAsync(new Twinkle()
             {

@@ -33,9 +33,9 @@ public abstract class BaseChase : IEffect
             var c = (b + size) % segment.Width;
             if (Reverse)
             {
-                segment.SetPixel(segment.AbsEnd - a, _colorBackground, layer);
-                segment.SetPixel(segment.AbsEnd - b, _colorA, layer);
-                segment.SetPixel(segment.AbsEnd - c, _colorB, layer);
+                segment.SetPixel(segment.RelEnd - a, _colorBackground, layer);
+                segment.SetPixel(segment.RelEnd - b, _colorA, layer);
+                segment.SetPixel(segment.RelEnd - c, _colorB, layer);
             }
             else
             {

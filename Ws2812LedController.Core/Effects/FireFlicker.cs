@@ -22,7 +22,7 @@ public class FireFlicker : IEffect
         var g = Color.G;
         var b = Color.B;
         var lum = Math.Max(w, Math.Max(r, Math.Max(g, b))) / Intensity;
-        for (ushort i = 0; i <= segment.AbsEnd; i++)
+        for (ushort i = 0; i <= segment.RelEnd; i++)
         {
             var flicker = Random.Shared.Next(lum);
             segment.SetPixel(i, Color.FromArgb(Math.Max(w - flicker, 0), Math.Max(r - flicker, 0), Math.Max(g - flicker, 0), Math.Max(b - flicker, 0)), layer);

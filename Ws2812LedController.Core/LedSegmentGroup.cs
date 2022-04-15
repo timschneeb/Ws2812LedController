@@ -8,7 +8,7 @@ namespace Ws2812LedController.Core;
 public class LedSegmentGroup
 {
     /* Absolute end index */
-    public int AbsEnd => Width - 1;
+    public int RelEnd => Width - 1;
     public int Width { private set; get; }
     public List<LedSegment> Segments => _segments;
     public LedSegment MasterSegment => _segments[0];
@@ -47,19 +47,6 @@ public class LedSegmentGroup
         _segments.RemoveRange(1, _segments.Count);
     }
     
-    public void Render(bool dry = false)
-    {
-        foreach (var segment in Segments)
-        {
-            segment.ProcessLayers();
-        }
-        /* All segments are on the same strip; just tell the strip to render once for every segment */
-        if (!dry)
-        {
-            MasterSegment.Render();
-        }
-    }
-
     public void SetPixel(int i, Color color, LayerId layer )//= LayerId.BaseLayer)
     {
         foreach (var segment in Segments)

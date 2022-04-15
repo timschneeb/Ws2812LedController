@@ -11,14 +11,11 @@ public abstract class IEffect
     [NonEffectParameter]
     public ICancellationMethod CancellationMethod { init; get; } = new CancellationTokenMethod();
     [NonEffectParameter]
-    public bool AutomaticRender { set; get; } = true;
-    [NonEffectParameter]
     public virtual bool IsSingleShot => false;
     public abstract int Speed { set; get; }
     public bool IsFrozen { set; get; }
     
     public event EventHandler<bool>? Finished;
-    public event EventHandler? RenderRequest;
     protected uint Frame { private set; get; }
 
     public virtual void Reset()
@@ -62,16 +59,6 @@ public abstract class IEffect
                 }
 
                 var timeout = await PerformFrameAsync(segment, layer);
-               
-                if (AutomaticRender)
-                {
-                    segment.Render();
-                }
-                else
-                {
-                    segment.Render(dry: true);
-                    RenderRequest?.Invoke(this, EventArgs.Empty);
-                }
                 
                 CancellationMethod.NextFrame();
                 await Task.Delay(timeout, CancellationMethod.Token);

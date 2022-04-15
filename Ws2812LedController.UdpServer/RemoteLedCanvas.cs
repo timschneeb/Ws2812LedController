@@ -32,6 +32,8 @@ public class RemoteLedCanvas
             colors[i] = Bitmap.PixelAt(i).ToUInt32();
         }
 
+       // Console.WriteLine(Bitmap.PixelAt(363 - 70));
+        
         NewPacketAvailable?.Invoke(this, new PaintInstructionPacket
         {
             Layer = _layer,

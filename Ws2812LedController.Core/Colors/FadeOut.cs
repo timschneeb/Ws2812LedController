@@ -24,7 +24,7 @@ public static class FadeOut
 
         var finished = true;
 
-        for (var i = 0; i <= segment.AbsEnd; i++)
+        for (var i = 0; i <= segment.RelEnd; i++)
         {
             color = (int)segment.PixelAt(i, layer).ToUInt32(); // current color
             if (rate == 0)

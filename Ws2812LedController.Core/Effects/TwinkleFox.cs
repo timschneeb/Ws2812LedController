@@ -29,7 +29,7 @@ public class TwinkleFox : IEffect
         var color1 = ColorB;
         var color2 = ColorC;
 
-        for (ushort i = 0; i <= segment.AbsEnd; i += size)
+        for (ushort i = 0; i <= segment.RelEnd; i += size)
         {
             // Use Mark Kriegsman's clever idea of using pseudo-random numbers to determine
             // each LED's initial and increment blend values
@@ -64,7 +64,7 @@ public class TwinkleFox : IEffect
             // Assign the new color to the number of LEDs specified by the SIZE option
             for (byte j = 0; j < size; j++)
             {
-                if ((i + j) <= segment.AbsEnd)
+                if ((i + j) <= segment.RelEnd)
                 {
                     segment.SetPixel(i + j, blendedColor.ToColor(), layer);
                 }

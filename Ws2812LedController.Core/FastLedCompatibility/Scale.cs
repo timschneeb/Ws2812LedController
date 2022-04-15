@@ -13,14 +13,15 @@ public static class Scale
 //#endif
     }
     
-    public static Color nscale8x3( Color c, short scale)
+    public static Color nscale8x3( Color c, short scale, bool scaleA = false)
     {
 //#if (FASTLED_SCALE8_FIXED == 1)
         var scale_fixed = scale + 1;
+        var a = scaleA ? (c.A * scale_fixed) >> 8 : c.A;
         var r = (c.R * scale_fixed) >> 8;
         var g = (c.G * scale_fixed) >> 8;
         var b = (c.B * scale_fixed) >> 8;
-        return Color.FromArgb(r, g, b);
+        return Color.FromArgb(a, r, g, b);
 //#else
         /*  r = ((int)r * (int)(scale) ) >> 8;
           g = ((int)g * (int)(scale) ) >> 8;
