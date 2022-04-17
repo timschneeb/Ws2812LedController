@@ -1,11 +1,11 @@
 using System.Drawing;
-using Ws2812AudioReactiveClient.FastLedCompatibility;
+using Ws2812AudioReactiveClient.Effects.Base;
 using Ws2812LedController.Core;
 using Ws2812LedController.Core.FastLedCompatibility;
 using Ws2812LedController.Core.Model;
 using Ws2812LedController.Core.Utils;
 
-namespace Ws2812AudioReactiveClient.Effects;
+namespace Ws2812AudioReactiveClient.Effects.Fft;
 
 public class DjLightReactiveEffect : BaseAudioReactiveEffect
 {

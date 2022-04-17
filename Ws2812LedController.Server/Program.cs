@@ -45,19 +45,12 @@ namespace Ws2812LedController.Console
             _webApiManager = new WebApiManager(new Ref<LedManager>(() => _mgr));
             _syncLedReceiver = new SynchronizedLedReceiver(new Ref<LedStrip>(() => strip), new Ref<LedManager>(() => _mgr));
 
-            //_mgr.RegisterSegment("b", segmentB);
-
-            //_mgr.Get("b")!.SourceSegment.InvertX = true;
-            //_mgr.Get("b")!.SourceSegment.Layers[0].Mask = new LedMask((color, i, _) => (i % 2 == 0) ? Color.Black : color);
-            //_mgr.MirrorTo("a", "b");
-
+            foreach (var segment in _mgr.Segments)
+            {
+                segment.PowerEffect = new WipePowerEffect();
+            }
+            
             var ctrl = _mgr.Get("full")!;
-            //ctrl.SourceSegment.Layers[0].Mask = new LedMask((color, i, width) => (i % 2 != 0) ? Color.Black : color);
-
-            ctrl.PowerEffect = new FadePowerEffect();
-            //await Task.Delay(2000);
-            //await ctrl.SetEffectAsync(new BaseAudioReactiveEffect());
-            //ctrl.SourceSegment.MuteSection(true, 0, 124, true);
             await ctrl.SetEffectAsync(new RainbowCycle());
            /* await ctrl.SetEffectAsync(new LarsonScanner()
             {
@@ -175,8 +168,8 @@ namespace Ws2812LedController.Console
 
         private static async void LircOnKeyPress(object? sender, IrKeyPressEventArgs e)
         {
-            var segment = _mgr.Get("full");
-            if (segment == null)
+            var fullSeg = _mgr.Get("full");
+            if (fullSeg == null)
             {
                 return;
             }
@@ -240,7 +233,7 @@ namespace Ws2812LedController.Console
             }
             
             _mgr.Get("full")?.SegmentGroup.Clear(Color.FromArgb(0,0,0,0), LayerId.ExclusiveEnetLayer);
-            await segment.SetEffectAsync(new Static()
+            await fullSeg.SetEffectAsync(new Static()
             {
                 Color = color
             });
@@ -251,37 +244,37 @@ namespace Ws2812LedController.Console
             switch (e.Action)
             {
                 case KeyAction.PowerOff:
-                    await segment.PowerAsync(false);
+                    await _mgr.PowerAllAsync(false, "bed", "desk_left", "desk_right", "heater");
                     break;
                 case KeyAction.PowerOn:
-                    await segment.PowerAsync(true);
+                    await _mgr.PowerAllAsync(true, "bed", "desk_left", "desk_right", "heater");
                     break;
                 case KeyAction.BrightnessUp:
-                    segment.SegmentGroup.MasterSegment.MaxBrightness =
-                        (byte)(segment.SegmentGroup.MasterSegment.MaxBrightness + 30);
+                    fullSeg.SegmentGroup.MasterSegment.MaxBrightness =
+                        (byte)(fullSeg.SegmentGroup.MasterSegment.MaxBrightness + 30);
                     break;
                 case KeyAction.BrightnessDown:
-                    segment.SegmentGroup.MasterSegment.MaxBrightness =
-                        (byte)(segment.SegmentGroup.MasterSegment.MaxBrightness - 30);
+                    fullSeg.SegmentGroup.MasterSegment.MaxBrightness =
+                        (byte)(fullSeg.SegmentGroup.MasterSegment.MaxBrightness - 30);
                     break;
                 case KeyAction.Flash:
-                    await segment.SetEffectAsync(new Firework()
+                    await fullSeg.SetEffectAsync(new Firework()
                     {
                         Speed = 5000,
                         FadeRate = FadeRate.None
                     });
                     break;
                 case KeyAction.Strobe:
-                    await segment.SetEffectAsync(new FireFlicker());
+                    await fullSeg.SetEffectAsync(new FireFlicker());
                     break;
                 case KeyAction.Fade:
-                    await segment.SetEffectAsync(new Rainbow()
+                    await fullSeg.SetEffectAsync(new Rainbow()
                     {
                         Speed = 10000
                     });
                     break;
                 case KeyAction.Smooth:
-                    await segment.SetEffectAsync(new RainbowCycle());
+                    await fullSeg.SetEffectAsync(new RainbowCycle());
                     break;
             }
         }

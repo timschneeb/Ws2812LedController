@@ -1,17 +1,12 @@
-using System.Collections.Concurrent;
-using System.Diagnostics;
-using System.Drawing;
-using Ws2812AudioReactiveClient.FastLedCompatibility;
+using Ws2812AudioReactiveClient.Effects.Base;
 using Ws2812LedController.Core;
 using Ws2812LedController.Core.Colors;
-using Ws2812LedController.Core.Effects.Base;
 using Ws2812LedController.Core.FastLedCompatibility;
 using Ws2812LedController.Core.Model;
-using Ws2812LedController.Core.Utils;
 
-namespace Ws2812AudioReactiveClient.Effects;
+namespace Ws2812AudioReactiveClient.Effects.Fft;
 
-public class FreqMapReactiveEffect : BaseAudioReactiveEffect
+public class FreqMapReactiveEffect : BaseAudioReactiveEffect, IHasFrequencyLimits
 {
     public override string Description => "Map major FFT peaks to LED strip length";
     public override int Speed { set; get; } = 1000 / 60;
@@ -43,7 +38,7 @@ public class FreqMapReactiveEffect : BaseAudioReactiveEffect
         if (locn < 0)
         {
             goto NEXT_FRAME;
-        };
+        }
         
         var pixCol = (byte)((Math.Log10((int)FftMajorPeak[0]) - Math.Log10(StartFrequency)) * 255.0/(Math.Log10(EndFrequency)-Math.Log10(StartFrequency)));   // Scale log10 of frequency values to the 255 colour index.
         var bright = (byte)255;//(byte)((int)FftMajorPeak[1]>>4);

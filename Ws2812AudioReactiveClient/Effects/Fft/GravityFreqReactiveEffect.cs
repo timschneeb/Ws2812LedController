@@ -1,18 +1,13 @@
-using System.Collections.Concurrent;
-using System.Diagnostics;
 using System.Drawing;
-using Ws2812AudioReactiveClient.Dsp;
-using Ws2812AudioReactiveClient.FastLedCompatibility;
+using Ws2812AudioReactiveClient.Effects.Base;
 using Ws2812LedController.Core;
-using Ws2812LedController.Core.Colors;
-using Ws2812LedController.Core.Effects.Base;
 using Ws2812LedController.Core.FastLedCompatibility;
 using Ws2812LedController.Core.Model;
 using Ws2812LedController.Core.Utils;
 
-namespace Ws2812AudioReactiveClient.Effects;
+namespace Ws2812AudioReactiveClient.Effects.Fft;
 
-public class GravityFreqReactiveEffect : BaseAudioReactiveEffect
+public class GravityFreqReactiveEffect : BaseAudioReactiveEffect, IHasFrequencyLimits
 {
     public override string Description => "VU Meter from center. Log of frequency is index to center colour";
     public override int Speed { set; get; } = 1000 / 60;
@@ -20,8 +15,9 @@ public class GravityFreqReactiveEffect : BaseAudioReactiveEffect
     public int Intensity { set; get; } = 2;
     public int StartFrequency { set; get; } = 70;
     public int EndFrequency { set; get; } = 5120;
+    public override double AvgSmoothingStrength { get; set; } = 5;
 
-    public CRGBPalette16 Palette = new(Color.Blue, Color.DarkBlue, Color.DarkSlateBlue, Color.RoyalBlue);
+    public CRGBPalette16 Palette { set; get; } = new(Color.Blue, Color.DarkBlue, Color.DarkSlateBlue, Color.RoyalBlue);
     
     public override void Reset()
     {

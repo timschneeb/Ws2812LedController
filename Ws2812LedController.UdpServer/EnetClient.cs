@@ -90,19 +90,19 @@ public class EnetClient
                         break;
 
                     case EventType.Connect:
-                        Console.WriteLine("Client connected to server");
+                        Console.WriteLine("EnetClient.ClientLoop: Client connected to server");
                         break;
 
                     case EventType.Disconnect:
-                        Console.WriteLine("Client disconnected from server");
+                        Console.WriteLine("EnetClient.ClientLoop: Client disconnected from server");
                         break;
 
                     case EventType.Timeout:
-                        Console.WriteLine("Client connection timeout");
+                        Console.WriteLine("EnetClient.ClientLoop: Client connection timeout");
                         break;
 
                     case EventType.Receive:
-                        Console.WriteLine("Packet received from server - Channel ID: " + netEvent.ChannelID + ", Data length: " + netEvent.Packet.Length);
+                        Console.WriteLine($"EnetClient.ClientLoop: Packet received from server - Channel ID: {netEvent.ChannelID}, Data length: {netEvent.Packet.Length}");
                         PacketReceived?.Invoke(this, IPacket.FromEnetPacket(netEvent.Packet));
                         
                         /* var p = ;

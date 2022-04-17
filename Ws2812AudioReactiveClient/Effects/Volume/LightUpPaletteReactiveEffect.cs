@@ -1,29 +1,25 @@
-using System.Collections.Concurrent;
 using System.Diagnostics;
-using System.Drawing;
-using Ws2812AudioReactiveClient.Dsp;
-using Ws2812AudioReactiveClient.FastLedCompatibility;
+using Ws2812AudioReactiveClient.Effects.Base;
+using Ws2812AudioReactiveClient.Model;
+using Ws2812AudioReactiveClient.Utils;
 using Ws2812LedController.Core;
-using Ws2812LedController.Core.Colors;
-using Ws2812LedController.Core.Effects.Base;
 using Ws2812LedController.Core.FastLedCompatibility;
 using Ws2812LedController.Core.Model;
 using Ws2812LedController.Core.Utils;
 
-namespace Ws2812AudioReactiveClient.Effects;
+namespace Ws2812AudioReactiveClient.Effects.Volume;
 
 /**
  * Adopted from https://github.com/atuline/FastLED-SoundReactive
  */
-public class LightUpPaletteReactiveEffect : BaseAudioReactiveEffect
+public class LightUpPaletteReactiveEffect : BaseAudioReactiveEffect, IHasVolumeAnalysis, IHasPeakDetection
 {
     public override string Description => "Light single LEDs based on volume peaks up. Use colors from randomized palettes";
     public override int Speed { set; get; } = 1000 / 60;
-    public double Threshold { set; get; } = 1500;
     public int FadeSpeed { set; get; } = 6;
-    public int MinPeakMagnitude { set; get; } = 100;
-    public int MaxPeakMagnitude { set; get; } = 8000;
-    
+    public IVolumeAnalysisOption VolumeAnalysisOptions { set; get; } = new AgcVolumeAnalysisOption(128);
+    public double Threshold { set; get; } = 1500;
+
     private readonly CRGBPalette16 _currentPalette = new(CRGBPalette16.Palette.Ocean);
     private CRGBPalette16 _targetPalette = new(CRGBPalette16.Palette.Lava);
 
@@ -61,8 +57,12 @@ public class LightUpPaletteReactiveEffect : BaseAudioReactiveEffect
         }
 
         var isPeak = IsPeak(Threshold);
-        var strength = (byte)SampleAvg.Map(MinPeakMagnitude, MaxPeakMagnitude, 0, 255);
-        
+        byte strength = VolumeAnalysisOptions switch
+        {
+            AgcVolumeAnalysisOption agc => (byte)(SampleAgc * agc.Intensity / 64.0).Clamp(0, 255),
+            FixedVolumeAnalysisOption fix => (byte)SampleAvg.Map(fix.MinimumMagnitude, fix.MaximumMagnitude, 0, 255, true),
+            _ => 0
+        };        
         /* Fade to black by x */ 
         for(var i = 0; i < segment.Width; ++i) 
         {
@@ -71,7 +71,7 @@ public class LightUpPaletteReactiveEffect : BaseAudioReactiveEffect
 
         if (isPeak)
         {
-            segment.SetPixel((int)(((_timeSinceStart.ElapsedMilliseconds & 0xFFFF) % (segment.Width-1)) +1), _currentPalette.ColorFromPalette(strength, strength, TBlendType.LinearBlend), layer);
+            segment.SetPixel((int)(((TimeSinceStart.ElapsedMilliseconds & 0xFFFF) % (segment.Width-1)) +1), _currentPalette.ColorFromPalette(strength, strength, TBlendType.LinearBlend), layer);
         }
 
         if (_timer100.ElapsedMilliseconds >= 100)

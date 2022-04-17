@@ -14,7 +14,7 @@ namespace Ws2812AudioReactiveClient
 		public double Latency { get; }
 		public event EventHandler<double[][]>? NewSamplesReceived;
 
-		public SoundInputStream(string inputName, double latency = 0.1, string? backendName = null)
+		public SoundInputStream(string inputName, double latency = 0.02, string? backendName = null)
 		{
 			BackendName = backendName;
 			InputName = inputName;
@@ -45,7 +45,7 @@ namespace Ws2812AudioReactiveClient
 				api.Connect ();
 			else
 				api.ConnectBackend (backend);
-			Console.WriteLine ("backend: " + api.CurrentBackend);
+			Console.WriteLine ("SoundInputStream: Using backend: " + api.CurrentBackend);
 
 			api.FlushEvents ();
 
@@ -53,12 +53,12 @@ namespace Ws2812AudioReactiveClient
 				.Select (i => api.GetInputDevice (i))
 				.FirstOrDefault (d => d.Id == InputName && d.IsRaw == isRaw);
 			if (in_device == null) {
-				Console.Error.WriteLine ("Input device " + InputName + " not found.");
+				Console.Error.WriteLine ("SoundInputStream: Input device " + InputName + " not found.");
 				return;
 			}
-			Console.WriteLine ("input device: " + in_device.Name);
+			Console.WriteLine ("SoundInputStream: Using input device: " + in_device.Name);
 			if (in_device.ProbeError != 0) {
-				Console.Error.WriteLine ("Cannot probe input device " + InputName + ".");
+				Console.Error.WriteLine ("SoundInputStream: Cannot probe input device " + InputName + ".");
 				return;
 			}
 			
@@ -93,11 +93,13 @@ namespace Ws2812AudioReactiveClient
 		
 		private void OnInputRead (SoundIOInStream stream, int frame_count_min, int frame_count_max)
 		{
-			var buffer = new double[2][];
+			var buffer = new double[stream.Layout.ChannelCount][];
 
 			var framesLeft = frame_count_max;
-			buffer[0] = new double[frame_count_max];
-			buffer[1] = new double[frame_count_max];
+			for (var i = 0; i < stream.Layout.ChannelCount; i++)
+			{
+				buffer[i] = new double[frame_count_max];
+			}
 			for (; ; ) {
 				var frameCount = framesLeft;
 
@@ -119,13 +121,6 @@ namespace Ws2812AudioReactiveClient
 					{
 						for (var ch = 0; ch < chCount; ch += 1) {
 							var area = areas.GetArea (ch);
-							/*foreach(var b in buffer[0])
-							{
-								Console.Write($"{b},");
-							}
-							Console.WriteLine();
-							Console.WriteLine("________________");
-							Console.WriteLine(frame + " / " + frame_count_max);*/
 
 							Marshal.Copy(area.Pointer, _tempBuffer, 0, 1);
 							buffer[ch][frame] = _tempBuffer[0]; // quick float to double conversion

@@ -1,30 +1,24 @@
-using System.Collections.Concurrent;
-using System.Diagnostics;
 using System.Drawing;
-using Ws2812AudioReactiveClient.Dsp;
-using Ws2812AudioReactiveClient.FastLedCompatibility;
+using Ws2812AudioReactiveClient.Effects.Base;
+using Ws2812AudioReactiveClient.Model;
 using Ws2812LedController.Core;
-using Ws2812LedController.Core.Colors;
-using Ws2812LedController.Core.Effects.Base;
 using Ws2812LedController.Core.FastLedCompatibility;
 using Ws2812LedController.Core.Model;
 using Ws2812LedController.Core.Utils;
 
-namespace Ws2812AudioReactiveClient.Effects;
+namespace Ws2812AudioReactiveClient.Effects.Volume;
 
-public class GravityVolumeReactiveEffect : BaseAudioReactiveEffect
+public class GravityVolumeReactiveEffect : BaseAudioReactiveEffect, IHasVolumeAnalysis
 {
     public override string Description => "Volume reactive vu-meter from edge/center with gravity and perlin noise";
     public override int Speed { set; get; } = 1000 / 60;
     public bool Centered { set; get; } = false;
     public bool ColorNoise { set; get; } = true;
-    public int AnimationSpeed { set; get; } = 16;
-    public byte FadeSpeed { set; get; } = 15;
-    public int Intensity { set; get; } = 128; 
-    public int MinPeakMagnitude { set; get; } = 100;
-    public int MaxPeakMagnitude { set; get; } = 8000;
+    public int AnimationSpeed { set; get; } = 32;
+    public byte FadeSpeed { set; get; } = 120;
+    public IVolumeAnalysisOption VolumeAnalysisOptions { set; get; } = new FixedVolumeAnalysisOption(100, 8000);
 
-    public CRGBPalette16 Palette = new(Color.Blue, Color.DarkBlue, Color.DarkSlateBlue, Color.RoyalBlue);
+    public CRGBPalette16 Palette { set; get; } = new(Color.Blue, Color.DarkBlue, Color.DarkSlateBlue, Color.RoyalBlue);
     
     public override void Reset()
     {
@@ -49,16 +43,21 @@ public class GravityVolumeReactiveEffect : BaseAudioReactiveEffect
             segment.SetPixel(i, Scale.nscale8x3(segment.PixelAt(i, layer), (short)(255 - /*fadeBy*/ FadeSpeed)),layer);
         }
 
-        var segmentSampleAvg = (byte)(SampleAvg * Intensity / 128.0).Map(MinPeakMagnitude, MaxPeakMagnitude, 0, 255, true);
-        var tempsamp = (int)segmentSampleAvg.Map(0, 255, 0, Centered ? segment.Width / 2 : segment.Width - 1, true); // Keep the sample from overflowing.
+        byte strength = VolumeAnalysisOptions switch
+        {
+            AgcVolumeAnalysisOption agc => (byte)(SampleAgc * agc.Intensity / 64.0).Clamp(0, 255),
+            FixedVolumeAnalysisOption fix => (byte)SampleAvg.Map(fix.MinimumMagnitude, fix.MaximumMagnitude, 0, 255, true),
+            _ => 0
+        };     
+        var tempsamp = (int)strength.Map(0, 255, 0, Centered ? segment.Width / 2 : segment.Width - 1, true); // Keep the sample from overflowing.
         var gravity = (byte)(8 - AnimationSpeed / 32.0);
 
         for (int i = 0; i < tempsamp; i++)
         {
-            var index = !ColorNoise ? (byte)(segmentSampleAvg * 24 + Time.Millis() / 200.0) : 
-                Noise.inoise8((ushort)(i*segmentSampleAvg+Time.Millis()), (ushort)(5000+i*segmentSampleAvg));
+            var index = !ColorNoise ? (byte)(strength * 24 + Time.Millis() / 200.0) : 
+                Noise.inoise8((ushort)(i*strength+Time.Millis()), (ushort)(5000+i*strength));
             
-            var color = Palette.ColorFromPalette(index, segmentSampleAvg, TBlendType.LinearBlend);
+            var color = Palette.ColorFromPalette(index, strength, TBlendType.LinearBlend);
             segment.SetPixel(Centered ? i + segment.Width / 2 : i, color, layer);
             if (Centered)
             {

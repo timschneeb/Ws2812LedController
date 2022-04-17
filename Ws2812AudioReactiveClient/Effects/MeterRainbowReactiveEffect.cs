@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Drawing;
 using Ws2812AudioReactiveClient.Dsp;
+using Ws2812AudioReactiveClient.Effects.Base;
 using Ws2812LedController.Core;
 using Ws2812LedController.Core.Colors;
 using Ws2812LedController.Core.Effects.Base;
@@ -10,11 +11,11 @@ using Ws2812LedController.Core.Utils;
 
 namespace Ws2812AudioReactiveClient.Effects;
 
-public class MeterRainbowReactiveEffect : BaseAudioReactiveEffect
+public class MeterRainbowReactiveEffect : BaseAudioReactiveEffect, IHasOptionalFftBinSelection
 {
-    public override string Description => "Expand LEDs based on volume peaks";
+    public override string Description => "Expand LEDs based on FFT or volume peaks";
     public override int Speed { set; get; } = 1000 / 60;
-    public FftCBinSelector? FftBinSelector { set; get; }
+    public FftCBinSelector? FftCBinSelector { set; get; }
     /** Only non-fluent rainbow */
     public int ColorWheelSpeed { set; get; } = 3;
     public int DecayFrameTimeout { set; get; } = 0;
@@ -24,8 +25,8 @@ public class MeterRainbowReactiveEffect : BaseAudioReactiveEffect
     private int _colorWheelPos = 255;
     private int _decayCheck = 0;
     private int _stepCounter = 0;
-    private long _preReact = 0; // NEW SPIKE CONVERSION
-    private long _react = 0; // NUMBER OF LEDs BEING LIT
+    private long _preReact = 0;
+    private long _react = 0;
 
     public override void Reset()
     {
@@ -86,7 +87,7 @@ public class MeterRainbowReactiveEffect : BaseAudioReactiveEffect
             goto NEXT_FRAME;
         }
 
-        var maxSample = FftBinSelector?.Mean(FftCompressedBins) ?? FindMaxSample(_proc);
+        var maxSample = /* TODO -> */ FftCBinSelector?.Mean(FftCompressedBins) ?? FindMaxSample(_proc);
         if (maxSample > _maxSampleEver)
         {
             _maxSampleEver = maxSample;

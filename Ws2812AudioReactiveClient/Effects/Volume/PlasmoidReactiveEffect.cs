@@ -1,15 +1,17 @@
+using Ws2812AudioReactiveClient.Effects.Base;
 using Ws2812LedController.Core;
 using Ws2812LedController.Core.FastLedCompatibility;
 using Ws2812LedController.Core.Model;
 using Ws2812LedController.Core.Utils;
 
-namespace Ws2812AudioReactiveClient.Effects;
+namespace Ws2812AudioReactiveClient.Effects.Volume;
 
 public class PlasmoidReactiveEffect : BaseAudioReactiveEffect
 {
     public override string Description => "Sine wave based plasma";
     public override int Speed { set; get; } = 1000 / 60;
-    public byte Intensity { set; get; } = 8;
+    public byte Intensity { set; get; } = 128;
+
     public CRGBPalette16 Palette { set; get; } = new(CRGBPalette16.Palette.Lava);
 
     private short _thisPhase = 0;
@@ -44,9 +46,8 @@ public class PlasmoidReactiveEffect : BaseAudioReactiveEffect
             var thisbright = Math8.cubicwave8((byte)((i * 13) + _thisPhase)) / 2;
             thisbright = (int)(thisbright + Math.Cos((i * 117) + _thatPhase) / 2.0); // Let's munge the brightness a bit and animate it all with the phases.
             var colorIndex = thisbright;
-
-            var tmpSound = SampleAvg;//(soundAgc) ? sampleAgc : sampleAvg;
-            if (tmpSound * Intensity / 128 < thisbright)
+            
+            if (SampleAgc * Intensity / 128.0 < thisbright)
             {
                 thisbright = 0;
             }

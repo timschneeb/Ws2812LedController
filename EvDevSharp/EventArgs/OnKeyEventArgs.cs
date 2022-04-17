@@ -1,8 +1,8 @@
-using System;
+using EvDevSharp.Enums;
 
-namespace EvDevSharp;
+namespace EvDevSharp.EventArgs;
 
-public class OnKeyEventArgs : EventArgs
+public class OnKeyEventArgs : System.EventArgs
 {
     public OnKeyEventArgs(EvDevKeyCode key, EvDevKeyValue value) =>
         (Key, Value) = (key, value);

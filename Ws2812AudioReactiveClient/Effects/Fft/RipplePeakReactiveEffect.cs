@@ -1,25 +1,24 @@
-using System.Collections.Concurrent;
-using System.Data;
-using System.Diagnostics;
 using System.Drawing;
 using Ws2812AudioReactiveClient.Dsp;
-using Ws2812AudioReactiveClient.FastLedCompatibility;
+using Ws2812AudioReactiveClient.Effects.Base;
+using Ws2812AudioReactiveClient.Model;
 using Ws2812LedController.Core;
 using Ws2812LedController.Core.Colors;
 using Ws2812LedController.Core.FastLedCompatibility;
 using Ws2812LedController.Core.Model;
 
-namespace Ws2812AudioReactiveClient.Effects;
+namespace Ws2812AudioReactiveClient.Effects.Fft;
 
-public class RipplePeakReactiveEffect : BaseAudioReactiveEffect
+public class RipplePeakReactiveEffect : BaseAudioReactiveEffect, IHasFftBinSelection, IHasPeakDetection
 {
     public override string Description => "Peak detection triggers ripples";
     public override int Speed { set; get; } = 1000 / 60;
+    [ValueRange(max: 32)]
     public byte MaxRipples { set; get; } = 16; /* Up to 32 */
     public byte FadeStrength { set; get; } = 80;
     public int MaxSteps { set; get; } = 16;
     public FftCBinSelector FftCBinSelector { set; get; } = new(0);
-    public int MaxVolume { set; get; } = 100;
+    public double Threshold { get; set; } = 100;
     public CRGBPalette16 Palette { set; get; } = new(CRGBPalette16.Palette.Lava);
     public bool RainbowColors { set; get; } = true;
 
@@ -95,7 +94,7 @@ public class RipplePeakReactiveEffect : BaseAudioReactiveEffect
         for (ushort i = 0; i < MaxRipples; i++)
         { // Limit the number of ripples.
 
-            if (IsFftPeak(FftCBinSelector, MaxVolume))
+            if (IsFftPeak(FftCBinSelector, Threshold))
             {
                 _ripples[i].State = -1;
             }
@@ -146,5 +145,5 @@ public class RipplePeakReactiveEffect : BaseAudioReactiveEffect
         
         NEXT_FRAME:
         return Speed;
-    }
+    } 
 }

@@ -1,6 +1,6 @@
 namespace Ws2812AudioReactiveClient.Dsp;
 
-public static class Volume
+public static class VolumeLevel
 {
     public static double LevelLinear(double[] buffer)
     {

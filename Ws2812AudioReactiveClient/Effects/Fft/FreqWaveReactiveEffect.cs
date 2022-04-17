@@ -1,13 +1,14 @@
 using System.Drawing;
-using Ws2812AudioReactiveClient.FastLedCompatibility;
+using Ws2812AudioReactiveClient.Effects.Base;
+using Ws2812AudioReactiveClient.Utils;
 using Ws2812LedController.Core;
 using Ws2812LedController.Core.FastLedCompatibility;
 using Ws2812LedController.Core.Model;
 using Ws2812LedController.Core.Utils;
 
-namespace Ws2812AudioReactiveClient.Effects;
+namespace Ws2812AudioReactiveClient.Effects.Fft;
 
-public class FreqWaveReactiveEffect : BaseAudioReactiveEffect
+public class FreqWaveReactiveEffect : BaseAudioReactiveEffect, IHasFrequencyLimits
 {
     public override string Description => "Wave pushing outwards from center colored by frequency";
     public override int Speed { set; get; } = 1000 / 60;
@@ -17,8 +18,8 @@ public class FreqWaveReactiveEffect : BaseAudioReactiveEffect
     public byte Sensitivity { set; get; } = 10;
     public int StartFrequency { set; get; } = 70;
     public int EndFrequency { set; get; } = 5000;
-    public int MinPeakMagnitude { set; get; } = 100;
-    public int MaxPeakMagnitude { set; get; } = 1800;
+    public int MinFftPeakMagnitude { set; get; } = 100;
+    public int MaxFftPeakMagnitude { set; get; } = 1800;
     
     protected override async Task<int> PerformFrameAsync(LedSegmentGroup segment, LayerId layer)
     {
@@ -57,13 +58,13 @@ public class FreqWaveReactiveEffect : BaseAudioReactiveEffect
         }
         else
         {
-            var i = MinPeakMagnitude != MaxPeakMagnitude ? fftPeak.Map(MinPeakMagnitude, MaxPeakMagnitude, 0, 255, true) : fftPeak;
+            var i = MinFftPeakMagnitude != MaxFftPeakMagnitude ? fftPeak.Map(MinFftPeakMagnitude, MaxFftPeakMagnitude, 0, 255, true) : fftPeak;
             var b = (ushort)(255 * intensity);
             if (b > 255)
             {
                 b = 255;
             }
-            color = Conversions.ColorFromHSV(i, 240, (byte)b);; 
+            color = Conversions.ColorFromHSV(i, 240, (byte)b);
         }
 
 

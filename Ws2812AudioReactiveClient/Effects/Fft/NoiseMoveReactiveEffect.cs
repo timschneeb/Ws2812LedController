@@ -1,18 +1,15 @@
-using System.Collections.Concurrent;
-using System.Diagnostics;
-using System.Drawing;
 using Ws2812AudioReactiveClient.Dsp;
-using Ws2812AudioReactiveClient.FastLedCompatibility;
+using Ws2812AudioReactiveClient.Effects.Base;
+using Ws2812AudioReactiveClient.Utils;
 using Ws2812LedController.Core;
 using Ws2812LedController.Core.Colors;
-using Ws2812LedController.Core.Effects.Base;
 using Ws2812LedController.Core.FastLedCompatibility;
 using Ws2812LedController.Core.Model;
 using Ws2812LedController.Core.Utils;
 
-namespace Ws2812AudioReactiveClient.Effects;
+namespace Ws2812AudioReactiveClient.Effects.Fft;
 
-public class NoiseMoveReactiveEffect : BaseAudioReactiveEffect
+public class NoiseMoveReactiveEffect : BaseAudioReactiveEffect, IHasFftBinSelection
 {
     public override string Description => "	Using perlin noise as movement for different frequency bins";
     public override int Speed { set; get; } = 1000 / 60;

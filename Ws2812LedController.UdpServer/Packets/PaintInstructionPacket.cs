@@ -28,7 +28,7 @@ public class PaintInstructionPacket : IPacket
     public PaintInstructionMode PaintInstructionMode { set; get; }
     public ushort[] Indices { set; get; } = Array.Empty<ushort>();
     public uint[] Colors { set; get; } = Array.Empty<uint>();
-    public RenderMode RenderMode { set; get; } = RenderMode.AnonymousTask;
+    public RenderMode RenderMode { set; get; } = RenderMode.ManagedTask;
     
     public PacketTypeId TypeId => PacketTypeId.PaintInstruction;
     /* Minimum size */

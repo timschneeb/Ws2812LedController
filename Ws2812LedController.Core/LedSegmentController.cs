@@ -57,20 +57,19 @@ public class LedSegmentController : IDisposable
     
     public async Task PowerAsync(bool power)
     {
-        if(/*!PowerEffect.CancellationMethod.Token.IsCancellationRequested && */
-           ((CurrentState == PowerState.PoweringOff && !power) || (CurrentState == PowerState.PoweringOn && power)))
+        switch (CurrentState)
         {
-            Console.WriteLine("LedSegmentController.PowerAsync: Already powering down/up. Skipping request");
-            return;
-        } 
-
-        if((CurrentState == PowerState.Off && !power) || (CurrentState == PowerState.On && power))
-        {
-            Console.WriteLine("LedSegmentController.PowerAsync: Already powered down/up. Re-render current state without animation");
-            await SetEffectAsync(
-                new NullPowerEffect(){ TargetState = CurrentState }, CancelMode.Now, true, LayerId.PowerSwitchLayer);
-            return;
-        }    
+            case PowerState.PoweringOff when !power:
+            case PowerState.PoweringOn when power:
+                Console.WriteLine("LedSegmentController.PowerAsync: Already powering down/up. Skipping request");
+                return;
+            case PowerState.Off when !power:
+            case PowerState.On when power:
+                Console.WriteLine("LedSegmentController.PowerAsync: Already powered down/up. Re-render current state without animation");
+                await SetEffectAsync(
+                    new NullPowerEffect(){ TargetState = CurrentState }, CancelMode.Now, true, LayerId.PowerSwitchLayer);
+                return;
+        }
 
         CurrentState = power ? PowerState.PoweringOn : PowerState.PoweringOff;
 
@@ -84,21 +83,17 @@ public class LedSegmentController : IDisposable
         {
             if (!cancelled)
             {
-                Console.WriteLine("OnFinished: Success");
                 CurrentState = target;
             }
             else
             {
                 /* Revert state due to cancellation */
-                Console.WriteLine("OnFinished: Cancelled");
                 CurrentState = !power ? PowerState.On : PowerState.Off;
             }
-            Console.WriteLine("CurrentState after OnFinished: " + CurrentState);
-
+            
             PowerEffect.Finished -= OnFinished;
         }
-
-        Console.WriteLine("CurrentState before SetEffectAsync: " + CurrentState);
+        
         PowerEffect.Finished += OnFinished;
         await SetEffectAsync(PowerEffect, CancelMode.Now, true, LayerId.PowerSwitchLayer);
     }

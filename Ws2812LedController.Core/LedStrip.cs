@@ -4,7 +4,6 @@ using System.Drawing;
 using Iot.Device.Ws28xx;
 using Ws2812LedController.Core.Colors;
 using Ws2812LedController.Core.Model;
-using Ws2812LedController.Core.Utils;
 
 namespace Ws2812LedController.Core;
 
@@ -44,16 +43,16 @@ public class LedStrip
             Canvas = new BitmapWrapper(_device.Image);
         }
 
-        _renderTask = Task.Run(RenderTask);
         FullSegment = new LedSegment(0, width, this);
+        _renderTask = Task.Run(RenderTask);
     }
 
     public LedStrip(ICustomStrip customStrip)
     {
         _customDevice = customStrip;
-        _renderTask = Task.Run(RenderTask);
-        Canvas = customStrip.Canvas;
         FullSegment = new LedSegment(0, customStrip.Canvas.Width, this);
+        Canvas = customStrip.Canvas;
+        _renderTask = Task.Run(RenderTask);
     }
 
     public LedSegment CreateSegment(int start, int length)
@@ -84,8 +83,6 @@ public class LedStrip
         return false;
     }
 
-    private int _cnt = 0;
-
     private async void RenderTask()
     {
         var stopwatch = new Stopwatch();
@@ -95,9 +92,9 @@ public class LedStrip
             stopwatch.Restart();
             Render();
             
-            var millis = stopwatch.ElapsedMilliseconds;
-            var wait = (int)(1000.0 / Framerate - millis);
-            // Console.WriteLine($"DRIFT: {millis}ms ->\t{wait}");
+            var drift = stopwatch.ElapsedMilliseconds;
+            var wait = (int)(1000.0 / Framerate - drift);
+            // Console.WriteLine($"DRIFT: {drift}ms ->\t{wait}");
             if (wait > 0)
             {
                 await Task.Delay(wait, _tokenSource.Token);
@@ -105,78 +102,37 @@ public class LedStrip
         }
     }
     
-    private static readonly int _layerCount = typeof(LayerId).GetEnumValues().Length;
+    private readonly int _layerCount = typeof(LayerId).GetEnumValues().Length;
 
     protected void Render()
     {
-        //lock (this)
+        for (var pxlIdx = 0; pxlIdx < Canvas.Width; pxlIdx++)
         {
-            _cnt++;
-            var self = _cnt;
-            //Console.WriteLine($"[Task {self}] Entered -------------------------------------");
-            
-            void PrintDebug(int layer, LedSegment segment, int segmentIdx, int pixel, Color cA, Color cB, Color cC)
+            var finalPixel = Color.Black;
+            for (var layer = 0; layer < _layerCount; layer++)
             {
-                 var msg =
-                        $"[Task {self}] Layer={(LayerId)layer}\tSegment=({segmentIdx})->{segment.Id}\tPixel={pixel} \tColorOld={cA}\tColorCur={cB}\tA={cB.A} ->\t{cC}";
-                    Console.WriteLine(msg);
-            }
-            
-            for (var pxlIdx = 0; pxlIdx < Canvas.Width; pxlIdx++)
-            {
-                var finalPixel = Color.Black;
-                for (var layer = 0; layer < _layerCount; layer++)
+                var pixel = FullSegment.Layers[layer].IsActive
+                    ? FullSegment.Layers[layer].LayerState[pxlIdx]
+                    : Color.FromArgb(0, 0, 0, 0);
+                for (var segIdx = 0; segIdx < SubSegments.Count; segIdx++)
                 {
-                    var pixel = FullSegment.Layers[layer].IsActive
-                        ? FullSegment.Layers[layer].LayerState[pxlIdx]
-                        : Color.FromArgb(0, 0, 0, 0);
-                    for (var segIdx = 0; segIdx < SubSegments.Count; segIdx++)
+                    var seg = SubSegments[segIdx];
+                    if (!seg.Layers[layer].IsActive || !seg.ContainsAbsolutePixel(pxlIdx))
                     {
-                        var seg = SubSegments[segIdx];
-                        if (!seg.Layers[layer].IsActive || !seg.ContainsAbsolutePixel(pxlIdx))
-                        {
-                            continue;
-                        }
-
-                        var relPxlIdx = seg.ToRelativeIndex(pxlIdx);
-
-                        //Console.WriteLine($"Segment.Id={seg.Id};\tAbsPixelIdx={pxlIdx} ->\tRelPixelIdx={relPxlIdx}");
-                        var next = seg.Layers[layer].LayerState[relPxlIdx];
-                        pixel = ColorBlend.Blend(pixel, next, next.A, false);
-
-                        // PrintDebug(layer, seg, segIdx, pxlIdx, pixel, next, pixel);
+                        continue;
                     }
 
-                    finalPixel = ColorBlend.Blend(finalPixel, pixel, pixel.A, true);
+                    var relPxlIdx = seg.ToRelativeIndex(pxlIdx);
+                    var next = seg.Layers[layer].LayerState[relPxlIdx];
+                    pixel = ColorBlend.Blend(pixel, next, next.A, false);
                 }
-                Canvas.SetPixel(pxlIdx, finalPixel);
- 
-                //Console.WriteLine($"[Task {self}] Layer {(LayerId)layer} done -------------------------------------");
+
+                finalPixel = ColorBlend.Blend(finalPixel, pixel, pixel.A, true);
             }
 
-            //Console.WriteLine($"[Task {self}] Exited -------------------------------------");
+            Canvas.SetPixel(pxlIdx, finalPixel, FullSegment.MaxBrightness /* TODO brightness */);
         }
 
-        /* foreach (var seg in SubSegments)
-         {
-             for (var i = 0; i < Width; i++)
-             {
-                 var pixel = Layers[0].LayerState[i];
-                 for (var j = 1; j < Layers.Length; j++)
-                 {
-                     if (!Layers[j].IsActive)
-                     {
-                         continue;
-                     }
-                 
-                     var next = Layers[j].LayerState[i];
-                     pixel = ColorBlend.Blend(pixel, next, next.A, true);
-                 }
-             
-                 Strip.Canvas.SetPixel(RelStart + i, pixel, MaxBrightness, UseGammaCorrection);
-             }
-             //Canvas.CopyFrom(seg.Canvas, seg.RelStart, seg.Width, true);
-         }*/
         _device?.Update();
         _customDevice?.Render();
         ActiveCanvasChanged?.Invoke(this, Canvas.State);

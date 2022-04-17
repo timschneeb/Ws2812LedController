@@ -23,8 +23,6 @@ public class CRGBPalette16
 		byte green1 = entry.G;
 		byte blue1 = entry.B;
 
-		// Console.WriteLine($"index={index}\thi4={hi4}\tlo4={lo4} -> {entry}");
-		
 		if (blend)
 		{
 

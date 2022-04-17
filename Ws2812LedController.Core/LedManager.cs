@@ -35,6 +35,16 @@ public class LedManager
         return _segments.FirstOrDefault(x => x?.Name == name, null);
     }
 
+    public Task PowerAllAsync(bool state, params LedSegmentController[] ctrls)
+    {
+        return Task.WhenAll((from seg in ctrls select seg.PowerAsync(state)).ToList());
+    }
+    
+    public Task PowerAllAsync(bool state, params string[] names)
+    {
+        return Task.WhenAll(names.Select(name => Get(name)?.PowerAsync(state)).Where(task => task != null).Cast<Task>().ToList());
+    }
+
     public void MirrorTo(string source, string target)
     {
         var targetCtrl = _segments.FirstOrDefault(x => x.Name == target);

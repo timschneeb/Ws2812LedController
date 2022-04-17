@@ -7,7 +7,7 @@ namespace Ws2812LedController.Core.Model;
  * [1] Exclusive ENET layer; reserved for realtime effects via network
  * [0] Base layer; user-controlled space
  */
-public enum LayerId : int
+public enum LayerId
 {
     BaseLayer = 0,
     ExclusiveEnetLayer = 1,

@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using EvDevSharp;
+using EvDevSharp.EventArgs;
 
 namespace Ws2812LedController.Lirc;
 
@@ -24,8 +25,8 @@ public class IrReceiver
     public int KeyHoldTimeout { set; get; } = 650;
 
     private int _previousKeyCode = 0;
-    private EvDevDevice? _device;
-    private Stopwatch _stopwatch = new();
+    private readonly EvDevDevice? _device;
+    private readonly Stopwatch _stopwatch = new();
 
     public IrReceiver() : this(CreateDevice("gpio_ir_recv")) {}
     public IrReceiver(EvDevDevice? dev)

@@ -1,8 +1,8 @@
-using System;
+using EvDevSharp.Enums;
 
-namespace EvDevSharp;
+namespace EvDevSharp.EventArgs;
 
-public class OnSynEventArgs : EventArgs
+public class OnSynEventArgs : System.EventArgs
 {
     public OnSynEventArgs(EvDevSynCode code, int value) =>
         (Code, Value) = (code, value);

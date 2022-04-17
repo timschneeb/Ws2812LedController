@@ -1,24 +1,19 @@
-using System.Collections.Concurrent;
-using System.Diagnostics;
-using System.Drawing;
-using Ws2812AudioReactiveClient.FastLedCompatibility;
+using Ws2812AudioReactiveClient.Effects.Base;
+using Ws2812AudioReactiveClient.Model;
 using Ws2812LedController.Core;
-using Ws2812LedController.Core.Colors;
-using Ws2812LedController.Core.Effects.Base;
 using Ws2812LedController.Core.FastLedCompatibility;
 using Ws2812LedController.Core.Model;
 using Ws2812LedController.Core.Utils;
 
-namespace Ws2812AudioReactiveClient.Effects;
+namespace Ws2812AudioReactiveClient.Effects.Volume;
 
-public class JugglesReactiveEffect : BaseAudioReactiveEffect
+public class JugglesReactiveEffect : BaseAudioReactiveEffect, IHasVolumeAnalysis
 {
     public override string Description => "Simple scanning light with brightness derived from volume levels";
     public override int Speed { set; get; } = 1000 / 60;
     public int AnimationSpeed { set; get; } = 64;
-    public byte Intensity { set; get; } = 32;
-    public int MinPeakMagnitude { set; get; } = 100;
-    public int MaxPeakMagnitude { set; get; } = 8000;
+    public byte Count { set; get; } = 2;
+    public IVolumeAnalysisOption VolumeAnalysisOptions { set; get; } = new AgcVolumeAnalysisOption(64);
     public CRGBPalette16 Palette { set; get; } = new(CRGBPalette16.Palette.Lava);
     
     protected override async Task<int> PerformFrameAsync(LedSegmentGroup segment, LayerId layer)
@@ -34,10 +29,15 @@ public class JugglesReactiveEffect : BaseAudioReactiveEffect
             segment.SetPixel(i, Scale.nscale8x3(segment.PixelAt(i, layer), 255 - /*fadeBy*/ 31),layer);
         } 
         
-        for (var i=0; i<Intensity/32+1; i++)
+        for (var i=0; i < Count; i++)
         {
-            var tmpSound = SampleAvg.Map(MinPeakMagnitude, MaxPeakMagnitude, 0, 255, true);//(soundAgc) ? sampleAgc : sampleAvg;
-            var color = Palette.ColorFromPalette((byte)(Time.Millis() / 4 + i * 2), (byte)tmpSound, TBlendType.None);
+            byte strength = VolumeAnalysisOptions switch
+            {
+                AgcVolumeAnalysisOption agc => (byte)(SampleAgc * agc.Intensity / 64.0).Clamp(0, 255),
+                FixedVolumeAnalysisOption fix => (byte)SampleAvg.Map(fix.MinimumMagnitude, fix.MaximumMagnitude, 0, 255, true),
+                _ => 0
+            };
+            var color = Palette.ColorFromPalette((byte)(Time.Millis() / 4 + i * 2), (byte)strength, TBlendType.None);
             segment.SetPixel(Beat.beatsin16((ushort)(AnimationSpeed/4+i*2),0,(ushort)(segment.Width-1)), color, layer);
         }
         

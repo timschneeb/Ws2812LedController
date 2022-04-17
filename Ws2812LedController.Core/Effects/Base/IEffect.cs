@@ -68,10 +68,9 @@ public abstract class IEffect
             
             Finished?.Invoke(this, false);
         }
-        catch (TaskCanceledException ex)
+        catch (TaskCanceledException)
         {
             Finished?.Invoke(this, true);
-            Console.WriteLine("IEffect.PerformAsync: TaskCanceledException received");
         }
     }
 }

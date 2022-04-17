@@ -5,7 +5,7 @@ namespace Ws2812AudioReactiveClient.Dsp;
 */
 public class FftCalibration
 {
-    private double[] _fftMean;
+    private readonly double[] _fftMean;
 
     public FftCalibration(int binLength)
     {

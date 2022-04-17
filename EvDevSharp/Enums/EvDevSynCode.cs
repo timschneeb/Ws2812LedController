@@ -1,4 +1,4 @@
-namespace EvDevSharp;
+namespace EvDevSharp.Enums;
 
 public enum EvDevSynCode
 {

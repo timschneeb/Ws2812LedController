@@ -1,15 +1,11 @@
-using System.Collections.Concurrent;
-using System.Diagnostics;
-using System.Drawing;
-using Ws2812AudioReactiveClient.FastLedCompatibility;
+using Ws2812AudioReactiveClient.Effects.Base;
+using Ws2812AudioReactiveClient.Utils;
 using Ws2812LedController.Core;
-using Ws2812LedController.Core.Colors;
-using Ws2812LedController.Core.Effects.Base;
 using Ws2812LedController.Core.FastLedCompatibility;
 using Ws2812LedController.Core.Model;
 using Ws2812LedController.Core.Utils;
 
-namespace Ws2812AudioReactiveClient.Effects;
+namespace Ws2812AudioReactiveClient.Effects.Fft;
 
 public class RocktavesReactiveEffect : BaseAudioReactiveEffect
 {
@@ -32,7 +28,6 @@ public class RocktavesReactiveEffect : BaseAudioReactiveEffect
         
         var frTemp = FftMajorPeak[0];
         byte octCount = 0; 
-        Console.WriteLine(FftMajorPeak[1]);
         var volTemp = FftMajorPeak[1].Map(3000, 8000, 100, 255);
 
         while (frTemp > 249) {
@@ -44,8 +39,6 @@ public class RocktavesReactiveEffect : BaseAudioReactiveEffect
         frTemp = Math.Abs(frTemp * 2.1);           // Fudge factors to compress octave range starting at 0 and going to 255;
         
         var loc = Beat.beatsin16((ushort)(8 + octCount * 4) , 0, (ushort)(segment.Width - 1), 0, (ushort)(octCount * 8));
-        // Console.WriteLine($"Octave count: {octCount}\tFrTemp: {frTemp}\tBeat: {loc}\tPhase offset: {(byte)(octCount*8)} \tBPM: {(ushort)(8 + octCount * 4)}");
-
         var newColor = Conversions.ColorFromHSV((byte)frTemp, 255, volTemp);
         segment.SetPixel(loc, Math8.AddColor(segment.PixelAt(loc, layer), newColor), layer);
       

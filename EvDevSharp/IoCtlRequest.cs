@@ -1,3 +1,5 @@
+using EvDevSharp.Enums;
+
 namespace EvDevSharp;
 
 internal static class IoCtlRequest

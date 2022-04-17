@@ -1,26 +1,23 @@
-using System.Collections.Concurrent;
-using System.Diagnostics;
 using System.Drawing;
 using Ws2812AudioReactiveClient.Dsp;
-using Ws2812AudioReactiveClient.FastLedCompatibility;
+using Ws2812AudioReactiveClient.Effects.Base;
+using Ws2812AudioReactiveClient.Utils;
 using Ws2812LedController.Core;
 using Ws2812LedController.Core.Colors;
-using Ws2812LedController.Core.Effects.Base;
 using Ws2812LedController.Core.Model;
 using Ws2812LedController.Core.Utils;
 
-namespace Ws2812AudioReactiveClient.Effects;
+namespace Ws2812AudioReactiveClient.Effects.Fft;
 
-public class WaterfallReactiveEffect : BaseAudioReactiveEffect
+public class WaterfallReactiveEffect : BaseAudioReactiveEffect, IHasFftBinSelection, IHasPeakDetection, IHasFrequencyLimits
 {
     public override string Description => "FFT version of a Waterfall";
     public override int Speed { set; get; } = 1000 / 60;
-    public FftCBinSelector FftCBinSelector { set; get; } = new(0);
     public bool ColorBasedOnHz { set; get; } = false;
-    public int MaxVolume { set; get; } = 128;
+    public FftCBinSelector FftCBinSelector { set; get; } = new(0);
+    public double Threshold { set; get; } = 4000;
     public int StartFrequency { set; get; } = 93;
     public int EndFrequency { set; get; } = 5120;
-    
 
     protected override async Task<int> PerformFrameAsync(LedSegmentGroup segment, LayerId layer)
     {
@@ -48,7 +45,7 @@ public class WaterfallReactiveEffect : BaseAudioReactiveEffect
                 (byte)((int)FftMajorPeak[1] >> 4));
         }
         
-        if (!fftNoData && IsFftPeak(FftCBinSelector, MaxVolume))
+        if (!fftNoData && IsFftPeak(FftCBinSelector, Threshold))
         {
             segment.SetPixel(segment.Width - 1, Conversions.ColorFromHSV(92, 92, 92), layer);
         }

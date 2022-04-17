@@ -1,8 +1,8 @@
-using System;
+using EvDevSharp.Enums;
 
-namespace EvDevSharp;
+namespace EvDevSharp.EventArgs;
 
-public class OnRelativeEventArgs : EventArgs
+public class OnRelativeEventArgs : System.EventArgs
 {
     public OnRelativeEventArgs(EvDevRelativeAxisCode axis, int value) =>
         (Axis, Value) = (axis, value);

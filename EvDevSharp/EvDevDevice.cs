@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
+using EvDevSharp.Enums;
 using EvDevSharp.InteropStructs;
 using static EvDevSharp.IoCtlRequest;
 

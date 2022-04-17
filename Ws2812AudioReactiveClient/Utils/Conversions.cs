@@ -1,6 +1,6 @@
 using System.Drawing;
 
-namespace Ws2812AudioReactiveClient.FastLedCompatibility;
+namespace Ws2812AudioReactiveClient.Utils;
 
 public static class Conversions
 {
@@ -13,8 +13,15 @@ public static class Conversions
     public static void HsvToRgb(double h, double S, double V, out int r, out int g, out int b)
     {    
         double H = h;
-        while (H < 0) { H += 360; };
-        while (H >= 360) { H -= 360; };
+        while (H < 0)
+        {
+            H += 360;
+        }
+        while (H >= 360)
+        {
+            H -= 360;
+            
+        }
         double R, G, B;
         if (V <= 0)
         { R = G = B = 0; }
@@ -106,8 +113,11 @@ public static class Conversions
     /// </summary>
     private static int Clamp(int i)
     {
-        if (i < 0) return 0;
-        if (i > 255) return 255;
-        return i;
+        return i switch
+        {
+            < 0 => 0,
+            > 255 => 255,
+            _ => i
+        };
     }
 }

@@ -60,19 +60,19 @@ public class EnetServer
                         break;
 
                     case EventType.Connect:
-                        Console.WriteLine("Client connected - ID: " + netEvent.Peer.ID + ", IP: " + netEvent.Peer.IP);
+                        Console.WriteLine("EnetServer.ReceiverLoop: Client connected - ID: " + netEvent.Peer.ID + ", IP: " + netEvent.Peer.IP);
                         break;
 
                     case EventType.Disconnect:
-                        Console.WriteLine("Client disconnected - ID: " + netEvent.Peer.ID + ", IP: " + netEvent.Peer.IP);
+                        Console.WriteLine("EnetServer.ReceiverLoop: Client disconnected - ID: " + netEvent.Peer.ID + ", IP: " + netEvent.Peer.IP);
                         break;
 
                     case EventType.Timeout:
-                        Console.WriteLine("Client timeout - ID: " + netEvent.Peer.ID + ", IP: " + netEvent.Peer.IP);
+                        Console.WriteLine("EnetServer.ReceiverLoop: Client timeout - ID: " + netEvent.Peer.ID + ", IP: " + netEvent.Peer.IP);
                         break;
 
                     case EventType.Receive:
-                        //Console.WriteLine("Packet received from - ID: " + netEvent.Peer.ID + ", IP: " + netEvent.Peer.IP + ", Channel ID: " + netEvent.ChannelID + ", Data length: " + netEvent.Packet.Length);
+                        //Console.WriteLine("EnetServer.ReceiverLoop: Packet received from - ID: " + netEvent.Peer.ID + ", IP: " + netEvent.Peer.IP + ", Channel ID: " + netEvent.ChannelID + ", Data length: " + netEvent.Packet.Length);
                         var packet = IPacket.FromEnetPacket(netEvent.Packet);
                         /*var ba = packet.Encode();
                         var hex = new StringBuilder(ba.Length * 2);

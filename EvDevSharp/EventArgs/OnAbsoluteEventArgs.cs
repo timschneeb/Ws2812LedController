@@ -1,8 +1,8 @@
-using System;
+using EvDevSharp.Enums;
 
-namespace EvDevSharp;
+namespace EvDevSharp.EventArgs;
 
-public class OnAbsoluteEventArgs : EventArgs
+public class OnAbsoluteEventArgs : System.EventArgs
 {
     public OnAbsoluteEventArgs(EvDevAbsoluteAxisCode axis, int value) =>
         (Axis, Value) = (axis, value);
