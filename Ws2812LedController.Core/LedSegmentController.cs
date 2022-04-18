@@ -12,13 +12,13 @@ public class LedSegmentController : IDisposable
     public string Name { get; }
     public LedSegmentGroup SegmentGroup { get; }
     public LedSegment SourceSegment => SegmentGroup.MasterSegment;
-    public IEffect?[] CurrentEffects { get; }
+    public BaseEffect?[] CurrentEffects { get; }
     public BasePowerEffect PowerEffect { set; get; } = new NullPowerEffect();
 
     public PowerState CurrentState { private set; get; }
 
     private readonly Task[] _loop;
-    private readonly ConcurrentQueue<IEffect>[] _queue;
+    private readonly ConcurrentQueue<BaseEffect>[] _queue;
     private readonly CancellationTokenSource _cancelSource = new();
 
     public LedSegmentController(string name, LedSegment segment) : this(name, new LedSegmentGroup(segment)) {}
@@ -29,13 +29,13 @@ public class LedSegmentController : IDisposable
         
         var layerCount = segmentGroup.MasterSegment.Layers.Length;
         _loop = new Task[layerCount];
-        _queue = new ConcurrentQueue<IEffect>[layerCount];
-        CurrentEffects = new IEffect[layerCount];
+        _queue = new ConcurrentQueue<BaseEffect>[layerCount];
+        CurrentEffects = new BaseEffect[layerCount];
         
         for (var i = 0; i < layerCount; i++)
         {
             var layer = (LayerId)i;
-            _queue[i] = new ConcurrentQueue<IEffect>();
+            _queue[i] = new ConcurrentQueue<BaseEffect>();
             _loop[i] = Task.Run(() => ProcessEvents(layer), _cancelSource.Token);
         }
     }
@@ -98,7 +98,7 @@ public class LedSegmentController : IDisposable
         await SetEffectAsync(PowerEffect, CancelMode.Now, true, LayerId.PowerSwitchLayer);
     }
 
-    public async Task SetEffectAsync(IEffect effect, CancelMode cancelMode = CancelMode.Now, bool noPowerOn = false, LayerId layer = LayerId.BaseLayer)
+    public async Task SetEffectAsync(BaseEffect effect, CancelMode cancelMode = CancelMode.Now, bool noPowerOn = false, LayerId layer = LayerId.BaseLayer)
     {
         SegmentGroup.MasterSegment.Strip.Canvas.ExclusiveMode = false;
         

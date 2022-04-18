@@ -6,7 +6,7 @@ using Ws2812LedController.Core.Model;
 
 namespace Ws2812LedController.Core.Effects;
 
-public class Comet : IEffect
+public class Comet : BaseEffect
 {
     public override string Description => "Firing comets from one end";
     public override int Speed { get; set; } = 1000;

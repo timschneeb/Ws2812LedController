@@ -5,7 +5,7 @@ using Ws2812LedController.Core.Model;
 
 namespace Ws2812LedController.Core.Effects.Sparkle;
 
-public class HyperSparkle : IEffect
+public class HyperSparkle : BaseEffect
 {
     public override string Description => "Like flash sparkle. With more flash.";
     public override int Speed { get; set; } = 1500;

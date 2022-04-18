@@ -6,7 +6,7 @@ using Ws2812LedController.Core.Model;
 
 namespace Ws2812LedController.Core.Effects.Base;
 
-public abstract class BaseFirework : IEffect
+public abstract class BaseFirework : BaseEffect
 {
     public override int Speed { get; set; } = 1000;
     

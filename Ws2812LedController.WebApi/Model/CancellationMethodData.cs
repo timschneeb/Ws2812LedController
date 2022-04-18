@@ -16,7 +16,7 @@ public class CancellationMethodData
         Once
     }
     
-    public ICancellationMethod? Inflate()
+    public BaseCancellationMethod? Inflate()
     {
         try
         {
@@ -39,7 +39,7 @@ public class CancellationMethodData
 
 public static class CancellationMethodExtensions
 {
-    public static CancellationMethodData Deflate(this ICancellationMethod method)
+    public static CancellationMethodData Deflate(this BaseCancellationMethod method)
     {
         CancellationMethodData.Type cancelType;
         long? parameter = null;

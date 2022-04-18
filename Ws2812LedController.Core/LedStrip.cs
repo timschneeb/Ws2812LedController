@@ -11,11 +11,8 @@ public class LedStrip
 {
     public LedSegment FullSegment { get; }
     public List<LedSegment> SubSegments { get; } = new();
-
     public event EventHandler<Color[]>? ActiveCanvasChanged;
-
     public BitmapWrapper Canvas { get; }
-
     public int Framerate { set; get; } = 60;
     
     private readonly Ws28xx? _device;

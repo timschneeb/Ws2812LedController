@@ -7,7 +7,7 @@ using Ws2812LedController.Core.Utils;
 
 namespace Ws2812LedController.Core.Effects;
 
-public class RunningLights : IEffect
+public class RunningLights : BaseEffect
 {
     public override string Description => "Running lights effect with smooth sine transition.";
     public override int Speed { get; set; } = 500;

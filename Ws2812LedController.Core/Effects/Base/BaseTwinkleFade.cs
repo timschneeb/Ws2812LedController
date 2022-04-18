@@ -5,7 +5,7 @@ using Ws2812LedController.Core.Model;
 
 namespace Ws2812LedController.Core.Effects.Base;
 
-public abstract class BaseTwinkleFade : IEffect
+public abstract class BaseTwinkleFade : BaseEffect
 {
     public override int Speed { get; set; } = 200;
     public SizeOption Size { get; set; } = SizeOption.Small;

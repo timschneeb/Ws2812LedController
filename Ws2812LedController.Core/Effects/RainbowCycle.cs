@@ -6,7 +6,7 @@ using Ws2812LedController.Core.Model;
 
 namespace Ws2812LedController.Core.Effects;
 
-public class RainbowCycle : IEffect
+public class RainbowCycle : BaseEffect
 {
     public override string Description => "Cycles a rainbow over the entire string of LEDs.";
     public override int Speed { get; set; } = 10000;

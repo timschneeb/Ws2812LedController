@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <LangVersion>preview</LangVersion>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <RootNamespace>Ws2812LedController.AudioReactive</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="FftSharp" Version="1.1.5" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\libsoundio-sharp\libsoundio-sharp\libsoundio-sharp.csproj" />
+      <ProjectReference Include="..\Ws2812LedController.UdpServer\Ws2812LedController.UdpServer.csproj" />
+    </ItemGroup>
+
+</Project>

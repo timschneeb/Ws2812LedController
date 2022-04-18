@@ -6,7 +6,7 @@ using Ws2812LedController.Core.Model;
 
 namespace Ws2812LedController.Core.Effects;
 
-public class MultiStrobe : IEffect
+public class MultiStrobe : BaseEffect
 {
     public override string Description => "Strobe effect with different strobe count and pause, controlled by speed";
     public override int Speed { get; set; } = 1000;

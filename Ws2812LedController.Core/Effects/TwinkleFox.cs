@@ -7,7 +7,7 @@ using Ws2812LedController.Core.Utils;
 
 namespace Ws2812LedController.Core.Effects;
 
-public class TwinkleFox : IEffect
+public class TwinkleFox : BaseEffect
 {
     public override string Description => "An adaptation of the FastLED twinkleFOX effect";
     public override int Speed { get; set; } = 1000;

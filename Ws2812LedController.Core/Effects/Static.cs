@@ -5,7 +5,7 @@ using Ws2812LedController.Core.Model;
 
 namespace Ws2812LedController.Core.Effects;
 
-public class Static : IEffect
+public class Static : BaseEffect
 {
     public override string Description => "Static color";
     public override int Speed { get; set; } = 100;

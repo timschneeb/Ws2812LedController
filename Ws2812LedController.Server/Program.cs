@@ -123,29 +123,6 @@ namespace Ws2812LedController.Console
                 case PacketTypeId.PaintInstruction:
                     if (arg is PaintInstructionPacket paint)
                     {
-                        if (paint.RenderMode == RenderMode.AnonymousTask)
-                        {
-                            Task.Run(() =>
-                            {
-                                switch (paint.PaintInstructionMode)
-                                {
-                                    case PaintInstructionMode.Full:
-                                        for (var i = 0; i < paint.Colors.Length; i++)
-                                        {
-                                            _mgr.Get("full")!.SegmentGroup.SetPixel(i, paint.Colors[i].ToColor(), paint.Layer);
-                                        }
-                                        break;
-                                    case PaintInstructionMode.Selective:
-                                        for (var i = 0; i < paint.Indices.Length; i++)
-                                        {
-                                            _mgr.Get("full")!.SegmentGroup.SetPixel(paint.Indices[i], paint.Colors[i].ToColor(), paint.Layer);
-                                        }
-                                        break;
-                                }
-                            });
-                            break;
-                        }
-                        
                         _syncLedReceiver.EnqueuePacket(paint);
                     }
                     break;

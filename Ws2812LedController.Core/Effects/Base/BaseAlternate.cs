@@ -4,7 +4,7 @@ using Ws2812LedController.Core.Model;
 
 namespace Ws2812LedController.Core.Effects.Base;
 
-public abstract class BaseAlternate : IEffect
+public abstract class BaseAlternate : BaseEffect
 {
     public override int Speed { get; set; } = 1000;
     

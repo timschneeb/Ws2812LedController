@@ -4,7 +4,7 @@ using Ws2812LedController.Core.Model;
 
 namespace Ws2812LedController.Core.Effects;
 
-public class Scan : IEffect
+public class Scan : BaseEffect
 {
     public override string Description => "Runs a block of pixels back and forth.";
     public override int Speed { get; set; } = 500;

@@ -5,7 +5,7 @@ using Ws2812LedController.Core.Model;
 
 namespace Ws2812LedController.Core.Effects;
 
-public class Blink : IEffect
+public class Blink : BaseEffect
 {
     public override string Description => "Alternate between two colors";
     public override int Speed { get; set; } = 2000;

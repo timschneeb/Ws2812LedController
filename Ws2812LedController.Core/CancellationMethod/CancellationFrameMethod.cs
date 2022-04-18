@@ -1,6 +1,6 @@
 namespace Ws2812LedController.Core.CancellationMethod;
 
-public class CancellationFrameMethod : ICancellationMethod
+public class CancellationFrameMethod : BaseCancellationMethod
 {
     public CancellationFrameMethod(long frameLimit)
     {

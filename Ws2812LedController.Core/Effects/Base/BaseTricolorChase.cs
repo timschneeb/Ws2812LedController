@@ -4,7 +4,7 @@ using Ws2812LedController.Core.Model;
 
 namespace Ws2812LedController.Core.Effects.Base;
 
-public abstract class BaseTricolorChase : IEffect
+public abstract class BaseTricolorChase : BaseEffect
 {
     public override int Speed { get; set; } = 500;
     

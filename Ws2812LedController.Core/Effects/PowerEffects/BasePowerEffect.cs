@@ -4,7 +4,7 @@ using Ws2812LedController.Core.Model;
 
 namespace Ws2812LedController.Core.Effects.PowerEffects;
 
-public abstract class BasePowerEffect : IEffect
+public abstract class BasePowerEffect : BaseEffect
 {
     public PowerState TargetState
     {

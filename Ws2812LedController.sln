@@ -21,9 +21,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ws2812LedController.UdpServ
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UdpProtocolClient", "UdpProtocolClient\UdpProtocolClient.csproj", "{4AA8DF5B-4632-49F6-81FD-A245A2C85909}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ws2812AudioReactiveClient", "Ws2812AudioReactiveClient\Ws2812AudioReactiveClient.csproj", "{21C77904-7EE6-41FC-BD26-DDDAD473BEF2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ws2812LedController.AudioReactive", "Ws2812LedController.AudioReactive\Ws2812LedController.AudioReactive.csproj", "{21C77904-7EE6-41FC-BD26-DDDAD473BEF2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libsoundio-sharp", "libsoundio-sharp\libsoundio-sharp\libsoundio-sharp.csproj", "{2933C1AA-5A46-41D9-890B-8099495A0684}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentAvalonia", "FluentAvalonia\FluentAvalonia\FluentAvalonia.csproj", "{041BCC0F-17FC-4BCD-8D9B-8D6D9B8CAE6A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ws2812AudioReactiveClient", "Ws2812AudioReactiveClient\Ws2812AudioReactiveClient.csproj", "{7421A56B-03EF-4EB9-9EF1-653B45FA61F0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -78,5 +82,13 @@ Global
 		{2933C1AA-5A46-41D9-890B-8099495A0684}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2933C1AA-5A46-41D9-890B-8099495A0684}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2933C1AA-5A46-41D9-890B-8099495A0684}.Release|Any CPU.Build.0 = Release|Any CPU
+		{041BCC0F-17FC-4BCD-8D9B-8D6D9B8CAE6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{041BCC0F-17FC-4BCD-8D9B-8D6D9B8CAE6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{041BCC0F-17FC-4BCD-8D9B-8D6D9B8CAE6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{041BCC0F-17FC-4BCD-8D9B-8D6D9B8CAE6A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7421A56B-03EF-4EB9-9EF1-653B45FA61F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7421A56B-03EF-4EB9-9EF1-653B45FA61F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7421A56B-03EF-4EB9-9EF1-653B45FA61F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7421A56B-03EF-4EB9-9EF1-653B45FA61F0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

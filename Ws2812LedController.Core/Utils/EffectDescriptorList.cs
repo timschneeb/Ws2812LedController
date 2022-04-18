@@ -12,7 +12,7 @@ public static class EffectDescriptorList
         Descriptors = Enumerate();
     }
 
-    public static EffectDescriptor? Create(IEffect? effect)
+    public static EffectDescriptor? Create(BaseEffect? effect)
     {
         if (effect == null)
         {
@@ -36,7 +36,7 @@ public static class EffectDescriptorList
     
     public static EffectDescriptor[] Enumerate()
     {
-        var effectClassTypes = typeof(IEffect).Assembly.GetTypes()
+        var effectClassTypes = typeof(BaseEffect).Assembly.GetTypes()
             .Where(t => t.Namespace?.StartsWith("Ws2812LedController.Core.Effects") ?? false)
             .Where(t => !t.IsAbstract && t.IsClass && t.GetProperties().Length > 0)
             .ToArray();
@@ -45,7 +45,7 @@ public static class EffectDescriptorList
         foreach (var type in effectClassTypes)
         {
             var temp = Activator.CreateInstance(type);
-            if (temp is IEffect effect)
+            if (temp is BaseEffect effect)
             {
                 var properties = new List<EffectProperty>();
                 foreach (var property in type.GetProperties())

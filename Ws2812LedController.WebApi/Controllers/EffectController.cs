@@ -76,7 +76,7 @@ public class EffectController : ControllerBase, IJsonOptionHelper
         }
         
         var temp = Activator.CreateInstance(desc.InternalType);
-        if (temp is not IEffect effect)
+        if (temp is not BaseEffect effect)
         {
             return new StatusCodeResult(500); 
         }

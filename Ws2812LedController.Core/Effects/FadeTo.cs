@@ -6,7 +6,7 @@ using Ws2812LedController.Core.Model;
 
 namespace Ws2812LedController.Core.Effects;
 
-public class FadeTo : IEffect
+public class FadeTo : BaseEffect
 {
     public override string Description => "Fade from current to new color";
     public override bool IsSingleShot => true;

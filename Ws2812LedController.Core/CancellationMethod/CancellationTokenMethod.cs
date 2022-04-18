@@ -1,5 +1,5 @@
 namespace Ws2812LedController.Core.CancellationMethod;
 
-public class CancellationTokenMethod : ICancellationMethod
+public class CancellationTokenMethod : BaseCancellationMethod
 {
 }

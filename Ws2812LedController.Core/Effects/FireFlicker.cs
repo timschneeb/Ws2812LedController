@@ -6,7 +6,7 @@ using Ws2812LedController.Core.Model;
 
 namespace Ws2812LedController.Core.Effects;
 
-public class FireFlicker : IEffect
+public class FireFlicker : BaseEffect
 {
     public override string Description => "Random flickering";
     public override int Speed { get; set; } = 1000;

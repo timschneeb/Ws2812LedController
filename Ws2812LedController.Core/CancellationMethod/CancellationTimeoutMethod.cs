@@ -4,7 +4,7 @@ using Timer = System.Timers.Timer;
 
 namespace Ws2812LedController.Core.CancellationMethod;
 
-public class CancellationTimeoutMethod : ICancellationMethod
+public class CancellationTimeoutMethod : BaseCancellationMethod
 {
     private readonly Timer _timer = new();
     

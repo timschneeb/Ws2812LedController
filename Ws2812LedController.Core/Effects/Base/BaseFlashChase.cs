@@ -5,7 +5,7 @@ using Ws2812LedController.Core.Model;
 
 namespace Ws2812LedController.Core.Effects.Base;
 
-public abstract class BaseFlashChase : IEffect
+public abstract class BaseFlashChase : BaseEffect
 {
     public override int Speed { get; set; } = 1000;
     

@@ -5,7 +5,7 @@ using Ws2812LedController.Core.Model;
 
 namespace Ws2812LedController.Core.Effects;
 
-public class ColorWipe : IEffect
+public class ColorWipe : BaseEffect
 {
     public override string Description => "Lights all LEDs one after another.";
     public override int Speed { get; set; } = 2000;

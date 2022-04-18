@@ -1,6 +1,6 @@
 namespace Ws2812LedController.Core.CancellationMethod;
 
-public class CancellationCycleMethod : ICancellationMethod
+public class CancellationCycleMethod : BaseCancellationMethod
 {
     public CancellationCycleMethod(long cycleLimit)
     {
