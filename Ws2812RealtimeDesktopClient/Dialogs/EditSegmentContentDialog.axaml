@@ -1,0 +1,35 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:Ws2812RealtimeDesktopClient.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             Padding="0, 10"
+             x:DataType="viewModels:EditSegmentDialogViewModel"
+             x:Class="Ws2812RealtimeDesktopClient.Dialogs.EditSegmentContentDialog">
+    <StackPanel Spacing="10" MinWidth="400">
+        <TextBox Watermark="Segment name"
+                 Text="{CompiledBinding Name}"
+                 AttachedToVisualTree="InputField_OnAttachedToVisualTree" />
+        <StackPanel Spacing="8" Orientation="Horizontal">
+            <TextBlock VerticalAlignment="Center">
+                Offset
+            </TextBlock>
+            <NumericUpDown Minimum="0"
+                           Value="{CompiledBinding Start}"
+                           ShowButtonSpinner="True"/>
+            <TextBlock VerticalAlignment="Center">
+                Length
+            </TextBlock>
+            <NumericUpDown Minimum="1"
+                           Value="{CompiledBinding Width}"
+                           ShowButtonSpinner="True"/>
+        </StackPanel>
+
+        <TextBlock>Duplicate contents to</TextBlock>
+        <TextBox Watermark="Names of target segments, comma-separated"
+                 Text="{CompiledBinding MirroredToCsv}"/>
+        <CheckBox Content="Invert X-axis"
+                  IsChecked="{CompiledBinding InvertX}"/>
+    </StackPanel>
+</UserControl>

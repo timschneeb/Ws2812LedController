@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Ws2812LedController.Core;
 using Ws2812LedController.Core.Effects.Base;
 using Ws2812LedController.Core.Model;
+using Ws2812LedController.Core.Model.Serializable;
 using Ws2812LedController.Core.Utils;
-using Ws2812LedController.WebApi.Model;
 
 namespace Ws2812LedController.WebApi.Controllers;
 

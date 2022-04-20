@@ -13,9 +13,11 @@ public class EnetClient
     
     private Task? _loop;
     private CancellationTokenSource _cancelSource = new();
-    
-    public ConcurrentQueue<IPacket> Queue { get; } = new();
-    public event EventHandler<IPacket>? PacketReceived; 
+    private ConcurrentQueue<IPacket> _queue { get; } = new();
+    public event EventHandler<IPacket>? PacketReceived;
+    public event EventHandler? Connected;
+    public event EventHandler? Disconnected;
+    public event EventHandler? Timeout;
 
     public EnetClient(string ip, ushort port = 32670)
     {
@@ -35,7 +37,7 @@ public class EnetClient
         _cancelSource = new CancellationTokenSource();
         _loop = Task.Run(ClientLoop);
         
-        Queue.Clear();
+        _queue.Clear();
         
         _peer = _client.Connect(_address);
     }
@@ -50,15 +52,26 @@ public class EnetClient
         await (_loop?.WaitAsync(CancellationToken.None) ?? Task.CompletedTask);
     }
 
+    public void Enqueue(IPacket packet)
+    {
+        if (_cancelSource.IsCancellationRequested)
+        {
+            // Seal queue
+            return;
+        }
+        
+        _queue.Enqueue(packet);
+    }
+    
     public void ClientLoop()
     {
-        while (!_cancelSource.Token.IsCancellationRequested) 
+        while (!_cancelSource.IsCancellationRequested || !_queue.IsEmpty) 
         {
             var polled = false;
 
             while (!polled)
             {
-                if (Queue.TryDequeue(out var nextPacket))
+                if (_queue.TryDequeue(out var nextPacket))
                 {
                     var enetPacket = default(Packet);
                     var payload = nextPacket.Encode();
@@ -91,14 +104,17 @@ public class EnetClient
 
                     case EventType.Connect:
                         Console.WriteLine("EnetClient.ClientLoop: Client connected to server");
+                        Connected?.Invoke(this, EventArgs.Empty);
                         break;
 
                     case EventType.Disconnect:
                         Console.WriteLine("EnetClient.ClientLoop: Client disconnected from server");
+                        Disconnected?.Invoke(this, EventArgs.Empty);
                         break;
 
                     case EventType.Timeout:
                         Console.WriteLine("EnetClient.ClientLoop: Client connection timeout");
+                        Timeout?.Invoke(this, EventArgs.Empty);
                         break;
 
                     case EventType.Receive:

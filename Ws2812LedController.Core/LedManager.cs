@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Drawing;
 
 namespace Ws2812LedController.Core;
 
@@ -20,16 +21,43 @@ public class LedManager
         RegisterSegment(name, strip.CreateSegment(start, width));
     }
     
-    public bool UnregisterSegment(string name)
+    public async Task<bool> UnregisterSegmentAsync(string name, LedStrip? strip)
     {
         foreach (var ctrl in _segments.FindAll(x => x.Name == name))
         {
+            await ctrl.TerminateLoopAsync(1000);
+            ctrl.SegmentGroup.FillAllLayers(Color.FromArgb(0,0,0,0));
+            strip?.RemoveSegment(ctrl.SourceSegment);
             ctrl.Dispose();
         }
         
         return _segments.RemoveAll(x => x.Name == name) > 0;
     }
+    
+    public async Task UnregisterAllSegmentsAsync(LedStrip? strip)
+    {
+        foreach (var ctrl in _segments)
+        {
+            await ctrl.TerminateLoopAsync(1000);
+            ctrl.SegmentGroup.FillAllLayers(Color.FromArgb(0,0,0,0));
+            strip?.RemoveSegment(ctrl.SourceSegment);
+            ctrl.Dispose();
+        }
+        
+        _segments.Clear();
+    }
 
+    public bool RenameSegment(string oldName, string newName)
+    {
+        var ctrl = Get(oldName);
+        if (ctrl == null)
+        {
+            return false;
+        }
+        ctrl.Name = newName;
+        return true;
+    }
+    
     public LedSegmentController? Get(string name)
     {
         return _segments.FirstOrDefault(x => x?.Name == name, null);
@@ -53,5 +81,13 @@ public class LedManager
         Debug.Assert(targetCtrl != null && sourceCtrl != null, "Source/target not found");
         
         sourceCtrl.MirrorTo(targetCtrl);
+    }
+
+    public void RemoveAllMirrors()
+    {
+        foreach (var segment in _segments)
+        {
+            segment.RemoveAllMirrors();
+        }
     }
 }

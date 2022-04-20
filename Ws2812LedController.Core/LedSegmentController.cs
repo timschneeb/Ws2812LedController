@@ -9,7 +9,7 @@ namespace Ws2812LedController.Core;
 
 public class LedSegmentController : IDisposable
 {
-    public string Name { get; }
+    public string Name { internal set; get; }
     public LedSegmentGroup SegmentGroup { get; }
     public LedSegment SourceSegment => SegmentGroup.MasterSegment;
     public BaseEffect?[] CurrentEffects { get; }

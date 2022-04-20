@@ -1,0 +1,98 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ui="using:FluentAvalonia.UI.Controls"
+             xmlns:input="clr-namespace:FluentAvalonia.UI.Input;assembly=FluentAvalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Ws2812RealtimeDesktopClient.Pages.SegmentPage">
+    <UserControl.Resources>
+        <input:StandardUICommand x:Key="DeleteCommand" Kind="Delete" Label="Delete"
+                                 Description="Delete segment" Command="{Binding DeleteItem}" />
+        <input:XamlUICommand x:Key="EditCommand" Label="Edit" IconSource="{StaticResource EditIcon}"
+                                 Description="Edit segment" Command="{Binding  DoEditCommand}" />
+        <input:XamlUICommand x:Key="AddCommand" Label="New" IconSource="{StaticResource NewIcon}"
+                             Description="Create new segment" Command="{Binding DoAddCommand}" />
+    </UserControl.Resources>
+
+    <DockPanel>
+        <Panel MinHeight="90" Name="HeaderRegion"
+               Background="{StaticResource TopLevelPageBackgroundImage}"
+               DockPanel.Dock="Top">
+            <Rectangle>
+                <Rectangle.Fill>
+                    <LinearGradientBrush StartPoint="0,0"
+                                         EndPoint="0,1365">
+                        <GradientStop Offset="0" Color="Transparent" />
+                        <GradientStop Offset="0.035" Color="{DynamicResource SolidBackgroundFillColorTertiary}" />
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+
+            <StackPanel>
+                <TextBlock Text="Segments"
+                           VerticalAlignment="Top"
+                           Classes="TitleTextBlockStyle"
+                           Padding="32 20 0 0" />
+                
+                <TextBlock Margin="32 0" Text="Split your LED strip into individual segments that can be addressed individually and overlap each other" TextWrapping="Wrap" />
+            </StackPanel>
+
+        </Panel>
+
+        <StackPanel Spacing="4" Margin="18 9"
+                    DockPanel.Dock="Top">
+            <StackPanel>
+                <ui:CommandBar DefaultLabelPosition="Right">
+                    <ui:CommandBar.PrimaryCommands>
+                        <ui:CommandBarButton Command="{StaticResource AddCommand}"  />
+                        <ui:CommandBarButton Command="{StaticResource EditCommand}"
+                                             CommandParameter="{Binding #ListBox1.SelectedItem}" />
+                        <ui:CommandBarButton Command="{StaticResource DeleteCommand}"
+                                             CommandParameter="{Binding #ListBox1.SelectedItem}" />
+
+                    </ui:CommandBar.PrimaryCommands>
+                </ui:CommandBar>
+                <ListBox Items="{Binding Segments}" Name="ListBox1" VirtualizationMode="None">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Border Background="Transparent">
+                                <Panel>
+                                    <Grid RowDefinitions="Auto,4,Auto" Margin="4 10">
+                                        <TextBlock Text="{Binding Name}"
+                                                   Classes="BaseTextBlockStyle"
+                                                   VerticalAlignment="Bottom"
+                                                   HorizontalAlignment="Left"
+                                                   TextTrimming="CharacterEllipsis" />
+
+                                        <TextBlock Text="{Binding Description}"
+                                                   Classes="CaptionTextBlockStyle"
+                                                   Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                                   VerticalAlignment="Top"
+                                                   TextWrapping="Wrap"
+                                                   Grid.Row="2" />
+
+                                    </Grid>
+
+                                    <StackPanel Orientation="Horizontal" 
+                                                HorizontalAlignment="Right">
+                                        <ui:CommandBarButton HorizontalAlignment="Right"
+                                                             Command="{StaticResource EditCommand}"
+                                                             CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=DataContext}"
+                                                             HotKey="{x:Null}" />   
+                                        <ui:CommandBarButton HorizontalAlignment="Right"
+                                                             Command="{StaticResource DeleteCommand}"
+                                                             CommandParameter="{Binding RelativeSource={RelativeSource Self}, Path=DataContext}"
+                                                             HotKey="{x:Null}" />
+                                    </StackPanel>
+                                </Panel>
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </StackPanel>
+
+        </StackPanel>
+
+    </DockPanel>
+</UserControl>

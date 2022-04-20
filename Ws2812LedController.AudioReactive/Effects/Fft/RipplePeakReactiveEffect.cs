@@ -20,7 +20,7 @@ public class RipplePeakReactiveEffect : BaseAudioReactiveEffect, IHasFftBinSelec
     public FftCBinSelector FftCBinSelector { set; get; } = new(0);
     public double Threshold { get; set; } = 100;
     public CRGBPalette16 Palette { set; get; } = new(CRGBPalette16.Palette.Lava);
-    public bool RainbowColors { set; get; } = true;
+    public bool RainbowColors { set; get; } = false;
 
     public RipplePeakReactiveEffect()
     {

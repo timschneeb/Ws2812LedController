@@ -9,14 +9,14 @@ namespace Ws2812LedController.Core;
 public class LedSegment
 {
     /* Absolute start index relative to the complete strip */
-    public int AbsStart { get; }
+    public int AbsStart { private set; get; }
     /* Absolute end index */
     public int AbsEnd => AbsStart + Width - 1;
     
-    public int Width { get; }
+    public int Width { private set; get; }
     public string Id => $"{AbsStart}..{AbsEnd}";
     public Color[] State => Strip.Canvas.State[AbsStart..AbsEnd];
-    public BitmapWrapper Canvas { get; }
+    public BitmapWrapper Canvas { private set; get; } = null!;
 
     public bool Enabled { set; get; } = true;
     public LedLayer[] Layers { get; } = new LedLayer[typeof(LayerId).GetEnumNames().Length];
@@ -50,30 +50,23 @@ public class LedSegment
 
     public LedSegment(int absStart, int length, LedStrip strip)
     {
-        AbsStart = absStart;
-        Width = length;
         Strip = strip;
+        Resize(absStart, length);
+    }
+
+    public void Resize(int offset, int length)
+    {
+        AbsStart = offset;
+        Width = length;
+        
         Canvas = new BitmapWrapper(Width);
+        Canvas.Clear(Color.FromArgb(0,0,0,0));
 
         for (var i = 0; i < Layers.Length; i++)
         {
             Layers[i] = new LedLayer(length);
         }
     }
-
-    public void MuteSection(bool mute, int start, int end, bool absolute)
-    {
-        if (absolute)
-        {
-            start = ToRelativeIndex(start);
-            end = ToRelativeIndex(end);
-        }
-
-        for (var i = start; i <= end; i++)
-        {
-            Canvas.MutedPixels[i] = mute;
-        }
-    }  
     
     public bool ContainsAbsolutePixel(int absoluteIndex)
     {

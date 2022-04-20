@@ -1,0 +1,84 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\FluentAvalonia\FluentAvalonia\FluentAvalonia.csproj" />
+      <ProjectReference Include="..\Ws2812LedController.AudioReactive\Ws2812LedController.AudioReactive.csproj" />
+      <ProjectReference Include="..\Ws2812LedController.Core\Ws2812LedController.Core.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <AvaloniaResource Include="Assets\**" />
+        <AvaloniaResource Include="Pages\SampleCode\**" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Avalonia" Version="0.10.13" />
+        <PackageReference Include="Avalonia.AvaloniaEdit" Version="0.10.12.1" />
+        <PackageReference Include="Avalonia.Desktop" Version="0.10.13" />
+        <PackageReference Include="Avalonia.Diagnostics" Version="0.10.13" />
+        <PackageReference Include="Config.Net" Version="4.15.0" />
+        <PackageReference Include="Config.Net.Json" Version="4.15.0" />
+    </ItemGroup>
+    <ItemGroup>
+      <Compile Update="Dialogs\EditSegmentContentDialog.axaml.cs">
+        <DependentUpon>ContentDialogInputExample.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+    </ItemGroup>
+    <ItemGroup>
+      <UpToDateCheckInput Remove="Pages\CoreControlPages\BasicInputControlsPage.axaml" />
+      <UpToDateCheckInput Remove="Pages\CoreControlPages\DataControlsPage.axaml" />
+      <UpToDateCheckInput Remove="Pages\CoreControlPages\DateTimeControlsPage.axaml" />
+      <UpToDateCheckInput Remove="Pages\CoreControlPages\ListControlsPage.axaml" />
+      <UpToDateCheckInput Remove="Pages\CoreControlPages\MenuControlsPage.axaml" />
+      <UpToDateCheckInput Remove="Pages\CoreControlPages\MiscControlsPage.axaml" />
+      <UpToDateCheckInput Remove="Pages\CoreControlPages\RangeControlsPage.axaml" />
+      <UpToDateCheckInput Remove="Pages\CoreControlPages\TextControlsPage.axaml" />
+      <UpToDateCheckInput Remove="Pages\CoreControlPages\ViewControlsPage.axaml" />
+      <UpToDateCheckInput Remove="Pages\SampleCode\CommandBar1.xaml.txt" />
+      <UpToDateCheckInput Remove="Pages\SampleCode\CommandBar2.xaml.txt" />
+      <UpToDateCheckInput Remove="Pages\SampleCode\CommandBar3.xaml.txt" />
+      <UpToDateCheckInput Remove="Pages\SampleCode\CommandBarFlyout.cs.txt" />
+      <UpToDateCheckInput Remove="Pages\SampleCode\CommandBarFlyout.xaml.txt" />
+      <UpToDateCheckInput Remove="Pages\SampleCode\ContentDialogUsageNotes.txt" />
+      <UpToDateCheckInput Remove="Pages\SampleCode\CoreWindow1.cs.txt" />
+      <UpToDateCheckInput Remove="Pages\SampleCode\CoreWindow2.cs.txt" />
+      <UpToDateCheckInput Remove="Pages\SampleCode\CoreWindow3.cs.txt" />
+      <UpToDateCheckInput Remove="Pages\SampleCode\CoreWindow3.xaml.txt" />
+      <UpToDateCheckInput Remove="Pages\SampleCode\CustomContentDialog.cs.txt" />
+      <UpToDateCheckInput Remove="Pages\SampleCode\DropDownButton.xaml.txt" />
+      <UpToDateCheckInput Remove="Pages\SampleCode\Frame.cs.txt" />
+      <UpToDateCheckInput Remove="Pages\SampleCode\Frame.xaml.txt" />
+      <UpToDateCheckInput Remove="Pages\SampleCode\GettingStarted.cs.txt" />
+      <UpToDateCheckInput Remove="Pages\SampleCode\GettingStarted.xaml.txt" />
+      <UpToDateCheckInput Remove="Pages\SampleCode\InfoBadge2.xaml.txt" />
+      <UpToDateCheckInput Remove="Pages\SampleCode\MenuFlyout.xaml.txt" />
+      <UpToDateCheckInput Remove="Pages\SampleCode\MenuFlyout2.xaml.txt" />
+      <UpToDateCheckInput Remove="Pages\SampleCode\NavView1.xaml.txt" />
+      <UpToDateCheckInput Remove="Pages\SampleCode\NavView2.xaml.txt" />
+      <UpToDateCheckInput Remove="Pages\SampleCode\NavView3.xaml.txt" />
+      <UpToDateCheckInput Remove="Pages\SampleCode\NavView4.xaml.txt" />
+      <UpToDateCheckInput Remove="Pages\SampleCode\NavView5.xaml.txt" />
+      <UpToDateCheckInput Remove="Pages\SampleCode\NavView6.xaml.txt" />
+      <UpToDateCheckInput Remove="Pages\SampleCode\NumberBox3.cs.txt" />
+      <UpToDateCheckInput Remove="Pages\SampleCode\NumberBox3UsageNotes.txt" />
+      <UpToDateCheckInput Remove="Pages\SampleCode\StandardUICommand.cs.txt" />
+      <UpToDateCheckInput Remove="Pages\SampleCode\StandardUICommand.xaml.txt" />
+      <UpToDateCheckInput Remove="Pages\SampleCode\StandardUICommandUsageNotes.txt" />
+      <UpToDateCheckInput Remove="Pages\SampleCode\TaskDialog1.cs.txt" />
+      <UpToDateCheckInput Remove="Pages\SampleCode\TaskDialog1.xaml.txt" />
+      <UpToDateCheckInput Remove="Pages\SampleCode\TaskDialog2.cs.txt" />
+      <UpToDateCheckInput Remove="Pages\SampleCode\TaskDialog3.cs.txt" />
+      <UpToDateCheckInput Remove="Pages\SampleCode\TextCommandBarFlyoutUsageNotes.txt" />
+      <UpToDateCheckInput Remove="Pages\SampleCode\XamlUICommand.cs.txt" />
+      <UpToDateCheckInput Remove="Pages\SampleCode\XamlUICommand.xaml.txt" />
+      <UpToDateCheckInput Remove="Pages\SampleCode\XamlUICommandUsageNotes.txt" />
+    </ItemGroup>
+
+</Project>

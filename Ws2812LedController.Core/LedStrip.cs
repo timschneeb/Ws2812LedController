@@ -4,10 +4,11 @@ using System.Drawing;
 using Iot.Device.Ws28xx;
 using Ws2812LedController.Core.Colors;
 using Ws2812LedController.Core.Model;
+using Ws2812LedController.Core.Utils;
 
 namespace Ws2812LedController.Core;
 
-public class LedStrip
+public class LedStrip : IDisposable
 {
     public LedSegment FullSegment { get; }
     public List<LedSegment> SubSegments { get; } = new();
@@ -83,19 +84,24 @@ public class LedStrip
     private async void RenderTask()
     {
         var stopwatch = new Stopwatch();
-        
-        while (!_tokenSource.IsCancellationRequested)
+        try
         {
-            stopwatch.Restart();
-            Render();
-            
-            var drift = stopwatch.ElapsedMilliseconds;
-            var wait = (int)(1000.0 / Framerate - drift);
-            // Console.WriteLine($"DRIFT: {drift}ms ->\t{wait}");
-            if (wait > 0)
+            while (!_tokenSource.IsCancellationRequested)
             {
-                await Task.Delay(wait, _tokenSource.Token);
+                stopwatch.Restart();
+                Render();
+
+                var drift = stopwatch.ElapsedMilliseconds;
+                var wait = (int)(1000.0 / Framerate - drift);
+                // Console.WriteLine($"DRIFT: {drift}ms ->\t{wait}");
+                if (wait > 0)
+                {
+                    await Task.Delay(wait, _tokenSource.Token);
+                }
             }
+        }
+        catch (TaskCanceledException)
+        {
         }
     }
     
@@ -133,5 +139,18 @@ public class LedStrip
         _device?.Update();
         _customDevice?.Render();
         ActiveCanvasChanged?.Invoke(this, Canvas.State);
+    }
+
+    public async Task CancelAsync()
+    {
+        _tokenSource.Cancel();
+        await _tokenSource.Token.WaitHandle.WaitOneAsync(1000, CancellationToken.None);
+    }
+    
+    public void Dispose()
+    {
+        _tokenSource.Cancel();
+        _renderTask.Dispose();
+        _tokenSource.Dispose();
     }
 }

@@ -89,6 +89,14 @@ public class LedSegmentGroup
     {
         Clear(null, layer);
     }
+
+    public void FillAllLayers(Color color)
+    {
+        for (var i = 0; i < typeof(LayerId).GetEnumNames().Length; i++)
+        {
+            Clear(color, (LayerId)i);
+        }
+    }
     
     /* We expect all the segments to carry the same data, so just take the master strip */
     public byte[] DumpBytes(LayerId layer )//= LayerId.BaseLayer)

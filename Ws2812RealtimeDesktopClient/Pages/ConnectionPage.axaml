@@ -1,0 +1,80 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:Ws2812RealtimeDesktopClient.Controls"
+             xmlns:viewModels="clr-namespace:Ws2812RealtimeDesktopClient.ViewModels"
+             xmlns:controls1="clr-namespace:FluentAvalonia.UI.Controls;assembly=FluentAvalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="3000"
+             x:Class="Ws2812RealtimeDesktopClient.Pages.ConnectionPage"
+             x:DataType="viewModels:ConnectionPageViewModel">
+
+    <ScrollViewer Margin="18 18 18 18">
+        <StackPanel Spacing="8">
+            <controls:ControlExample Header="Connection configuration">
+                <StackPanel Spacing="10">
+                    <Grid ColumnDefinitions="*,3*">
+                        <StackPanel Grid.Column="0"
+                                    Spacing="10">
+                            <TextBlock>Server IP address</TextBlock>
+                            <TextBox HorizontalAlignment="Stretch"
+                                     Watermark="192.168.x.x"
+                                     Text="{Binding IpAddress}" />
+                            <TextBlock Grid.Column="0">LED strip width</TextBlock>
+                            <NumericUpDown Minimum="1"
+                                           Value="{CompiledBinding StripWidth}"
+                                           ShowButtonSpinner="True" />
+                            <StackPanel
+                                Orientation="Horizontal">
+                                <Grid ColumnDefinitions="*,4,*">
+                                    <Button Grid.Column="0"
+                                            Content="Connect"
+                                            Command="{Binding Connect_OnClick}" />
+                                    <Button Grid.Column="2"
+                                            Content="Disconnect"
+                                            Command="{Binding Disconnect_OnClick}" />
+                                </Grid>
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </controls:ControlExample>
+
+            <controls:ControlExample Header="Connection status">
+                <Grid ColumnDefinitions="Auto,12,Auto,4,Auto"
+                      RowDefinitions="Auto,4,Auto">
+                    <TextBlock Grid.Row="0"
+                               Grid.Column="0"
+                               Classes="BodyTextBlockStyle"
+                               Text="UDP status" />
+                    <controls1:InfoBadge
+                        Grid.Row="0"
+                        Grid.Column="2"
+                        Name="UdpBadge"
+                        VerticalAlignment="Center" />
+                    <TextBlock Grid.Row="0"
+                               Grid.Column="4"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                               Classes="BodyTextBlockStyle"
+                               VerticalAlignment="Center"
+                               Text="{CompiledBinding UdpStatus}" />
+                    <TextBlock Grid.Row="2"
+                               Grid.Column="0"
+                               Classes="BodyTextBlockStyle"
+                               Text="REST API status" />
+                    <controls1:InfoBadge
+                        Grid.Row="2"
+                        Grid.Column="2"
+                        Name="RestBadge"
+                        VerticalAlignment="Center" />
+                    <TextBlock Grid.Row="2"
+                               Grid.Column="4"
+                               Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                               Classes="BodyTextBlockStyle"
+                               VerticalAlignment="Center"
+                               Text="{CompiledBinding RestStatus}" />
+                </Grid>
+            </controls:ControlExample>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

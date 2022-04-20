@@ -14,14 +14,12 @@ public class BitmapWrapper
     public bool ExclusiveMode { set; get; } = false;
     public int Width { get; }
     public Color[] State => VirtualCopy;
-
-    public bool[] MutedPixels { get; }
+    
     public BitmapWrapper(BitmapImage image)
     {
         Image = image;
         Width = image.Width;
         VirtualCopy = new Color[image.Width];
-        MutedPixels = new bool[image.Width];
         Clear();
     }
 
@@ -30,13 +28,12 @@ public class BitmapWrapper
     {
         Width = width;
         VirtualCopy = new Color[width];
-        MutedPixels = new bool[width];
         Clear();
     }
 
     public void SetPixel(int i, Color color, byte brightness = 255, bool gammaCorrection = false, bool isExclusive = false)
     {
-        if (!isExclusive && ExclusiveMode || MutedPixels[i])
+        if (!isExclusive && ExclusiveMode)
         {
             return;
         }

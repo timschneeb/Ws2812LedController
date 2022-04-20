@@ -9,10 +9,10 @@ public class RemoteLedCanvas
 {
     private readonly LayerId _layer;
     private readonly int _offset;
-    private readonly int _length;
+    private int _length;
     private readonly RenderMode _renderMode;
 
-    public BitmapWrapper Bitmap { get; }
+    public BitmapWrapper Bitmap { private set; get; }
     public event EventHandler<IPacket>? NewPacketAvailable;
 
     public RemoteLedCanvas(LayerId layer, int offset, int length, RenderMode renderMode)
@@ -22,6 +22,15 @@ public class RemoteLedCanvas
         _length = length;
         _renderMode = renderMode;
         Bitmap = new BitmapWrapper(length);
+    }
+
+    public void Resize(int length)
+    {
+        _length = length;
+        var old = Bitmap;
+        var @new = new BitmapWrapper(length);
+        @new.CopyFrom(old, 0, Math.Min(@new.Width, old.Width), false);
+        Bitmap = @new;
     }
     
     public void Render()

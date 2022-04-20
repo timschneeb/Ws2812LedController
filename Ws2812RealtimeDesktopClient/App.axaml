@@ -1,0 +1,54 @@
+﻿<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Ws2812RealtimeDesktopClient.App"
+             xmlns:ui="using:FluentAvalonia.UI.Controls"
+             xmlns:sty="using:FluentAvalonia.Styling">
+    <Application.Resources>
+        <ui:SymbolIconSource x:Key="SaveIcon" Symbol="Save" />
+        <ui:FontIconSource x:Key="FontIcon" Glyph="F" />
+        <ui:PathIconSource x:Key="PathIcon" Data="M0,0 L 50,0 L 25,50Z" />
+        <ui:BitmapIconSource x:Key="BmpIcon" UriSource="avares://Ws2812RealtimeDesktopClient/Assets/avalonia-logo.ico" />
+
+		<!-- Override this -->
+		<Thickness x:Key="NavigationViewContentMargin">0,48,0,0</Thickness>
+
+        <ui:SymbolIconSource Symbol="Home" x:Key="HomeIcon" />
+        <ui:SymbolIconSource Symbol="HomeFilled" x:Key="HomeIconFilled" />
+        <ui:SymbolIconSource Symbol="Crop" x:Key="CropIcon" />
+        <ui:SymbolIconSource Symbol="Audio" x:Key="AudioIcon" />
+        <ui:SymbolIconSource Symbol="ImageCopy" x:Key="ImageIcon" />
+        <ui:SymbolIconSource Symbol="New" x:Key="NewIcon" />
+        <ui:SymbolIconSource Symbol="Edit" x:Key="EditIcon" />
+        <ui:SymbolIconSource Symbol="EditFilled" x:Key="EditIconFilled" />
+        <ui:SymbolIconSource Symbol="StarFilled" x:Key="StarFilledIcon" />
+        <ui:SymbolIconSource Symbol="Settings" x:Key="SettingsIcon" />
+        <ui:SymbolIconSource Symbol="SettingsFilled" x:Key="SettingsIconFilled" />
+
+        <ImageBrush Source="avares://Ws2812RealtimeDesktopClient/Assets/headerimage.jpeg"
+                    x:Key="TopLevelPageBackgroundImage"
+                    AlignmentY="Top"
+                    Stretch="Fill" />
+    </Application.Resources>
+
+    <Application.Styles>
+        <sty:FluentAvaloniaTheme />
+        <StyleInclude Source="avares://AvaloniaEdit/AvaloniaEdit.xaml" />
+        <StyleInclude Source="/Styles/OptionsDisplayItemStyles.axaml" />
+        <StyleInclude Source="/Styles/ControlExampleStyles.axaml" />
+
+        <Style Selector="PopupRoot">
+            <Setter Property="TransparencyLevelHint" Value="Transparent" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="TransparencyBackgroundFallback" Value="Transparent" />
+        </Style>
+        <Style Selector="MenuFlyoutPresenter /template/ Border#LayoutRoot">
+            <Setter Property="Background">
+                <SolidColorBrush Color="{DynamicResource SolidBackgroundFillColorBase}"
+                                 Opacity="0.725"/>
+            </Setter>
+        </Style>
+
+		
+    </Application.Styles>
+
+</Application>

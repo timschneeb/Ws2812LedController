@@ -1,0 +1,170 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ui="using:FluentAvalonia.UI.Controls"
+             xmlns:uip="using:FluentAvalonia.UI.Controls.Primitives"
+             xmlns:aedit="using:AvaloniaEdit"
+             xmlns:local="clr-namespace:Ws2812RealtimeDesktopClient.Controls"
+             xmlns:input="clr-namespace:FluentAvalonia.UI.Input;assembly=FluentAvalonia"
+             xmlns:viewModels="clr-namespace:Ws2812RealtimeDesktopClient.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Ws2812RealtimeDesktopClient.Views.MainView"
+             x:DataType="viewModels:MainViewViewModel">
+    <UserControl.Styles>
+        <Style Selector="ui|NavigationView.SampleAppNav">
+            <Setter Property="IsPaneToggleButtonVisible" Value="False" />
+            <Setter Property="OpenPaneLength" Value="72" />
+        </Style>
+        <Style Selector="ui|NavigationView.SampleAppNav[IsBackButtonVisible=False] SplitView /template/ ContentPresenter#PART_PanePresenter">
+            <Setter Property="Margin" Value="0 40 0 0" />
+        </Style>
+
+        <Style Selector="ui|NavigationViewItem.SampleAppNav uip|NavigationViewItemPresenter">
+            <Setter Property="Width" Value="72" />
+            <Setter Property="MinHeight" Value="60" />
+            <Setter Property="CornerRadius" Value="{StaticResource ControlCornerRadius}" />
+            <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Border Name="LayoutRoot"
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="{TemplateBinding CornerRadius}"
+                            Margin="4 2"
+                            TemplatedControl.IsTemplateFocusTarget="True">
+                        <Panel>
+                            <Panel HorizontalAlignment="Left"
+                                   VerticalAlignment="Center">
+
+                                <Border Name="SelectionIndicator"
+                                        Background="{DynamicResource NavigationViewSelectionIndicatorForeground}"
+                                        Width="3"
+                                        Opacity="0"
+                                        VerticalAlignment="Center"
+                                        Height="20"
+                                        CornerRadius="{StaticResource ControlCornerRadius}"/>
+                            </Panel>
+
+
+                            <DockPanel>
+                                <ContentPresenter Name="ContentPresenter"
+                                                  Grid.Row="1"
+                                                  ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                  Content="{TemplateBinding Content}"
+                                                  HorizontalAlignment="Center"
+                                                  VerticalAlignment="Bottom"
+                                                  TextBlock.FontSize="10"
+                                                  Padding="0 4"
+                                                  Margin="0 -15 0 3"
+                                                  DockPanel.Dock="Bottom">
+                                    <ContentPresenter.Styles>
+                                        <Style Selector="TextBlock">
+                                            <Setter Property="TextWrapping" Value="Wrap" />
+                                        </Style>
+                                    </ContentPresenter.Styles>
+                                </ContentPresenter>   
+                                
+                                <Viewbox Name="IconBox" 
+                                         Height="28"
+										 HorizontalAlignment="Center"
+                                         VerticalAlignment="Center">
+                                    <ContentPresenter Name="Icon" 
+                                                      Content="{TemplateBinding Icon}" />
+                                </Viewbox>
+                                                               
+                            </DockPanel>
+                        </Panel>
+                    </Border>
+                </ControlTemplate>
+            </Setter>
+        </Style>
+        <Style Selector="ui|NavigationViewItem.SampleAppNav uip|NavigationViewItemPresenter:pointerover /template/ ContentPresenter#ContentPresenter">
+            <Setter Property="TextBlock.Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+        </Style>
+        <Style Selector="ui|NavigationViewItem.SampleAppNav uip|NavigationViewItemPresenter:pointerover /template/ ContentPresenter#Icon">
+            <Setter Property="TextBlock.Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+        </Style>
+
+        <Style Selector="ui|NavigationViewItem.SampleAppNav uip|NavigationViewItemPresenter:pressed /template/ ContentPresenter#ContentPresenter">
+            <Setter Property="TextBlock.Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+        </Style>
+        <Style Selector="ui|NavigationViewItem.SampleAppNav uip|NavigationViewItemPresenter:pressed /template/ ContentPresenter#Icon">
+            <Setter Property="TextBlock.Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+        </Style>
+
+        <Style Selector="ui|NavigationViewItem.SampleAppNav uip|NavigationViewItemPresenter:selected /template/ ContentPresenter#ContentPresenter">
+            <Setter Property="IsVisible" Value="False" />
+        </Style>
+        <Style Selector="ui|NavigationViewItem.SampleAppNav uip|NavigationViewItemPresenter:selected /template/ ContentPresenter#Icon">
+            <Setter Property="TextBlock.Foreground" Value="{DynamicResource AccentFillColorDefaultBrush}" />
+        </Style>
+    </UserControl.Styles>
+    <UserControl.Resources>
+        <input:XamlUICommand x:Key="PlayCommand" IconSource="Play" Label="Run" Command="{Binding OnPlayCommand}" />
+        <input:XamlUICommand x:Key="PauseCommand" IconSource="Pause" Label="Stop" Command="{Binding  OnPauseCommand}" />
+        <input:XamlUICommand x:Key="RestartCommand" IconSource="Refresh" Label="Restart" Command="{Binding OnRestartCommand}" />
+    </UserControl.Resources>
+    
+    <Grid RowDefinitions="Auto, *">
+        <Grid Name="TitleBarHost" ColumnDefinitions="Auto,Auto,*" Background="Transparent">
+            <Image Margin="12 4"
+                   IsHitTestVisible="False"
+                   Source="/Assets/avalonia-logo.ico"
+                   Width="18" Height="18"
+                   DockPanel.Dock="Left"
+                   Name="WindowIcon"/>
+            
+            <TextBlock Text="{Binding Title, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
+                       FontSize="12"
+                       IsHitTestVisible="False"
+                       VerticalAlignment="Center"
+                       Grid.Column="1"/>
+            
+            <ui:CommandBar
+                Grid.Column="2"
+                Padding="4"
+                IsDynamicOverflowEnabled="True"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                DefaultLabelPosition="Collapsed">
+                <ui:CommandBar.PrimaryCommands>
+                    <ui:CommandBarButton Command="{StaticResource PlayCommand}" 
+                                         IsVisible="{CompiledBinding PlayPauseButtonsVisible}"
+                                         IsCompact="True"
+                                         Width="40" />
+                    <ui:CommandBarButton Command="{StaticResource PauseCommand}"
+                                         IsVisible="{CompiledBinding PlayPauseButtonsVisible}"
+                                         IsCompact="True"
+                                         Width="40" />
+                    <ui:CommandBarButton Command="{StaticResource RestartCommand}"
+                                         IsCompact="True" 
+                                         Width="40" />
+                    <ui:CommandBarElementContainer>
+                        <ComboBox VerticalAlignment="Center" 
+                                  MinWidth="140"
+                                  Margin="4 3 0 0"
+                                  SelectedIndex="{CompiledBinding SelectedModeIndex}">
+                            <ComboBoxItem Content="Normal" />
+                            <ComboBoxItem Content="Audio reactive" />
+                            <ComboBoxItem Content="Ambilight" />
+                        </ComboBox>
+                    </ui:CommandBarElementContainer>
+                </ui:CommandBar.PrimaryCommands>
+            </ui:CommandBar>
+        </Grid>
+
+        <ui:NavigationView Classes="SampleAppNav"
+                           AlwaysShowHeader="False"
+                           PaneDisplayMode="Left"
+                           IsPaneOpen="True"
+                           Grid.RowSpan="2"
+                           Name="NavView"
+                           IsSettingsVisible="False"
+                           IsBackEnabled="{Binding #FrameView.CanGoBack}">
+            <Panel>
+                <ui:Frame Name="FrameView"/>                
+            </Panel>
+        </ui:NavigationView>
+
+    </Grid>
+</UserControl>

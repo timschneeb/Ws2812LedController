@@ -31,7 +31,7 @@ public static class Entrypoint
         for (var i = 0; i < length; i++)
         {
             indices[i] = (ushort)i;
-            colors[i] = 0xFF000000;
+            colors[i] = 0x00000000;
         }
         instruction.Indices = indices;
         instruction.Layer = LayerId.ExclusiveEnetLayer;

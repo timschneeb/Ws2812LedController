@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentAvalonia", "FluentAva
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ws2812AudioReactiveClient", "Ws2812AudioReactiveClient\Ws2812AudioReactiveClient.csproj", "{7421A56B-03EF-4EB9-9EF1-653B45FA61F0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ws2812RealtimeDesktopClient", "Ws2812RealtimeDesktopClient\Ws2812RealtimeDesktopClient.csproj", "{ADECF46D-C60C-419C-A701-766946CD94ED}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -90,5 +92,9 @@ Global
 		{7421A56B-03EF-4EB9-9EF1-653B45FA61F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7421A56B-03EF-4EB9-9EF1-653B45FA61F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7421A56B-03EF-4EB9-9EF1-653B45FA61F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ADECF46D-C60C-419C-A701-766946CD94ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ADECF46D-C60C-419C-A701-766946CD94ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ADECF46D-C60C-419C-A701-766946CD94ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ADECF46D-C60C-419C-A701-766946CD94ED}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Runtime.ExceptionServices;
 using Ws2812LedController.Core;
 using Ws2812LedController.Core.CancellationMethod;
 using Ws2812LedController.Core.Effects;
@@ -25,6 +26,8 @@ namespace Ws2812LedController.Console
         
         private static async Task Main(string[] args)
         {
+            AppDomain.CurrentDomain.FirstChanceException += AppDomainOnFirstChanceException;
+
             var lirc = new IrReceiver();
             lirc.KeyPress += LircOnKeyPress;
             lirc.Start();
@@ -76,6 +79,16 @@ namespace Ws2812LedController.Console
                 await Task.Delay(2000);
             }
             
+        }
+
+        private static void AppDomainOnFirstChanceException(object? sender, FirstChanceExceptionEventArgs e)
+        {
+            if (e.Exception is TaskCanceledException or OperationCanceledException)
+            {
+                return;
+            }
+            
+            System.Console.WriteLine($"Exception: {e.Exception}");
         }
 
         private static IPacket? EnetServerOnPacketReceived(IPacket arg)
