@@ -5,19 +5,9 @@
         xmlns:controls="clr-namespace:Ws2812RealtimeDesktopClient.Controls">
     <Design.PreviewWith>
         <Border Padding="20" Width="600" Height="450">
-            <controls:ControlExample Header="Sample Control"
-                                  CSharpSource="asdg"
-                                  XamlSource="xaml source"
-                                  UsageNotes="usage notes">
+            <controls:ControlExample Header="Sample Control">
                 <ui:Button Content="Sample"
                            Classes.accent="{Binding #Accent.IsChecked}"/>
-
-                <controls:ControlExample.Options>
-                    <StackPanel>
-                        <CheckBox Name="Accent" Content="Accent" />
-                    </StackPanel>
-                </controls:ControlExample.Options>
-
             </controls:ControlExample>
         </Border>
     </Design.PreviewWith>
