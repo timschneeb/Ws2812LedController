@@ -76,7 +76,7 @@ public class EnetClient
                     var enetPacket = default(Packet);
                     var payload = nextPacket.Encode();
                     enetPacket.Create(payload);
-                                
+                    
                     _peer?.Send(0, ref enetPacket);
                     enetPacket.Dispose();
                     

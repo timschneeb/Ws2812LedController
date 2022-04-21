@@ -12,15 +12,15 @@
              x:Class="Ws2812RealtimeDesktopClient.Views.MainView"
              x:DataType="viewModels:MainViewViewModel">
     <UserControl.Styles>
-        <Style Selector="ui|NavigationView.SampleAppNav">
+        <Style Selector="ui|NavigationView.SideNav">
             <Setter Property="IsPaneToggleButtonVisible" Value="False" />
             <Setter Property="OpenPaneLength" Value="72" />
         </Style>
-        <Style Selector="ui|NavigationView.SampleAppNav[IsBackButtonVisible=False] SplitView /template/ ContentPresenter#PART_PanePresenter">
+        <Style Selector="ui|NavigationView.SideNav[IsBackButtonVisible=False] SplitView /template/ ContentPresenter#PART_PanePresenter">
             <Setter Property="Margin" Value="0 40 0 0" />
         </Style>
 
-        <Style Selector="ui|NavigationViewItem.SampleAppNav uip|NavigationViewItemPresenter">
+        <Style Selector="ui|NavigationViewItem.SideNav uip|NavigationViewItemPresenter">
             <Setter Property="Width" Value="72" />
             <Setter Property="MinHeight" Value="60" />
             <Setter Property="CornerRadius" Value="{StaticResource ControlCornerRadius}" />
@@ -78,24 +78,24 @@
                 </ControlTemplate>
             </Setter>
         </Style>
-        <Style Selector="ui|NavigationViewItem.SampleAppNav uip|NavigationViewItemPresenter:pointerover /template/ ContentPresenter#ContentPresenter">
+        <Style Selector="ui|NavigationViewItem.SideNav uip|NavigationViewItemPresenter:pointerover /template/ ContentPresenter#ContentPresenter">
             <Setter Property="TextBlock.Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
         </Style>
-        <Style Selector="ui|NavigationViewItem.SampleAppNav uip|NavigationViewItemPresenter:pointerover /template/ ContentPresenter#Icon">
+        <Style Selector="ui|NavigationViewItem.SideNav uip|NavigationViewItemPresenter:pointerover /template/ ContentPresenter#Icon">
             <Setter Property="TextBlock.Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
         </Style>
 
-        <Style Selector="ui|NavigationViewItem.SampleAppNav uip|NavigationViewItemPresenter:pressed /template/ ContentPresenter#ContentPresenter">
+        <Style Selector="ui|NavigationViewItem.SideNav uip|NavigationViewItemPresenter:pressed /template/ ContentPresenter#ContentPresenter">
             <Setter Property="TextBlock.Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
         </Style>
-        <Style Selector="ui|NavigationViewItem.SampleAppNav uip|NavigationViewItemPresenter:pressed /template/ ContentPresenter#Icon">
+        <Style Selector="ui|NavigationViewItem.SideNav uip|NavigationViewItemPresenter:pressed /template/ ContentPresenter#Icon">
             <Setter Property="TextBlock.Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
         </Style>
 
-        <Style Selector="ui|NavigationViewItem.SampleAppNav uip|NavigationViewItemPresenter:selected /template/ ContentPresenter#ContentPresenter">
+        <Style Selector="ui|NavigationViewItem.SideNav uip|NavigationViewItemPresenter:selected /template/ ContentPresenter#ContentPresenter">
             <Setter Property="IsVisible" Value="False" />
         </Style>
-        <Style Selector="ui|NavigationViewItem.SampleAppNav uip|NavigationViewItemPresenter:selected /template/ ContentPresenter#Icon">
+        <Style Selector="ui|NavigationViewItem.SideNav uip|NavigationViewItemPresenter:selected /template/ ContentPresenter#Icon">
             <Setter Property="TextBlock.Foreground" Value="{DynamicResource AccentFillColorDefaultBrush}" />
         </Style>
     </UserControl.Styles>
@@ -145,15 +145,14 @@
                                   Margin="4 3 0 0"
                                   SelectedIndex="{CompiledBinding SelectedModeIndex}">
                             <ComboBoxItem Content="Normal" />
-                            <ComboBoxItem Content="Audio reactive" />
-                            <ComboBoxItem Content="Ambilight" />
+                            <ComboBoxItem Content="Reactive" />
                         </ComboBox>
                     </ui:CommandBarElementContainer>
                 </ui:CommandBar.PrimaryCommands>
             </ui:CommandBar>
         </Grid>
 
-        <ui:NavigationView Classes="SampleAppNav"
+        <ui:NavigationView Classes="SideNav"
                            AlwaysShowHeader="False"
                            PaneDisplayMode="Left"
                            IsPaneOpen="True"

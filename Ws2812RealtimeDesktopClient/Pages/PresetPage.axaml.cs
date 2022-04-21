@@ -4,13 +4,13 @@ using Ws2812RealtimeDesktopClient.ViewModels;
 
 namespace Ws2812RealtimeDesktopClient.Pages
 {
-    public partial class AudioReactivePage : UserControl
+    public partial class PresetPage : UserControl
     {
-        public AudioReactivePage()
+        public PresetPage()
         {
             InitializeComponent();
 
-            DataContext = new AudioReactivePageViewModel();
+            DataContext = new PresetPageViewModel();
         }
 
         private void InitializeComponent()

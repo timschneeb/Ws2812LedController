@@ -17,7 +17,7 @@ public class RemoteStripManager
     private LedManager? _mgr;
     private LedStrip? _remote;
     private EnetClient? _client;
-    private List<SegmentEntry> _segmentEntries = new();
+    public List<SegmentEntry> SegmentEntries { get; } = SettingsProvider.Instance.Segments.ToList();
 
     public static RemoteStripManager Instance => Lazy.Value;
 
@@ -54,7 +54,7 @@ public class RemoteStripManager
         _canvas = new RemoteLedCanvas(LayerId.ExclusiveEnetLayer, 0, maxLength.Value, RenderMode.ManagedTask);
         _mgr = new LedManager();
         _remote = new LedStrip(new RemoteLedStrip(_canvas));
-        await SyncSegmentsAsync(_segmentEntries.ToArray());
+        await SyncSegmentsAsync(SegmentEntries.ToArray());
         
         _client = new EnetClient(ip);
         _client.Connected += OnUdpConnected;
@@ -77,6 +77,7 @@ public class RemoteStripManager
                 Layer = LayerId.ExclusiveEnetLayer
             };
             _client?.Enqueue(clearPkg);
+            await Task.Delay(50);
         }
 
         if (_remote != null)
@@ -134,16 +135,24 @@ public class RemoteStripManager
         }
     }
 
-    public void SwitchMode(EffectModes mode)
+    public async void SwitchMode(EffectModes mode)
     {
-        
+        switch (mode)
+        {
+            case EffectModes.Normal:
+                await DisconnectUdpAsync();
+                break;
+            case EffectModes.Reactive:
+                await ConnectUdpAsync();
+                break;
+        }
     }
 
     #region Segment management
     /** Segments are implicitly reset by this function */
     public async Task SyncSegmentsAsync(SegmentEntry[] entries)
     {
-        _segmentEntries.Clear();
+        SegmentEntries.Clear();
 
         if (_mgr == null)
         {
@@ -160,7 +169,7 @@ public class RemoteStripManager
 
     public async Task UpdateSegmentAsync(SegmentEntry entry, string originalName)
     {
-        var oldEntryIdx = _segmentEntries.FindIndex(x => x.Name == originalName);
+        var oldEntryIdx = SegmentEntries.FindIndex(x => x.Name == originalName);
         if (oldEntryIdx == -1)
         {
             AddSegment(entry);
@@ -176,17 +185,17 @@ public class RemoteStripManager
         var seg = _mgr.Get(originalName);
         Debug.Assert(seg != null, "LedSegmentController must not be null at this point");
         
-        if(_segmentEntries[oldEntryIdx].Start != entry.Start || _segmentEntries[oldEntryIdx].Width != entry.Width)
+        if(SegmentEntries[oldEntryIdx].Start != entry.Start || SegmentEntries[oldEntryIdx].Width != entry.Width)
         {
             await _mgr.UnregisterSegmentAsync(originalName, _remote);
             _mgr.RegisterSegment(entry.Name, _remote, entry.Start, entry.Width);
         }
-        else if (_segmentEntries[oldEntryIdx].Name != entry.Name)
+        else if (SegmentEntries[oldEntryIdx].Name != entry.Name)
         {
             _mgr.RenameSegment(originalName, entry.Name);
         }
 
-        if(_segmentEntries[oldEntryIdx].InvertX != entry.InvertX)
+        if(SegmentEntries[oldEntryIdx].InvertX != entry.InvertX)
         {
             seg.SourceSegment.InvertX = entry.InvertX;
         }
@@ -194,12 +203,12 @@ public class RemoteStripManager
         ReattachMirrors();
         
         SKIP_SEG_UPDATE:
-        _segmentEntries[oldEntryIdx] = entry;
+        SegmentEntries[oldEntryIdx] = entry;
     }
 
     public void AddSegment(SegmentEntry entry)
     {
-        _segmentEntries.Add(entry);
+        SegmentEntries.Add(entry);
         
         if (_mgr == null || _remote == null)
         {
@@ -214,7 +223,7 @@ public class RemoteStripManager
 
     public async Task DeleteSegmentAsync(string name)
     {
-        _segmentEntries.RemoveAll(x => x.Name == name);
+        SegmentEntries.RemoveAll(x => x.Name == name);
         
         if (_mgr == null)
         {
@@ -229,7 +238,7 @@ public class RemoteStripManager
     public void ReattachMirrors()
     {
         _mgr?.RemoveAllMirrors();
-        foreach (var entry in _segmentEntries)
+        foreach (var entry in SegmentEntries)
         {
             entry.MirroredTo.ToList().ForEach(x => _mgr?.MirrorTo(entry.Name, x));
         }

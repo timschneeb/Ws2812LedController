@@ -30,6 +30,10 @@
         <DependentUpon>ContentDialogInputExample.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="Dialogs\AssignEffectContentDialog.axaml.cs">
+        <DependentUpon>AssignEffectContentDialog.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
     <ItemGroup>
       <UpToDateCheckInput Remove="Pages\CoreControlPages\BasicInputControlsPage.axaml" />

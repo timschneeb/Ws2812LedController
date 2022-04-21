@@ -1,0 +1,76 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ui="using:FluentAvalonia.UI.Controls"
+             xmlns:viewModels="clr-namespace:Ws2812RealtimeDesktopClient.ViewModels"
+             xmlns:controls="clr-namespace:Ws2812RealtimeDesktopClient.Controls"
+             xmlns:input="clr-namespace:FluentAvalonia.UI.Input;assembly=FluentAvalonia"
+             xmlns:models="clr-namespace:Ws2812RealtimeDesktopClient.Models"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Ws2812RealtimeDesktopClient.Pages.ReactiveEffectPage"
+             x:DataType="viewModels:ReactiveEffectPageViewModel">
+    <UserControl.Resources>
+        <input:StandardUICommand x:Key="DeleteCommand" Kind="Delete" Label="Remove"
+                                 Description="Remove effect" Command="{Binding RemoveEffect}" />
+        <input:StandardUICommand x:Key="LoadCommand" Kind="Open" Label="Load"
+                                 Description="Load composition" Command="{Binding LoadComposition}" />
+        <input:StandardUICommand x:Key="SaveCommand" Kind="Save" Label="Save"
+                                 Description="Save composition" Command="{Binding SaveComposition}" />
+        <input:StandardUICommand x:Key="CopyCommand" Kind="Copy" Label="Copy"
+                                 Description="Copy effect to segments" Command="{Binding CopyEffect}" />
+        <input:XamlUICommand x:Key="AddCommand" Label="Assign" IconSource="{StaticResource NewIcon}"
+                             Description="Assign effect to segment" Command="{Binding AssignEffect}" />
+    </UserControl.Resources>
+    
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled"
+                  VerticalScrollBarVisibility="Auto">
+        <StackPanel>
+            <Panel MinHeight="90" Name="HeaderRegion" Background="{StaticResource TopLevelPageBackgroundImage}">
+                <Rectangle>
+                    <Rectangle.Fill>
+                        <LinearGradientBrush StartPoint="0,0"
+                                             EndPoint="0,1365">
+                            <GradientStop Offset="0" Color="Transparent" />
+                            <GradientStop Offset="0.035" Color="{DynamicResource SolidBackgroundFillColorTertiary}" />
+                        </LinearGradientBrush>
+                    </Rectangle.Fill>
+                </Rectangle>
+
+                <StackPanel>
+                    <TextBlock Text="{Binding PageHeader}" VerticalAlignment="Top"
+                               Classes="TitleTextBlockStyle"
+                               Padding="32 20 0 0" />
+                    <TextBlock Margin="32 0" Text="{Binding PageSubtitle}" TextWrapping="Wrap" />
+                </StackPanel>
+            </Panel>
+
+            <StackPanel Spacing="4" Margin="18 9"
+                        DockPanel.Dock="Top">
+                <ui:CommandBar DefaultLabelPosition="Right">
+                    <ui:CommandBar.PrimaryCommands>
+                        <ui:CommandBarButton Command="{StaticResource LoadCommand}" />
+                        <ui:CommandBarButton Command="{StaticResource SaveCommand}" />
+                        <ui:CommandBarSeparator />
+                        <ui:CommandBarButton Command="{StaticResource AddCommand}" />
+                        <ui:CommandBarButton Command="{StaticResource CopyCommand}" 
+                                             CommandParameter="{Binding #AssignmentSelector.SelectedItem}"/>
+                        <ui:CommandBarButton Command="{StaticResource DeleteCommand}"
+                                             CommandParameter="{Binding #AssignmentSelector.SelectedItem}" />
+
+                        <ui:CommandBarElementContainer>
+                            <ComboBox Name="AssignmentSelector"
+                                      VerticalAlignment="Center" 
+                                      MinWidth="140"
+                                      Margin="4 3 0 0"
+                                      Items="{CompiledBinding Assignments}"
+                                      SelectedItem="{CompiledBinding SelectedSegment}" />
+                        </ui:CommandBarElementContainer>
+                    </ui:CommandBar.PrimaryCommands>
+                </ui:CommandBar>
+            </StackPanel>
+
+        </StackPanel>
+    </ScrollViewer>
+
+</UserControl>

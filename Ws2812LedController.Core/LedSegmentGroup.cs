@@ -44,7 +44,7 @@ public class LedSegmentGroup
         {
             return;
         }
-        _segments.RemoveRange(1, _segments.Count);
+        _segments.RemoveRange(1, _segments.Count - 1);
     }
     
     public void SetPixel(int i, Color color, LayerId layer )//= LayerId.BaseLayer)

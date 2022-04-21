@@ -73,14 +73,18 @@ public class LedManager
         return Task.WhenAll(names.Select(name => Get(name)?.PowerAsync(state)).Where(task => task != null).Cast<Task>().ToList());
     }
 
-    public void MirrorTo(string source, string target)
+    public bool MirrorTo(string source, string target)
     {
         var targetCtrl = _segments.FirstOrDefault(x => x.Name == target);
         var sourceCtrl = _segments.FirstOrDefault(x => x.Name == source);
-            
-        Debug.Assert(targetCtrl != null && sourceCtrl != null, "Source/target not found");
-        
+
+        if (targetCtrl == null || sourceCtrl == null)
+        {
+            return false; 
+        }
+
         sourceCtrl.MirrorTo(targetCtrl);
+        return true;
     }
 
     public void RemoveAllMirrors()

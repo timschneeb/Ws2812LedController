@@ -89,37 +89,37 @@ namespace Ws2812RealtimeDesktopClient.Views
                     Icon = new IconSourceElement { IconSource = (IconSource)this.FindResource("HomeIcon") },
                     Classes =
                     {
-                        "SampleAppNav"
+                        "SideNav"
                     }
                 },
                  new NavigationViewItem
                 {
                     Content = "Reactive",
-                    Tag = typeof(AudioReactivePage),
+                    Tag = typeof(ReactiveEffectPage),
                     Icon = new IconSourceElement { IconSource = (IconSource)this.FindResource("AudioIcon") },
                     Classes =
                     {
-                        "SampleAppNav"
+                        "SideNav"
                     }
                 },
-                new NavigationViewItem
-                {
-                    Content = "Ambilight",
-                    Tag = typeof(AmbilightPage),
-                    Icon = new IconSourceElement { IconSource = (IconSource)this.FindResource("ImageIcon") },
-                    Classes =
-                    {
-                        "SampleAppNav"
-                    }
-                },
-                new NavigationViewItem
+                 new NavigationViewItem
+                 {
+                     Content = "Presets",
+                     Tag = typeof(PresetPage),
+                     Icon = new IconSourceElement { IconSource = (IconSource)this.FindResource("ImageIcon") },
+                     Classes =
+                     {
+                         "SideNav"
+                     }
+                 },
+                 new NavigationViewItem
                 {
                     Content = "Segments",
                     Tag = typeof(SegmentPage),
                     Icon = new IconSourceElement { IconSource = (IconSource)this.FindResource("CropIcon") },
                     Classes =
                     {
-                        "SampleAppNav"
+                        "SideNav"
                     }
                 },
             };
@@ -136,7 +136,7 @@ namespace Ws2812RealtimeDesktopClient.Views
                     Icon = new IconSourceElement { IconSource = (IconSource)this.FindResource("SettingsIcon") },
                     Classes =
                     {
-                        "SampleAppNav"
+                        "SideNav"
                     }
                 }
             };

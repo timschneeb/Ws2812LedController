@@ -1,0 +1,26 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:Ws2812RealtimeDesktopClient.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             Padding="0, 10" 
+             x:DataType="viewModels:AssignEffectDialogViewModel"
+             x:Class="Ws2812RealtimeDesktopClient.Dialogs.AssignEffectContentDialog">
+    <StackPanel Spacing="10" MinWidth="400">
+            <TextBlock VerticalAlignment="Center">
+                Segment
+            </TextBlock>
+            <ComboBox MinWidth="400"
+                      Items="{Binding AvailableSegments}"
+                      SelectedItem="{Binding Segment}"
+                      AttachedToVisualTree="InputField_OnAttachedToVisualTree" />
+            <TextBlock VerticalAlignment="Center">
+                Effect
+            </TextBlock>
+            <ComboBox MinWidth="400"
+                      Items="{Binding AvailableEffects}"
+                      SelectedItem="{Binding Effect}" />
+
+        </StackPanel>
+</UserControl>
