@@ -41,6 +41,10 @@ namespace Ws2812RealtimeDesktopClient.Pages
                 {
                     NavigationService.Instance.Navigate(typeof(ConnectionPage));
                 }
+                if (odi.Name == "NoSegmentItem")
+                {
+                    NavigationService.Instance.Navigate(typeof(SegmentPage));
+                }
             }
         }
     }

@@ -1,18 +1,24 @@
+using System.Reflection;
 using Ws2812LedController.Core.Effects.Base;
 using Ws2812LedController.Core.Model;
 
 namespace Ws2812LedController.Core.Utils;
 
-public static class EffectDescriptorList
+public class EffectDescriptorList
 {
-    public static EffectDescriptor[] Descriptors { get; }
+    private static readonly Lazy<EffectDescriptorList> Lazy =
+        new(() => new EffectDescriptorList());
 
-    static EffectDescriptorList()
+    public static EffectDescriptorList Instance => Lazy.Value;
+    
+    public EffectDescriptor[] Descriptors { get; }
+
+    private EffectDescriptorList()
     {
-        Descriptors = Enumerate();
+        Descriptors = Enumerate(typeof(BaseEffect).Assembly, "Ws2812LedController.Core.Effects");
     }
 
-    public static EffectDescriptor? Create(BaseEffect? effect)
+    public EffectDescriptor? Create(BaseEffect? effect)
     {
         if (effect == null)
         {
@@ -34,10 +40,10 @@ public static class EffectDescriptorList
         return staticDesc;
     }
     
-    public static EffectDescriptor[] Enumerate()
+    public static EffectDescriptor[] Enumerate(Assembly assembly, string @namespace)
     {
-        var effectClassTypes = typeof(BaseEffect).Assembly.GetTypes()
-            .Where(t => t.Namespace?.StartsWith("Ws2812LedController.Core.Effects") ?? false)
+        var effectClassTypes = assembly.GetTypes()
+            .Where(t => t.Namespace?.StartsWith(@namespace) ?? false)
             .Where(t => !t.IsAbstract && t.IsClass && t.GetProperties().Length > 0)
             .ToArray();
 

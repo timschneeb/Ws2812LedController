@@ -25,6 +25,13 @@ namespace Ws2812RealtimeDesktopClient.ViewModels
             RestStatus = "Not connected";
             UdpStatus = "Not connected";
         }
+        
+        ~ConnectionPageViewModel()
+        {
+            PropertyChanged -= OnPropertyChanged;
+            RemoteStripManager.Instance.Connected -= OnConnected;
+            RemoteStripManager.Instance.Disconnected -= OnDisconnected;
+        }
 
         private async Task Connect_OnClick()
         {

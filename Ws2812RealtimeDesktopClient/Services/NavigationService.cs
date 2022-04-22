@@ -8,6 +8,8 @@ namespace Ws2812RealtimeDesktopClient.Services
     {
         public static NavigationService Instance { get; } = new NavigationService();
 
+        public Frame Frame => _frame;
+        
         public void SetFrame(Frame f)
         {
             _frame = f;

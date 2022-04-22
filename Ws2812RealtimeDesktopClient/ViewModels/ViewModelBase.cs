@@ -7,16 +7,14 @@ namespace Ws2812RealtimeDesktopClient.ViewModels
 {
     public class ViewModelBase : INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         protected string GetAssemblyResource(string name)
         {
             var assets = AvaloniaLocator.Current.GetService<IAssetLoader>();
-            using (var stream = assets.Open(new Uri(name)))
-            using (StreamReader reader = new StreamReader(stream))
-            {
-                return reader.ReadToEnd();
-            }
+            using var stream = assets!.Open(new Uri(name));
+            using var reader = new StreamReader(stream);
+            return reader.ReadToEnd();
         }
 
         protected bool RaiseAndSetIfChanged<T>(ref T field, T value, [CallerMemberName] string propertyName = "")

@@ -34,12 +34,22 @@
 
 
             <StackPanel>
-                <StackPanel Margin="18 0 18 18" Spacing="4">
+                <StackPanel Margin="18 0 18 8" Spacing="4">
                     <controls:OptionsDisplayItem Header="Manage server connection"
-                                              Description="{CompiledBinding ServerConnectionState}"
-                                              Icon="Globe"
-                                              Navigates="True"
-                                              Name="ConnectionItem" />
+                                                 Description="{CompiledBinding ServerConnectionState}"
+                                                 Icon="Globe"
+                                                 Navigates="True"
+                                                 Name="ConnectionItem" />
+                    
+                </StackPanel>
+                <StackPanel Margin="18 0 18 8" 
+                            Spacing="4"
+                            IsVisible="{Binding ShowNoSegmentsWarning}">
+                    <controls:OptionsDisplayItem Header="No segments set-up"
+                                                 Description="Please split your LED strip into individual segments to start using this application properly"
+                                                 Icon="Important"
+                                                 Navigates="True"
+                                                 Name="NoSegmentItem" />
                     
                 </StackPanel>
             </StackPanel>

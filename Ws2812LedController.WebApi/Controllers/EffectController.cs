@@ -31,7 +31,7 @@ public class EffectController : ControllerBase, IJsonOptionHelper
             return NotFound();
         }
         
-        return EffectDescriptorList.Descriptors;
+        return EffectDescriptorList.Instance.Descriptors;
     }
    
     [HttpGet]
@@ -49,7 +49,7 @@ public class EffectController : ControllerBase, IJsonOptionHelper
             return new NoContentResult();
         }
 
-        var desc = EffectDescriptorList.Create(segment.CurrentEffects[(int)layer]);
+        var desc = EffectDescriptorList.Instance.Create(segment.CurrentEffects[(int)layer]);
         if (desc == null)
         {
             return new StatusCodeResult(500);
@@ -68,7 +68,7 @@ public class EffectController : ControllerBase, IJsonOptionHelper
             return NotFound("Unknown segment name");
         }
         
-        var descList = EffectDescriptorList.Descriptors;
+        var descList = EffectDescriptorList.Instance.Descriptors;
         var desc = descList.FirstOrDefault(x => x.Name == data.Name);
         if (desc == null)
         {
@@ -108,7 +108,7 @@ public class EffectController : ControllerBase, IJsonOptionHelper
         // Fire-and-forget call; only power on automatically if the base layer is modified
         var _ = segment.SetEffectAsync(effect, data.PrevCancelMode ?? CancelMode.Now, layer != LayerId.BaseLayer, layer);
         
-        var finalDesc = EffectDescriptorList.Create(effect);
+        var finalDesc = EffectDescriptorList.Instance.Create(effect);
         if (finalDesc == null)
         {
             return new OkResult();

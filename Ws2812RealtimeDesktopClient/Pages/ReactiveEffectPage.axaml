@@ -58,16 +58,32 @@
                         <ui:CommandBarButton Command="{StaticResource DeleteCommand}"
                                              CommandParameter="{Binding #AssignmentSelector.SelectedItem}" />
 
-                        <ui:CommandBarElementContainer>
+                        <ui:CommandBarElementContainer
+                            IsVisible="{CompiledBinding ShowSelectors}">
                             <ComboBox Name="AssignmentSelector"
                                       VerticalAlignment="Center" 
                                       MinWidth="140"
                                       Margin="4 3 0 0"
-                                      Items="{CompiledBinding Assignments}"
-                                      SelectedItem="{CompiledBinding SelectedSegment}" />
+                                      SelectedItem="{CompiledBinding SelectedAssignment}" />
+                        </ui:CommandBarElementContainer>
+                        <ui:CommandBarElementContainer
+                            IsVisible="{CompiledBinding ShowSelectors}">
+                            <ComboBox Name="EffectSelector"
+                                      VerticalAlignment="Center" 
+                                      MinWidth="140"
+                                      Margin="4 3 0 0"
+                                      Items="{CompiledBinding AvailableEffects}"
+                                      SelectedItem="{CompiledBinding SelectedEffect}" />
                         </ui:CommandBarElementContainer>
                     </ui:CommandBar.PrimaryCommands>
                 </ui:CommandBar>
+                
+                <DataGrid Name="PropertyGrid">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Property" Binding="{Binding Name}" Width="2*" />
+                        <DataGridTextColumn Header="Value" Binding="{Binding Value}" Width="4*" />
+                    </DataGrid.Columns>
+                </DataGrid>
             </StackPanel>
 
         </StackPanel>

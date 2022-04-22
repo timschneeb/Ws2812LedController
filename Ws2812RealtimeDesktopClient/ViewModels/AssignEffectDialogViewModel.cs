@@ -19,7 +19,7 @@ namespace Ws2812RealtimeDesktopClient.ViewModels
         }
 
         public string[] AvailableSegments => RemoteStripManager.Instance.SegmentEntries.Select(x => x.Name).ToArray();
-        public string[] AvailableEffects => EffectDescriptorList.Descriptors.Select(x => x.Name).ToArray();
+        public string[] AvailableEffects => ReactiveEffectDescriptorList.Instance.Descriptors.Select(x => x.Name).ToArray();
 
         public string Segment
         {

@@ -4,19 +4,20 @@ namespace Ws2812LedController.Core.Model;
 
 public class EffectDescriptor
 {
-    public string Name { internal init; get; }
-    public string Description { internal init; get; }
-    public bool IsSingleShot { internal init; get; }
-    public EffectProperty[] Properties { internal init; get; }
+    public string Name { init; get; }
+    public string Description { init; get; }
+    public bool IsSingleShot { init; get; }
+    public EffectType EffectType { set; get; } = EffectType.Normal;
+    public EffectProperty[] Properties { init; get; }
     [JsonIgnore] public Type InternalType { set; get; }
 }
 
 public class EffectProperty
 {
-    public string Name { internal init; get; }
-    public string Type { internal init; get; }
-    public object? DefaultValue { internal init; get; }
-    public object? Value { internal set; get; }
+    public string Name { init; get; }
+    public string Type { init; get; }
+    public object? DefaultValue { init; get; }
+    public object? Value { set; get; }
     [JsonIgnore] public Type InternalType { set; get; }
 
 }

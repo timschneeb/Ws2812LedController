@@ -10,6 +10,11 @@ namespace Ws2812RealtimeDesktopClient.ViewModels
             Segments = new AvaloniaList<SegmentEntry>();
             SegmentChanged += OnSegmentChanged;
         }
+        
+        ~SegmentPageViewModel()
+        {
+            SegmentChanged -= OnSegmentChanged;
+        }
 
         private void OnSegmentChanged()
         {

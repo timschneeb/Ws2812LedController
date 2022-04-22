@@ -14,7 +14,7 @@ public static class Extensions
     
     public static EffectProperty? FromPropertyName(this LedSegmentController segment, string propName, LayerId layer)
     {
-        var desc = EffectDescriptorList.Create(segment.CurrentEffects[(int)layer]);
+        var desc = EffectDescriptorList.Instance.Create(segment.CurrentEffects[(int)layer]);
         return desc?.Properties.FirstOrDefault(x => x.Name == propName);
     }
 }

@@ -7,7 +7,7 @@
         <Border Padding="20" Width="600" Height="450">
             <controls:ControlExample Header="Sample Control">
                 <ui:Button Content="Sample"
-                           Classes.accent="{Binding #Accent.IsChecked}"/>
+                           Classes.accent="{Binding #Accent.IsChecked}" />
             </controls:ControlExample>
         </Border>
     </Design.PreviewWith>
@@ -38,24 +38,25 @@
                             <Border Background="{DynamicResource ControlStrokeColorDefault}"
                                     Height="1" Margin="1 0 1 0"
                                     VerticalAlignment="Bottom"
-                                    DockPanel.Dock="Bottom"/>
+                                    DockPanel.Dock="Bottom" />
 
                             <ContentPresenter Name="HeaderPresenter"
                                               Content="{TemplateBinding Header}"
-                                              ContentTemplate="{TemplateBinding HeaderTemplate}"                                          
+                                              ContentTemplate="{TemplateBinding HeaderTemplate}"
                                               TextBlock.FontSize="16"
                                               TextBlock.FontWeight="SemiBold"
                                               Padding="12 8"
                                               HorizontalContentAlignment="Left"
                                               VerticalContentAlignment="Center" />
 
-                        
+
                         </DockPanel>
                     </Border>
 
                     <Border Name="ControlPreviewAreaHost"
                             BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
                             BorderThickness="1 0 1 1"
+                            CornerRadius="{Binding Source={StaticResource OverlayCornerRadius}, Converter={StaticResource BottomCornerRadiusFilterConverter}}"
                             Background="{DynamicResource SolidBackgroundFillColorBaseBrush}">
                         <Grid ColumnDefinitions="*,Auto" RowDefinitions="*,Auto">
                             <ContentPresenter Name="ExamplePresenter"
@@ -65,7 +66,7 @@
                                               VerticalAlignment="Stretch"
                                               HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                                               VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                              Margin="12 12 0 12"/>
+                                              Margin="12 12 0 12" />
                         </Grid>
                     </Border>
                 </StackPanel>
@@ -82,9 +83,9 @@
             </Transitions>
         </Setter>
     </Style>
-    
-    
-    <!-- AdaptiveWidth -->    
+
+
+    <!-- AdaptiveWidth -->
     <Style Selector="controls|ControlExample:adaptiveW /template/ ContentPresenter#ExamplePresenter">
         <Setter Property="Grid.ColumnSpan" Value="2" />
         <Setter Property="Padding" Value="12 24 12 12" />

@@ -157,10 +157,12 @@ public class RemoteStripManager
         if (_mgr == null)
         {
             Console.WriteLine("SyncSegmentsAsync: LedManager is null");
-            return;
+        }
+        else
+        {
+             await _mgr.UnregisterAllSegmentsAsync(_remote);
         }
         
-        await _mgr.UnregisterAllSegmentsAsync(_remote);
         foreach(var entry in entries)
         {
             AddSegment(entry);

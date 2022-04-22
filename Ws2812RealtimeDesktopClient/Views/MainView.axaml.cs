@@ -20,8 +20,6 @@ namespace Ws2812RealtimeDesktopClient.Views
         {
             InitializeComponent();
             DataContext = new MainViewViewModel();
-
-            
         }
 
         private void InitializeComponent()
@@ -47,10 +45,9 @@ namespace Ws2812RealtimeDesktopClient.Views
             _frameView.Navigated += OnFrameViewNavigated;
             _navView.ItemInvoked += OnNavigationViewItemInvoked;
             _navView.BackRequested += OnNavigationViewBackRequested;
-
-            _frameView.Navigate(typeof(HomePage));
-
+            
             NavigationService.Instance.SetFrame(_frameView);
+            NavigationService.Instance.Frame.Navigate(typeof(HomePage));
             
             (DataContext as MainViewViewModel)?.ApplyUiSettings();
         }
