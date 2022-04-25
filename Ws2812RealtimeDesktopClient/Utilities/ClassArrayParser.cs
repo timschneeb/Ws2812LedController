@@ -1,6 +1,5 @@
 using Config.Net;
 using Newtonsoft.Json;
-using Ws2812RealtimeDesktopClient.ViewModels;
 
 namespace Ws2812RealtimeDesktopClient.Utilities
 {
@@ -29,7 +28,8 @@ namespace Ws2812RealtimeDesktopClient.Utilities
             {
                 try
                 {
-                    result = JsonConvert.DeserializeObject<T[] >(value);
+                    result = JsonConvert.DeserializeObject<T[]>(value);
+                    
                 }
                 catch (Exception ex)
                 {

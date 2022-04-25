@@ -72,7 +72,7 @@ namespace Ws2812RealtimeDesktopClient.Pages
                     [!SelectingItemsControl.SelectedItemProperty] = new Binding("Value", BindingMode.TwoWay)
                     {
                         Converter = new FuncValueDynamicConverter<CRGBPalette16, PaletteEntry>
-                        (pal => (PaletteEntry)(pal == null ? AvaloniaProperty.UnsetValue : new PaletteEntry("", pal.entries)), 
+                        (pal => (PaletteEntry)(pal == null ? AvaloniaProperty.UnsetValue : new PaletteEntry("", pal.Entries)), 
                             entry => (CRGBPalette16)(entry == null ? AvaloniaProperty.UnsetValue : new CRGBPalette16(entry.PaletteColors)))
                     }
                 };
@@ -158,7 +158,7 @@ namespace Ws2812RealtimeDesktopClient.Pages
                 return new PaletteViewControl()
                 {
                     Margin = new Thickness(8, 0),
-                    Colors = ((CRGBPalette16?)row.Value)?.entries ?? Array.Empty<Color>()
+                    Colors = ((CRGBPalette16?)row.Value)?.Entries ?? Array.Empty<Color>()
                 };
             }  
             if (row?.Type == typeof(Color))

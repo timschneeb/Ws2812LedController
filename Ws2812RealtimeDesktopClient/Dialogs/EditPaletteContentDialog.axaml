@@ -1,0 +1,42 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:Ws2812RealtimeDesktopClient.ViewModels"
+             xmlns:controls="clr-namespace:FluentAvalonia.UI.Controls;assembly=FluentAvalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             Padding="0, 10"
+             x:DataType="viewModels:EditPaletteDialogViewModel"
+             x:Class="Ws2812RealtimeDesktopClient.Dialogs.EditPaletteContentDialog">
+    <StackPanel Spacing="10" MinWidth="400">
+        <TextBox Watermark="Name"
+                 Text="{CompiledBinding Name}"
+                 AttachedToVisualTree="InputField_OnAttachedToVisualTree" />
+        <CheckBox Name="GradientCheckBox"
+                  Content="Generate color gradient" />
+        <StackPanel Spacing="8" Orientation="Horizontal" HorizontalAlignment="Center">
+            <controls:ColorPickerButton Color="{Binding PaletteColors[0], Converter={StaticResource ColorConverter}}" ShowAcceptDismissButtons="False" UseColorWheel="True" UseSpectrum="True" UseColorTriangle="True" />
+            <controls:ColorPickerButton Color="{Binding PaletteColors[1], Converter={StaticResource ColorConverter}}" ShowAcceptDismissButtons="False" UseColorWheel="True" UseSpectrum="True" UseColorTriangle="True" />
+            <controls:ColorPickerButton Color="{Binding PaletteColors[2], Converter={StaticResource ColorConverter}}" ShowAcceptDismissButtons="False" UseColorWheel="True" UseSpectrum="True" UseColorTriangle="True" />
+            <controls:ColorPickerButton Color="{Binding PaletteColors[3], Converter={StaticResource ColorConverter}}" ShowAcceptDismissButtons="False" UseColorWheel="True" UseSpectrum="True" UseColorTriangle="True" />
+        </StackPanel>
+        <StackPanel Spacing="8" Orientation="Horizontal" HorizontalAlignment="Center" IsVisible="{Binding RelativeSource={RelativeSource Self}, Path=!#GradientCheckBox.IsChecked}">
+            <controls:ColorPickerButton Color="{Binding PaletteColors[4], Converter={StaticResource ColorConverter}}" ShowAcceptDismissButtons="False" UseColorWheel="True" UseSpectrum="True" UseColorTriangle="True" />
+            <controls:ColorPickerButton Color="{Binding PaletteColors[5], Converter={StaticResource ColorConverter}}" ShowAcceptDismissButtons="False" UseColorWheel="True" UseSpectrum="True" UseColorTriangle="True" />
+            <controls:ColorPickerButton Color="{Binding PaletteColors[6], Converter={StaticResource ColorConverter}}" ShowAcceptDismissButtons="False" UseColorWheel="True" UseSpectrum="True" UseColorTriangle="True" />
+            <controls:ColorPickerButton Color="{Binding PaletteColors[7], Converter={StaticResource ColorConverter}}" ShowAcceptDismissButtons="False" UseColorWheel="True" UseSpectrum="True" UseColorTriangle="True" />
+        </StackPanel>
+        <StackPanel Spacing="8" Orientation="Horizontal" HorizontalAlignment="Center" IsVisible="{Binding RelativeSource={RelativeSource Self}, Path=!#GradientCheckBox.IsChecked}">
+            <controls:ColorPickerButton Color="{Binding PaletteColors[8], Converter={StaticResource ColorConverter}}" ShowAcceptDismissButtons="False" UseColorWheel="True" UseSpectrum="True" UseColorTriangle="True" />
+            <controls:ColorPickerButton Color="{Binding PaletteColors[9], Converter={StaticResource ColorConverter}}" ShowAcceptDismissButtons="False" UseColorWheel="True" UseSpectrum="True" UseColorTriangle="True" />
+            <controls:ColorPickerButton Color="{Binding PaletteColors[10], Converter={StaticResource ColorConverter}}" ShowAcceptDismissButtons="False" UseColorWheel="True" UseSpectrum="True" UseColorTriangle="True" />
+            <controls:ColorPickerButton Color="{Binding PaletteColors[11], Converter={StaticResource ColorConverter}}" ShowAcceptDismissButtons="False" UseColorWheel="True" UseSpectrum="True" UseColorTriangle="True" />
+        </StackPanel>
+        <StackPanel Spacing="8" Orientation="Horizontal" HorizontalAlignment="Center" IsVisible="{Binding RelativeSource={RelativeSource Self}, Path=!#GradientCheckBox.IsChecked}">
+            <controls:ColorPickerButton Color="{Binding PaletteColors[12], Converter={StaticResource ColorConverter}}" ShowAcceptDismissButtons="False" UseColorWheel="True" UseSpectrum="True" UseColorTriangle="True" />
+            <controls:ColorPickerButton Color="{Binding PaletteColors[13], Converter={StaticResource ColorConverter}}" ShowAcceptDismissButtons="False" UseColorWheel="True" UseSpectrum="True" UseColorTriangle="True" />
+            <controls:ColorPickerButton Color="{Binding PaletteColors[14], Converter={StaticResource ColorConverter}}" ShowAcceptDismissButtons="False" UseColorWheel="True" UseSpectrum="True" UseColorTriangle="True" />
+            <controls:ColorPickerButton Color="{Binding PaletteColors[15], Converter={StaticResource ColorConverter}}" ShowAcceptDismissButtons="False" UseColorWheel="True" UseSpectrum="True" UseColorTriangle="True" />
+        </StackPanel>
+    </StackPanel>
+</UserControl>

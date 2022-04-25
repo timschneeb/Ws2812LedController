@@ -1,4 +1,6 @@
 using System.Drawing;
+using System.Runtime.Serialization;
+using Ws2812LedController.Core.Utils;
 
 namespace Ws2812LedController.Core.FastLedCompatibility;
 
@@ -8,7 +10,8 @@ public enum TBlendType
 	LinearBlend = 1
 }
 
-public class CRGBPalette16
+[Serializable]
+public class CRGBPalette16 : ISerializable
 {
 	public Color ColorFromPalette(byte index, byte brightness, TBlendType blendType)
 	{
@@ -107,7 +110,7 @@ public class CRGBPalette16
 		Lava
 	}
 	
-	public readonly Color[] entries = new Color[16];
+	public readonly Color[] Entries = new Color[16];
 	public CRGBPalette16()
 	{
 	}
@@ -116,7 +119,7 @@ public class CRGBPalette16
 		switch (pal)
 		{
 			case Palette.Ocean:
-				entries = new[]
+				Entries = new[]
 				{
 					Color.FromArgb(0x19,0x19,0x70),
 					Color.FromArgb(0x00,0x00,0x8B),
@@ -140,7 +143,7 @@ public class CRGBPalette16
 				};
 				break;
 			case Palette.Lava:
-				entries = new[]
+				Entries = new[]
 				{
 					Color.FromArgb(0x00,0x00,0x00),
 					Color.FromArgb(0x80,0x00,0x00),
@@ -167,17 +170,29 @@ public class CRGBPalette16
 	}
 	
 	
-	
 	public CRGBPalette16(Color c1, Color c2, Color c3, Color c4)
 	{
 		fill_gradient_RGB( 16, c1, c2, c3, c4);
 	}
-
-	public CRGBPalette16(params Color[] colors)
+	public CRGBPalette16(Color c1, Color c2, Color c3)
 	{
-		if (colors.Length == entries.Length)
+		fill_gradient_RGB( 16, c1, c2, c3);
+	}
+	public CRGBPalette16(Color c1, Color c2)
+	{
+		fill_gradient_RGB( 16, c1, c2);
+	}
+	
+	public CRGBPalette16(Color c1)
+	{
+		Array.Fill(Entries, c1);
+	}
+
+	public CRGBPalette16(Color[] colors)
+	{
+		if (colors.Length == Entries.Length)
 		{
-			entries = colors;
+			Entries = colors;
 			return;
 		}
 
@@ -195,7 +210,22 @@ public class CRGBPalette16
 			}
 		}
 
-		entries = temp;
+		Entries = temp;
+	}
+	
+	private void fill_gradient_RGB(ushort numLeds, Color c1, Color c2)
+	{
+		ushort last = (ushort)(numLeds - 1);
+		fill_gradient_RGB(0, c1, last, c2);
+	}
+
+
+	private void fill_gradient_RGB(ushort numLeds, Color c1, Color c2, Color c3)
+	{
+		ushort half = (ushort)(numLeds / 2);
+		ushort last = (ushort)(numLeds - 1);
+		fill_gradient_RGB(0, c1, half, c2);
+		fill_gradient_RGB(half, c2, last, c3);
 	}
 	
 	public void fill_gradient_RGB(ushort numLeds, Color c1, Color c2, Color c3, Color c4)
@@ -231,7 +261,7 @@ public class CRGBPalette16
 		int b88 = startcolor.B << 8;
 		for (ushort i = startpos; i <= endpos; ++i)
 		{
-			entries[i] = Color.FromArgb(r88 >> 8, g88 >> 8, b88 >> 8);
+			Entries[i] = Color.FromArgb(r88 >> 8, g88 >> 8, b88 >> 8);
 			r88 += rdelta87;
 			g88 += gdelta87;
 			b88 += bdelta87;
@@ -242,8 +272,8 @@ public class CRGBPalette16
 
 	public Color this [int x]
 	{
-		get => entries[(byte)x];
-		set => entries[(byte)x] = value;
+		get => Entries[(byte)x];
+		set => Entries[(byte)x] = value;
 	}
 
 	private void SetChannel(int index, byte channel, byte value)
@@ -251,29 +281,29 @@ public class CRGBPalette16
 		switch (channel)
 		{
 			case 0:
-				entries[index] = Color.FromArgb(0xFF, value, entries[index].G, entries[index].B);
+				Entries[index] = Color.FromArgb(0xFF, value, Entries[index].G, Entries[index].B);
 				break;
 			case 1:
-				entries[index] = Color.FromArgb(0xFF, entries[index].R, value, entries[index].B);
+				Entries[index] = Color.FromArgb(0xFF, Entries[index].R, value, Entries[index].B);
 				break;
 			case 2:
-				entries[index] = Color.FromArgb(0xFF, entries[index].R, entries[index].G, value);
+				Entries[index] = Color.FromArgb(0xFF, Entries[index].R, Entries[index].G, value);
 				break;
 		}
 	}
 	
 	private byte GetChannel(int index, byte channel)
 	{
-		if (index >= entries.Length)
+		if (index >= Entries.Length)
 		{
 			return 0;
 		}
 		
 		return channel switch
 		{
-			0 => entries[index].R,
-			1 => entries[index].G,
-			2 => entries[index].B,
+			0 => Entries[index].R,
+			1 => Entries[index].G,
+			2 => Entries[index].B,
 			_ => 0
 		};
 	}
@@ -283,7 +313,7 @@ public class CRGBPalette16
 	{
 		byte changes = 0;
 
-		for (byte i = 0; i < current.entries.Length; ++i)
+		for (byte i = 0; i < current.Entries.Length; ++i)
 		{
 			for (byte channel = 0; channel < 3; ++channel)
 			{
@@ -324,6 +354,28 @@ public class CRGBPalette16
 		}
 	}
 
+	public CRGBPalette16(SerializationInfo info, StreamingContext context)
+	{
+		var entryArray = (uint[])(info.GetValue(nameof(Entries), typeof(uint[])) ?? 0);
+		var colorArray = new Color[16];
+		Array.Fill(colorArray, Color.Black);
+		for (var i = 0; i < Math.Min(16, entryArray.Length); i++)
+		{
+			colorArray[i] = entryArray[i].ToColor();
+		}
+		Entries = colorArray;
+	}
+            
+	public void GetObjectData(SerializationInfo info, StreamingContext context)
+	{
+		var entryArray = new uint[Entries.Length];
+		for (var i = 0; i < Math.Min(Entries.Length, entryArray.Length); i++)
+		{
+			entryArray[i] = Entries[i].ToUInt32();
+		}
+		
+		info.AddValue(nameof(Entries), entryArray);
+	}
 }
 
     

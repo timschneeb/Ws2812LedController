@@ -13,4 +13,10 @@ public class PaletteEntry : ViewModelBase
 
     public string Name { set; get; }
     public Color[] PaletteColors { set; get; }
+    
+    public void UpdateFromViewModel()
+    {
+        RaisePropertyChanged(nameof(Name));
+        RaisePropertyChanged(nameof(PaletteColors));
+    }
 }

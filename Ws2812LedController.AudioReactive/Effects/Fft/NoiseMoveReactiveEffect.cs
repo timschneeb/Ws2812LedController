@@ -15,7 +15,8 @@ public class NoiseMoveReactiveEffect : BaseAudioReactiveEffect, IHasFftBinSelect
 
     public override string Description => "	Using perlin noise as movement for different frequency bins";
     public override int Speed { set; get; } = 1000 / 60;
-    public int AnimationSpeed { set; get; } = (int)(128);
+    public byte AnimationSpeed { set; get; } = 128;
+    public byte FadeSpeed { set; get; } = 224;
     public FftCBinSelector FftCBinSelector { set; get; } = new(0,4);
 
     protected override async Task<int> PerformFrameAsync(LedSegmentGroup segment, LayerId layer)
@@ -26,7 +27,7 @@ public class NoiseMoveReactiveEffect : BaseAudioReactiveEffect, IHasFftBinSelect
         /* Fade to black by x */ 
         for(var i = 0; i < segment.Width; ++i) 
         {
-            segment.SetPixel(i, Scale.nscale8x3(segment.PixelAt(i, layer), 255 - /*fadeBy*/ 224 /*64*/),layer);
+            segment.SetPixel(i, Scale.nscale8x3(segment.PixelAt(i, layer), (short)(255 - /*fadeBy*/ FadeSpeed) /*64*/),layer);
         }
         
         var millis = Time.Millis();

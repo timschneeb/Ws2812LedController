@@ -279,8 +279,7 @@ public class RemoteStripManager
         }
     }
     #endregion
-    
-    
+
     #region Segment management
     /** Segments are implicitly reset by this function */
     public async Task SyncSegmentsAsync(SegmentEntry[] entries)

@@ -52,13 +52,36 @@ public class PaletteManager
                 }
 
                 PaletteEntries.First(x => x.Name == name).PaletteColors =
-                    new CRGBPalette16((CRGBPalette16.Palette)i).entries;
+                    new CRGBPalette16((CRGBPalette16.Palette)i).Entries;
             }
             else
             {
-                PaletteEntries.Add(new PaletteEntry(name, new CRGBPalette16((CRGBPalette16.Palette)i).entries));
+                PaletteEntries.Add(new PaletteEntry(name, new CRGBPalette16((CRGBPalette16.Palette)i).Entries));
             }
         }
+    }
+
+    public void AddOrUpdatePalette(PaletteEntry entry, string? originalName)
+    {
+        var oldEntry = PaletteEntries.FirstOrDefault(x => x.Name == originalName);
+        var oldEntryIdx = oldEntry == null ? -1 : PaletteEntries.IndexOf(oldEntry);
+        
+        if (oldEntryIdx == -1)
+        {
+            PaletteEntries.Add(entry);
+            SettingsProvider.Instance.Palettes = PaletteEntries.ToArray();
+            return;
+        }
+        
+        PaletteEntries[oldEntryIdx] = entry;
+        SettingsProvider.Instance.Palettes = PaletteEntries.ToArray();
+    }
+    
+    public void DeletePalette(string name)
+    {
+        PaletteEntries.Where(x => x.Name == name).ToList()
+            .ForEach(x => PaletteEntries.Remove(x));
+        SettingsProvider.Instance.Palettes = PaletteEntries.ToArray();
     }
     #endregion
 }

@@ -22,11 +22,11 @@ public class NoiseFireReactiveEffect : BaseAudioReactiveEffect, IHasVolumeAnalys
 
     public NoiseFireReactiveEffect()
     {
-        _palette = new CRGBPalette16(Conversions.ColorFromHSV(0,255,2), Conversions.ColorFromHSV(0,255,4), 
+        _palette = new CRGBPalette16(new[]{ Conversions.ColorFromHSV(0,255,2), Conversions.ColorFromHSV(0,255,4), 
             Conversions.ColorFromHSV(0,255,8), Conversions.ColorFromHSV(0, 255, 8), Conversions.ColorFromHSV(0, 255, 16), 
             Color.Red, Color.Red, Color.Red, Color.FromArgb(0xFF,0x8C,0x00),Color.FromArgb(0xFF,0x8C,0x00),
             Color.FromArgb(0xFF,0xA5,0x00), Color.FromArgb(0xFF,0xA5,0x00), Color.Yellow,
-            Color.FromArgb(0xFF,0xA5,0x00), Color.Yellow, Color.Yellow);
+            Color.FromArgb(0xFF,0xA5,0x00), Color.Yellow, Color.Yellow});
     }
     
     protected override async Task<int> PerformFrameAsync(LedSegmentGroup segment, LayerId layer)

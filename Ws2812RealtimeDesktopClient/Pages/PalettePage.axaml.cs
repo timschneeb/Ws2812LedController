@@ -1,7 +1,9 @@
+using System.Drawing;
 using Avalonia.Collections;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using FluentAvalonia.UI.Controls;
+using Ws2812LedController.Core.FastLedCompatibility;
 using Ws2812RealtimeDesktopClient.Dialogs;
 using Ws2812RealtimeDesktopClient.Models;
 using Ws2812RealtimeDesktopClient.Utilities;
@@ -20,8 +22,7 @@ namespace Ws2812RealtimeDesktopClient.Pages
             var context = new PalettePageViewModel();
             context.AddEvent += OnAddEvent;
             context.EditEvent += OnEditEvent;
-            context.SegmentChanged += OnSegmentChanged;
-            context.Segments = new AvaloniaList<SegmentEntry>(SettingsProvider.Instance.Segments ?? Array.Empty<SegmentEntry>());
+            context.Palettes = new AvaloniaList<PaletteEntry>(SettingsProvider.Instance.Palettes ?? Array.Empty<PaletteEntry>());
 
             _listView = this.FindControl<ListBox>("ListBox1");
             var entries = PaletteManager.Instance.PaletteEntries;
@@ -30,62 +31,58 @@ namespace Ws2812RealtimeDesktopClient.Pages
             DataContext = context;
         }
 
-        private void OnSegmentChanged()
-        {
-            if (DataContext is SegmentPageViewModel vm)
-            {
-                SettingsProvider.Instance.Segments = vm.Segments.ToArray();
-            }
-        }
-
-        private async Task<SegmentEntry?> OpenEditDialog(SegmentEntry? entry)
+        private async Task<PaletteEntry?> OpenEditDialog(PaletteEntry? entry)
         {
             var dialog = new ContentDialog()
             {
-                Title = entry == null ? "Create new segment" : "Edit segment",
+                Title = entry == null ? "Create new color palette" : "Edit color palette",
                 PrimaryButtonText = entry == null ? "Create" : "Save",
                 CloseButtonText = "Cancel"
             };
 
-            var viewModel = new EditSegmentDialogViewModel(dialog, entry);
-            dialog.Content = new EditSegmentContentDialog()
+            var viewModel = new EditPaletteDialogViewModel(dialog, entry);
+            var content = new EditPaletteContentDialog
             {
-                DataContext = viewModel
+                DataContext = viewModel,
+                GradientCheckBox =
+                {
+                    IsChecked = entry == null
+                }
             };
+            dialog.Content = content;
+            
             
             void OnPrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
             {
-                if (DataContext is SegmentPageViewModel vm)
+                if (DataContext is PalettePageViewModel vm)
                 {
-                    var defer = args.GetDeferral();
-
-                    var isNameExisting = entry == null /* create mode */ ? vm.Segments.Any(x => x.Name == viewModel.Name) :
-                        vm.Segments.Any(x => x.Name == viewModel.Name && entry.Start != x.Start && entry.Width != x.Width) ;
+                    var isNameExisting = entry == null /* create mode */ ? vm.Palettes.Any(x => x.Name == viewModel.Name) :
+                        vm.Palettes.Count(x => x.Name == viewModel.Name) > 1;
                     var isNameEmpty = viewModel.Name.Trim().Length < 1;
-                    var hasUnknownMirrorReference = false;
-                    viewModel.MirroredTo.ToList().ForEach(x =>
+                    var hasNoColors = true;
+                    viewModel.PaletteColors.ToList().ForEach(x =>
                     {
-                        if (hasUnknownMirrorReference == false)
+                        if (hasNoColors)
                         {
-                             hasUnknownMirrorReference = vm.Segments.All(z => z.Name != x);
+                            hasNoColors = x == Color.FromArgb(0, 0, 0, 0);
                         }
                     });
-                    args.Cancel = isNameExisting || hasUnknownMirrorReference || isNameEmpty;
+                    args.Cancel = isNameExisting || hasNoColors || isNameEmpty;
 
                     if (args.Cancel)
                     {
                         var msg = "Unknown validation error";
                         if (isNameExisting)
                         {
-                            msg = "Name is already taken by another segment";
+                            msg = "Name is already taken by another palette";
                         } 
                         else if (isNameEmpty)
                         {
                             msg = "Name must not be empty";
                         }
-                        else if (hasUnknownMirrorReference)
+                        else if (hasNoColors)
                         {
-                            msg = "Segment is duplicated to non-existent segments. Check your syntax; this app expects a comma-separated list of duplication targets";
+                            msg = "At least one color must be set";
                         }
                         
                         var resultHint = new ContentDialog()
@@ -95,11 +92,34 @@ namespace Ws2812RealtimeDesktopClient.Pages
                             PrimaryButtonText = "Close"
                         };
 
-                        _ = resultHint.ShowAsync().ContinueWith(_ => defer.Complete());
+                        _ = resultHint.ShowAsync();
                     }
                     else
                     {
-                        defer.Complete();
+                        // Gradient generations
+                        if (content.GradientCheckBox.IsChecked ?? false)
+                        {
+                            CRGBPalette16 expanded;
+                            if (viewModel.PaletteColors[1].IsTransparent() && viewModel.PaletteColors[2].IsTransparent() && viewModel.PaletteColors[3].IsTransparent())
+                            {
+                                expanded = new CRGBPalette16(viewModel.PaletteColors[0]);
+                            }
+                            else if (viewModel.PaletteColors[2].IsTransparent() && viewModel.PaletteColors[3].IsTransparent())
+                            {
+                                expanded = new CRGBPalette16(viewModel.PaletteColors[0],viewModel.PaletteColors[1]);
+                            }
+                            else if (viewModel.PaletteColors[3].IsTransparent())
+                            {
+                                expanded = new CRGBPalette16(viewModel.PaletteColors[0],viewModel.PaletteColors[1],
+                                    viewModel.PaletteColors[2]);
+                            }
+                            else
+                            {
+                                expanded = new CRGBPalette16(viewModel.PaletteColors[0],viewModel.PaletteColors[1],
+                                    viewModel.PaletteColors[2],viewModel.PaletteColors[3]);
+                            }
+                            viewModel.PaletteColors = expanded.Entries;
+                        }
                     }
                 }
                 
@@ -109,20 +129,15 @@ namespace Ws2812RealtimeDesktopClient.Pages
             var result = await dialog.ShowAsync();
             dialog.PrimaryButtonClick -= OnPrimaryButtonClick;
             
-            if (result == ContentDialogResult.None)
-            {
-                return null;
-            }
-            
-            return viewModel.ApplyTo(entry);
+            return result == ContentDialogResult.None ? null : viewModel.ApplyTo(entry);
         }
 
-        private async void OnEditEvent(SegmentEntry obj)
+        private async void OnEditEvent(PaletteEntry obj)
         {
             var item = await OpenEditDialog(obj);
             if (item != null)
             {
-                (DataContext as SegmentPageViewModel)?.UpdateItem(item, obj.Name);
+                (DataContext as PalettePageViewModel)?.UpdateItem(item, obj.Name);
             }
         }
 
@@ -131,7 +146,7 @@ namespace Ws2812RealtimeDesktopClient.Pages
             var item = await OpenEditDialog(null);
             if (item != null)
             {
-                (DataContext as SegmentPageViewModel)?.AddItem(item);
+                (DataContext as PalettePageViewModel)?.AddItem(item);
             }
         }
 

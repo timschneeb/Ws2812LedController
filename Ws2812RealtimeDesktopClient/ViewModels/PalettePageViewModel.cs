@@ -7,71 +7,71 @@ namespace Ws2812RealtimeDesktopClient.ViewModels
     {
         public PalettePageViewModel()
         {
-            Segments = new AvaloniaList<SegmentEntry>();
-            SegmentChanged += OnSegmentChanged;
+            Palettes = new AvaloniaList<PaletteEntry>();
+            PaletteChanged += OnPaletteChanged;
         }
         
         ~PalettePageViewModel()
         {
-            SegmentChanged -= OnSegmentChanged;
+            PaletteChanged -= OnPaletteChanged;
         }
 
         public string PageHeader => "Color palettes";
         public string PageSubtitle => "Create and edit color palettes used for some effects";
 
-        private void OnSegmentChanged()
+        private void OnPaletteChanged()
         {
             /* Reorder list. AvaloniaList doesn't really support sorting */
-            Segments = new AvaloniaList<SegmentEntry>(Segments.OrderBy(x => x.Start).AsEnumerable());
-            RaisePropertyChanged(nameof(Segments));
+            Palettes = new AvaloniaList<PaletteEntry>(Palettes.OrderBy(x => x.Name).AsEnumerable());
+            RaisePropertyChanged(nameof(Palettes));
         }
 
         public event Action? AddEvent;
-        public event Action<SegmentEntry>? EditEvent;
+        public event Action<PaletteEntry>? EditEvent;
         
-        public AvaloniaList<SegmentEntry> Segments { get; set; }
-        public event Action? SegmentChanged;
+        public AvaloniaList<PaletteEntry> Palettes { get; set; }
+        public event Action? PaletteChanged;
 
-        public async Task AddItem(SegmentEntry segment)
+        public void AddItem(PaletteEntry entry)
         {
-            if (Segments.All(x => x.Name != segment.Name))
+            if (Palettes.All(x => x.Name != entry.Name))
             {
-                Segments.Add(segment);
-                segment.UpdateFromViewModel();
-                RemoteStripManager.Instance.AddSegment(segment);
+                Palettes.Add(entry);
+                entry.UpdateFromViewModel();
+                PaletteManager.Instance.AddOrUpdatePalette(entry, null);
             }
             else
             {
-                await UpdateItem(segment, segment.Name);
+                UpdateItem(entry, entry.Name);
             }
             
-            SegmentChanged?.Invoke();
+            PaletteChanged?.Invoke();
         }  
         
-        public async Task UpdateItem(SegmentEntry segment, string oldName)
+        public void UpdateItem(PaletteEntry entry, string oldName)
         {
-            for (var i = 0; i < Segments.Count; i++)
+            for (var i = 0; i < Palettes.Count; i++)
             {
-                if (Segments[i].Name == oldName)
+                if (Palettes[i].Name == oldName)
                 {
-                    Segments[i] = segment;
-                    Segments[i].UpdateFromViewModel();
+                    Palettes[i] = entry;
+                    Palettes[i].UpdateFromViewModel();
                 }
             }
             
-            await RemoteStripManager.Instance.UpdateSegmentAsync(segment, oldName);
-            SegmentChanged?.Invoke();
+            PaletteManager.Instance.AddOrUpdatePalette(entry, oldName);
+            PaletteChanged?.Invoke();
         }
         
-        public async Task DeleteItem(object? param)
+        public void DeleteItem(object? param)
         {
-            if (param is SegmentEntry segment)
+            if (param is PaletteEntry entry)
             {
-                Segments.Remove(segment);
-                await RemoteStripManager.Instance.DeleteSegmentAsync(segment.Name);
+                Palettes.Remove(entry);
+                PaletteManager.Instance.DeletePalette(entry.Name);
             }
             
-            SegmentChanged?.Invoke();
+            PaletteChanged?.Invoke();
         }
 
         public void DoAddCommand()
@@ -81,9 +81,9 @@ namespace Ws2812RealtimeDesktopClient.ViewModels
 
         public void DoEditCommand(object? param)
         { 
-            if (param is SegmentEntry segment)
+            if (param is PaletteEntry entry)
             {
-                EditEvent?.Invoke(segment);
+                EditEvent?.Invoke(entry);
             }
         }
     }

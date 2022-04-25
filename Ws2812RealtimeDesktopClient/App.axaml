@@ -2,8 +2,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="Ws2812RealtimeDesktopClient.App"
              xmlns:ui="using:FluentAvalonia.UI.Controls"
-             xmlns:sty="using:FluentAvalonia.Styling">
+             xmlns:sty="using:FluentAvalonia.Styling"
+             xmlns:converters="clr-namespace:Ws2812RealtimeDesktopClient.Converters">
     <Application.Resources>
+        <converters:Color2ToSystemColorConverter x:Key="ColorConverter" />
+        
         <ui:SymbolIconSource x:Key="SaveIcon" Symbol="Save" />
         <ui:FontIconSource x:Key="FontIcon" Glyph="F" />
         <ui:PathIconSource x:Key="PathIcon" Data="M0,0 L 50,0 L 25,50Z" />
