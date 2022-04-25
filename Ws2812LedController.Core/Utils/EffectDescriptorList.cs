@@ -62,6 +62,17 @@ public class EffectDescriptorList
                     {
                         continue;
                     }
+
+                    var declaringBaseClass = type;
+                    var currentClassType = type;
+                    while (currentClassType != null)
+                    {
+                        if (currentClassType.GetProperty(property.Name) != null)
+                        {
+                            declaringBaseClass = currentClassType;
+                        }
+                        currentClassType = currentClassType.BaseType;
+                    }
                     
                     properties.Add(new EffectProperty()
                     {
@@ -70,13 +81,16 @@ public class EffectDescriptorList
                         Value = property.GetValue(effect),
                         Type = property.PropertyType.IsEnum
                             ? Enum.GetUnderlyingType(property.PropertyType).Name : property.PropertyType.Name,
-                        InternalType = property.PropertyType
+                        InternalType = property.PropertyType,
+                        PropertyInfo = property,
+                        DeclaringBaseClass = declaringBaseClass
                     });
                 }
                 
                 descriptors.Add(new EffectDescriptor()
                 {
                     Name = type.Name,
+                    FriendlyName = effect.FriendlyName,
                     Description = effect.Description,
                     IsSingleShot = effect.IsSingleShot,
                     Properties = properties.ToArray(),

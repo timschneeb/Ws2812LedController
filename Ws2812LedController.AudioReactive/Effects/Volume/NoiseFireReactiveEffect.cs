@@ -11,6 +11,7 @@ namespace Ws2812LedController.AudioReactive.Effects.Volume;
 
 public class NoiseFireReactiveEffect : BaseAudioReactiveEffect, IHasVolumeAnalysis
 {
+    public override string FriendlyName => "Noise fire";
     public override string Description => "A perlin noise based volume reactive fire routine";
     public override int Speed { set; get; } = 1000 / 60;
     public byte AnimationSpeed { set; get; } = 64;

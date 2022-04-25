@@ -1,71 +1,109 @@
-﻿using System.ComponentModel;
+﻿using System.Collections;
+using System.ComponentModel;
 using System.Text.Json;
+using Avalonia.Collections;
 using Avalonia.Controls;
 using FluentAvalonia.UI.Controls;
+using Ws2812LedController.Core.Model;
 using Ws2812RealtimeDesktopClient.Dialogs;
 using Ws2812RealtimeDesktopClient.Models;
 using Ws2812RealtimeDesktopClient.Pages;
 using Ws2812RealtimeDesktopClient.Services;
+using Ws2812RealtimeDesktopClient.Utilities;
 
 namespace Ws2812RealtimeDesktopClient.ViewModels
 {
     public class ReactiveEffectPageViewModel : ViewModelBase
     {
         private EffectAssignment? _selectedAssignment;
-        private string? _selectedEffect;
-        private List<EffectAssignment> _assignments = new();
+        private EffectDescriptor? _selectedEffect;
 
         public ReactiveEffectPageViewModel()
         {
             PropertyChanged += OnPropertyChanged;
         }
 
-        private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        public DataGridCollectionView PropertyGridItems
+        {
+            set => RaiseAndSetIfChanged(ref _propertyGridItems, value);
+            get => _propertyGridItems;
+        }
+
+        public void UpdatePropertyGrid()
+        {
+            if (_selectedAssignment == null)
+            {
+                PropertyGridItems = new DataGridCollectionView(Array.Empty<PropertyRow>());
+                return;
+            }
+
+            PropertyGridItems = new DataGridCollectionView(_selectedAssignment.Properties)
+            {
+                GroupDescriptions =
+                {
+                    new DataGridPathGroupDescription("Group")
+                }
+            };
+        }
+        
+        private async void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
             {
                 case nameof(Assignments):
                     RaisePropertyChanged(nameof(ShowSelectors));
+                    UpdatePropertyGrid();
                     break;
                 case nameof(SelectedAssignment):
                 {
                     if (_selectedAssignment != null)
                     {
-                        SelectedEffect = _selectedAssignment.EffectName;
+                        _ignoreEffectChange = true;
+                        SelectedEffect = AvailableEffects.FirstOrDefault(x => x.Name == _selectedAssignment.EffectName);
+                        UpdatePropertyGrid();
+                        _ignoreEffectChange = false;
                     }
                     break;
                 }
                 case nameof(SelectedEffect):
-                    if (_selectedAssignment != null && _selectedEffect != null)
+                    if (_selectedAssignment != null && _selectedEffect != null && !_ignoreEffectChange)
                     {
-                        _selectedAssignment.EffectName = _selectedEffect;
+                        _selectedAssignment.EffectName = _selectedEffect.Name;
+                        var copy = _selectedAssignment;
+                        await RemoteStripManager.Instance.DeleteEffectAssignmentAsync(_selectedAssignment.SegmentName, true);
+                        await RemoteStripManager.Instance.AddEffectAssignmentAsync(copy);
+                        SelectedAssignment = copy;
+                        RaisePropertyChanged(nameof(Assignments));
                     }
                     break;
             }
         }
+
+        private bool _ignoreEffectChange = false;
+        private DataGridCollectionView _propertyGridItems = new(Array.Empty<PropertyRow>());
 
         public async Task AssignEffect()
         {
              var result = await OpenAssignDialog(null);
              if (result != null)
              {
-                 Assignments.RemoveAll(x => x.SegmentName == result.SegmentName);
-                 Assignments.Add(result);
-                 
-                 RaisePropertyChanged(nameof(Assignments)); 
+                 await RemoteStripManager.Instance.AddEffectAssignmentAsync(result);
+                 RaisePropertyChanged(nameof(Assignments));
                  
                  SelectedAssignment = result;
-                 SelectedEffect = result.EffectName;
+                 SelectedEffect = AvailableEffects.FirstOrDefault(x => x.Name == result.EffectName);
+                 UpdatePropertyGrid();
              }
         } 
         
-        public void RemoveEffect(object? param)
+        public async Task RemoveEffect(object? param)
         {
             if (param is EffectAssignment ass)
             {
-                Assignments.RemoveAll(x => x.SegmentName == ass.SegmentName);
+                await RemoteStripManager.Instance.DeleteEffectAssignmentAsync(ass.SegmentName); 
                 SelectedAssignment = Assignments.FirstOrDefault();
                 RaisePropertyChanged(nameof(Assignments));
+                UpdatePropertyGrid();
             }
         }
         
@@ -84,11 +122,7 @@ namespace Ws2812RealtimeDesktopClient.ViewModels
             
         }
 
-        public List<EffectAssignment> Assignments
-        {
-            set => RaiseAndSetIfChanged(ref _assignments, value);
-            get => _assignments;
-        }
+        public AvaloniaList<EffectAssignment> Assignments => RemoteStripManager.Instance.EffectAssignments;
 
         public EffectAssignment? SelectedAssignment
         {
@@ -96,14 +130,14 @@ namespace Ws2812RealtimeDesktopClient.ViewModels
             get => _selectedAssignment;
         }
         
-        public string? SelectedEffect
+        public EffectDescriptor? SelectedEffect
         {
             set => RaiseAndSetIfChanged(ref _selectedEffect, value);
             get => _selectedEffect;
         }
 
         public bool ShowSelectors => Assignments.Count > 0;
-        public string[] AvailableEffects => ReactiveEffectDescriptorList.Instance.Descriptors.Select(x => x.Name).ToArray();
+        public EffectDescriptor[] AvailableEffects => ReactiveEffectDescriptorList.Instance.Descriptors;
         
         public string PageHeader => "Reactive effects";
         public string PageSubtitle => "Set-up audio/video reactive real-time effects";
@@ -141,7 +175,7 @@ namespace Ws2812RealtimeDesktopClient.ViewModels
             {
                 var defer = args.GetDeferral();
 
-                var isEffectEmpty = viewModel.Effect.Trim().Length < 1;
+                var isEffectEmpty = (viewModel.Effect?.Name.Trim().Length ?? 0) < 1;
                 var isNameEmpty = viewModel.Segment.Trim().Length < 1;
                     
                 args.Cancel = isEffectEmpty || isNameEmpty;

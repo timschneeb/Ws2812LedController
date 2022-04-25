@@ -5,6 +5,7 @@ namespace Ws2812LedController.Core.Effects.Firework;
 
 public class Firework : BaseFirework
 {
+    public override string FriendlyName => "Firework";
     public override string Description => "Firework sparks";
     
     public Color BackgroundColor

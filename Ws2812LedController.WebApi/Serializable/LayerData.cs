@@ -1,4 +1,7 @@
-namespace Ws2812LedController.Core.Model.Serializable;
+using Ws2812LedController.Core;
+using Ws2812LedController.Core.Model;
+
+namespace Ws2812LedController.WebApi.Serializable;
 
 public class LayerData
 {

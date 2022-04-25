@@ -15,9 +15,12 @@
         <ui:SymbolIconSource Symbol="Home" x:Key="HomeIcon" />
         <ui:SymbolIconSource Symbol="HomeFilled" x:Key="HomeIconFilled" />
         <ui:SymbolIconSource Symbol="Crop" x:Key="CropIcon" />
+        <ui:SymbolIconSource Symbol="ColorFill" x:Key="ColorFillIcon" />
         <ui:SymbolIconSource Symbol="Audio" x:Key="AudioIcon" />
         <ui:SymbolIconSource Symbol="ImageCopy" x:Key="ImageIcon" />
         <ui:SymbolIconSource Symbol="New" x:Key="NewIcon" />
+        <ui:SymbolIconSource Symbol="Delete" x:Key="DeleteIcon" />
+        
         <ui:SymbolIconSource Symbol="Edit" x:Key="EditIcon" />
         <ui:SymbolIconSource Symbol="EditFilled" x:Key="EditIconFilled" />
         <ui:SymbolIconSource Symbol="StarFilled" x:Key="StarFilledIcon" />
@@ -47,7 +50,6 @@
                                  Opacity="0.725"/>
             </Setter>
         </Style>
-
 		
     </Application.Styles>
 

@@ -7,6 +7,7 @@ namespace Ws2812LedController.Core.Effects;
 
 public class Static : BaseEffect
 {
+    public override string FriendlyName => "Static";
     public override string Description => "Static color";
     public override int Speed { get; set; } = 100;
     public Color Color { get; set; } = Color.White;

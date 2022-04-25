@@ -7,6 +7,8 @@ namespace Ws2812LedController.Core.Effects;
 
 public class ColorWipe : BaseEffect
 {
+    public override string FriendlyName => "Color wipe";
+
     public override string Description => "Lights all LEDs one after another.";
     public override int Speed { get; set; } = 2000;
     

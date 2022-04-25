@@ -13,6 +13,7 @@ namespace Ws2812LedController.AudioReactive.Effects;
  */
 public class NoiseCenteredReactiveEffect : BaseAudioReactiveEffect
 {
+    public override string FriendlyName => "Noise centered meter";
     public override string Description => "Light LEDs from center based on volume peaks and noise level";
     public override int Speed { set; get; } = 1000 / 60;
     public byte Intensity { set; get; } = 128;

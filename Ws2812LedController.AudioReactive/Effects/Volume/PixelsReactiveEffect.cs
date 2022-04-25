@@ -11,6 +11,7 @@ namespace Ws2812LedController.AudioReactive.Effects.Volume;
 
 public class PixelsReactiveEffect : BaseAudioReactiveEffect, IHasVolumeAnalysis
 {
+    public override string FriendlyName => "Pixels";
     public override string Description => "Random pixels based on volume peaks";
     public override int Speed { set; get; } = 1000 / 60;
     public byte FadeSpeed { set; get; } = 60;

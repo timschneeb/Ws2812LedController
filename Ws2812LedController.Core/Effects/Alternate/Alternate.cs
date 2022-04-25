@@ -6,6 +6,7 @@ namespace Ws2812LedController.Core.Effects.Alternate;
 
 public class Alternate : BaseAlternate
 {
+    public override string FriendlyName => "Alternate";
     public override string Description => "Alternating color pixels running";
     
     public Color ColorA

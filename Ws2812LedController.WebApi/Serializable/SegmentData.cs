@@ -1,6 +1,8 @@
+using Ws2812LedController.Core;
+using Ws2812LedController.Core.Model;
 using Ws2812LedController.Core.Utils;
 
-namespace Ws2812LedController.Core.Model.Serializable;
+namespace Ws2812LedController.WebApi.Serializable;
 
 public class SegmentData
 {

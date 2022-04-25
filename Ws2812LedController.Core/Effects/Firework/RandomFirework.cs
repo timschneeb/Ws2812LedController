@@ -8,6 +8,7 @@ namespace Ws2812LedController.Core.Effects.Firework;
 
 public class RandomFirework : BaseFirework
 {
+    public override string FriendlyName => "Firework (random)";
     public override string Description => "Firework sparks with random colors";
     
     private byte _lastRandomColor = 0;

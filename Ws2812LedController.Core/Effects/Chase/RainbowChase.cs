@@ -8,6 +8,7 @@ namespace Ws2812LedController.Core.Effects.Chase;
 
 public class RainbowChase : BaseChase
 {
+    public override string FriendlyName => "Rainbow chase";
     public override string Description => "Custom color running on rainbow background";
     
     private Color _color = Color.White;

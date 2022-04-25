@@ -11,6 +11,7 @@ namespace Ws2812LedController.AudioReactive.Effects.Volume;
 
 public class PixelWaveReactiveEffect : BaseAudioReactiveEffect, IHasVolumeAnalysis
 {
+    public override string FriendlyName => "Pixel wave";
     public override string Description => "Centered running light with brightness derived from volume levels";
     public override int Speed { set; get; } = 1000 / 60;
     public IVolumeAnalysisOption VolumeAnalysisOptions { set; get; } = new AgcVolumeAnalysisOption();

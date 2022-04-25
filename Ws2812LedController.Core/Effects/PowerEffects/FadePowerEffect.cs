@@ -7,6 +7,7 @@ namespace Ws2812LedController.Core.Effects.PowerEffects;
 
 public class FadePowerEffect : BasePowerEffect
 {
+    public override string FriendlyName => "Fade";
     public override string Description => "Fade LEDs in/out when toggling power states";
     public override int Speed { get; set; } = 1000;
     public override bool IsSingleShot => true;

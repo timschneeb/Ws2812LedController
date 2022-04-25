@@ -8,6 +8,7 @@ namespace Ws2812LedController.Core.Effects;
 
 public class LarsonScanner : BaseEffect
 {
+    public override string FriendlyName => "Larson scanner";
     public override string Description => "K.I.T.T.";
     public override int Speed { get; set; } = 1000;
     

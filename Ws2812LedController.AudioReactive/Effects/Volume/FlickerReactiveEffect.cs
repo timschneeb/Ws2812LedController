@@ -7,12 +7,12 @@ using Ws2812LedController.Core.Model;
 
 namespace Ws2812LedController.AudioReactive.Effects.Volume;
 
-public class FlickerReactiveEffect : BaseAudioReactiveEffect, IHasOptionalFftBinSelection
+public class FlickerReactiveEffect : BaseAudioReactiveEffect, IHasOptionalFftBinSelection, IHasPeakDetection
 {
+    public override string FriendlyName => "Flicker";
     public override string Description => "Flicker LEDs based on volume or FFT peaks";
     public override int Speed { set; get; } = 1000 / 60;
-    public FftCBinSelector? FftCBinSelector { set; get; }
-
+    public FftCBinSelector? FftCBinSelector { set; get; } = null;
     public Color Color { set; get; } = Color.DarkRed;
     public double Threshold { set; get; } = 500;
     

@@ -7,6 +7,8 @@ namespace Ws2812LedController.Core.Effects.Sparkle;
 
 public class HyperSparkle : BaseEffect
 {
+    public override string FriendlyName => "Sparkle (hyper)";
+
     public override string Description => "Like flash sparkle. With more flash.";
     public override int Speed { get; set; } = 1500;
     

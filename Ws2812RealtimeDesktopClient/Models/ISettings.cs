@@ -6,7 +6,9 @@ namespace Ws2812RealtimeDesktopClient.Models;
 
 public interface ISettings
 {
-    SegmentEntry[] Segments { set; get; }
+    SegmentEntry[]? Segments { set; get; }
+    EffectAssignment[]? ReactiveEffectAssignments { set; get; }
+    PaletteEntry[]? Palettes { set; get; }
     
     [Option(DefaultValue = "Light")]
     string Theme { set; get; }

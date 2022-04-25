@@ -9,6 +9,8 @@ namespace Ws2812LedController.AudioReactive.Effects.Fft;
 
 public class GravityFreqReactiveEffect : BaseAudioReactiveEffect, IHasFrequencyLimits
 {
+    public override string FriendlyName => "Gravity frequency";
+
     public override string Description => "VU Meter from center. Log of frequency is index to center colour";
     public override int Speed { set; get; } = 1000 / 60;
     public int AnimationSpeed { set; get; } = 16;

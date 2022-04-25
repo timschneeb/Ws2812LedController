@@ -5,6 +5,7 @@ namespace Ws2812LedController.Core.Effects.Twinkle;
 
 public class Twinkle : BaseTwinkle
 {
+    public override string FriendlyName => "Twinkle";
     public override string Description => "Blink several LEDs on, reset, repeat";
 
     public Color ForegroundColor

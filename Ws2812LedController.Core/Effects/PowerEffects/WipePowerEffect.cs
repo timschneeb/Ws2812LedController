@@ -5,6 +5,7 @@ namespace Ws2812LedController.Core.Effects.PowerEffects;
 
 public class WipePowerEffect : BasePowerEffect
 {
+    public override string FriendlyName => "Wipe";
     public override string Description => "Wipe LEDs on/off when toggling power states";
     public override int Speed { get; set; } = 1000;
     public override bool IsSingleShot => true;

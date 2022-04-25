@@ -12,6 +12,8 @@ namespace Ws2812RealtimeDesktopClient.Utilities
             Instance = new ConfigurationBuilder<ISettings>()
                 .UseJsonFile(SettingsPath)
                 .UseTypeParser(new ClassArrayParser<SegmentEntry>())
+                .UseTypeParser(new ClassArrayParser<PaletteEntry>())
+                .UseTypeParser(new ClassArrayParser<EffectAssignment>())
                 .UseTypeParser(new ColorParser())
                 .Build();
         }

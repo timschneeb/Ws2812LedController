@@ -83,17 +83,27 @@ namespace Ws2812RealtimeDesktopClient.Views
                 {
                     Content = "Home",
                     Tag = typeof(HomePage),
-                    Icon = new IconSourceElement { IconSource = (IconSource)this.FindResource("HomeIcon") },
+                    Icon = new IconSourceElement { IconSource = (IconSource?)this.FindResource("HomeIcon") },
                     Classes =
                     {
                         "SideNav"
                     }
                 },
-                 new NavigationViewItem
+                new NavigationViewItem
                 {
                     Content = "Reactive",
                     Tag = typeof(ReactiveEffectPage),
-                    Icon = new IconSourceElement { IconSource = (IconSource)this.FindResource("AudioIcon") },
+                    Icon = new IconSourceElement { IconSource = (IconSource?)this.FindResource("AudioIcon") },
+                    Classes =
+                    {
+                        "SideNav"
+                    }
+                },
+                new NavigationViewItem
+                {
+                    Content = "Palettes",
+                    Tag = typeof(PalettePage),
+                    Icon = new IconSourceElement { IconSource = (IconSource?)this.FindResource("ColorFillIcon") },
                     Classes =
                     {
                         "SideNav"
@@ -103,7 +113,7 @@ namespace Ws2812RealtimeDesktopClient.Views
                  {
                      Content = "Presets",
                      Tag = typeof(PresetPage),
-                     Icon = new IconSourceElement { IconSource = (IconSource)this.FindResource("ImageIcon") },
+                     Icon = new IconSourceElement { IconSource = (IconSource?)this.FindResource("ImageIcon") },
                      Classes =
                      {
                          "SideNav"
@@ -113,7 +123,7 @@ namespace Ws2812RealtimeDesktopClient.Views
                 {
                     Content = "Segments",
                     Tag = typeof(SegmentPage),
-                    Icon = new IconSourceElement { IconSource = (IconSource)this.FindResource("CropIcon") },
+                    Icon = new IconSourceElement { IconSource = (IconSource?)this.FindResource("CropIcon") },
                     Classes =
                     {
                         "SideNav"
@@ -130,7 +140,7 @@ namespace Ws2812RealtimeDesktopClient.Views
                 {
                     Content = "Settings",
                     Tag = typeof(SettingsPage),
-                    Icon = new IconSourceElement { IconSource = (IconSource)this.FindResource("SettingsIcon") },
+                    Icon = new IconSourceElement { IconSource = (IconSource?)this.FindResource("SettingsIcon") },
                     Classes =
                     {
                         "SideNav"
@@ -139,7 +149,7 @@ namespace Ws2812RealtimeDesktopClient.Views
             };
         }
 
-        private void OnParentWindowOpened(object sender, EventArgs e)
+        private void OnParentWindowOpened(object? sender, EventArgs e)
         {
             (sender as Window).Opened -= OnParentWindowOpened;
 
@@ -152,7 +162,7 @@ namespace Ws2812RealtimeDesktopClient.Views
 
                     titleBar.LayoutMetricsChanged += OnApplicationTitleBarLayoutMetricsChanged;
 
-                    if (this.FindControl<Grid>("TitleBarHost") is Grid g)
+                    if (this.FindControl<Grid>("TitleBarHost") is { } g)
                     {
                         cw.SetTitleBar(g);
                         g.Margin = new Thickness(0, 0, titleBar.SystemOverlayRightInset, 0);
@@ -163,18 +173,18 @@ namespace Ws2812RealtimeDesktopClient.Views
 
         private void OnApplicationTitleBarLayoutMetricsChanged(CoreApplicationViewTitleBar sender, object args)
         {
-            if (this.FindControl<Grid>("TitleBarHost") is Grid g)
+            if (this.FindControl<Grid>("TitleBarHost") is { } g)
             {
                 g.Margin = new Thickness(0, 0, sender.SystemOverlayRightInset, 0);
             }
         }
         
-        private void OnNavigationViewBackRequested(object sender, NavigationViewBackRequestedEventArgs e)
+        private void OnNavigationViewBackRequested(object? sender, NavigationViewBackRequestedEventArgs e)
         {
             _frameView.GoBack();
         }
 
-        private void OnNavigationViewItemInvoked(object sender, NavigationViewItemInvokedEventArgs e)
+        private void OnNavigationViewItemInvoked(object? sender, NavigationViewItemInvokedEventArgs e)
         {
             // Change the current selected item back to normal
             SetNVIIcon(_navView.SelectedItem as NavigationViewItem, false);
@@ -185,7 +195,7 @@ namespace Ws2812RealtimeDesktopClient.Views
             }
         }
 
-        private void SetNVIIcon(NavigationViewItem item, bool selected)
+        private void SetNVIIcon(NavigationViewItem? item, bool selected)
         {
             // Technically, yes you could set up binding and converters and whatnot to let the icon change
             // between filled and unfilled based on selection, but this is so much simpler 
@@ -193,7 +203,7 @@ namespace Ws2812RealtimeDesktopClient.Views
             if (item == null)
                 return;
 
-            Type t = item.Tag as Type;
+            var t = item.Tag as Type;
 
             /*if (t == typeof(HomePage))
             {

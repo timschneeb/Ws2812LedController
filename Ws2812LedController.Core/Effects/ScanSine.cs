@@ -8,6 +8,7 @@ namespace Ws2812LedController.Core.Effects;
 
 public class ScanSine : BaseEffect
 {
+    public override string FriendlyName => "Scan (sinewave)";
     public override string Description => "Runs a block of pixels back and forth. Interpolated using sine waves";
     public override int Speed { get; set; } = 20 /* bpm */;
     public byte FadeSpeed { get; set; } = 20;

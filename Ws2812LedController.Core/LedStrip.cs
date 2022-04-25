@@ -96,7 +96,14 @@ public class LedStrip : IDisposable
                 // Console.WriteLine($"DRIFT: {drift}ms ->\t{wait}");
                 if (wait > 0)
                 {
-                    await Task.Delay(wait, _tokenSource.Token);
+                    try
+                    {
+                        await Task.Delay(wait, _tokenSource.Token);
+                    }
+                    catch (ObjectDisposedException)
+                    {
+                        break;
+                    }
                 }
             }
         }

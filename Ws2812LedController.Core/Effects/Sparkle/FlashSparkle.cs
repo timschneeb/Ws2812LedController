@@ -5,6 +5,7 @@ namespace Ws2812LedController.Core.Effects.Sparkle;
 
 public class FlashSparkle : BaseSparkle
 {
+    public override string FriendlyName => "Sparkle (flash)";
     public override string Description => "Lights all LEDs in the color. Flashes white pixels randomly.";
 
     public Color BackgroundColor

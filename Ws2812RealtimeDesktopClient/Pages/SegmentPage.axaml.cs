@@ -18,7 +18,7 @@ namespace Ws2812RealtimeDesktopClient.Pages
             context.AddEvent += OnAddEvent;
             context.EditEvent += OnEditEvent;
             context.SegmentChanged += OnSegmentChanged;
-            context.Segments = new AvaloniaList<SegmentEntry>(SettingsProvider.Instance.Segments);
+            context.Segments = new AvaloniaList<SegmentEntry>(SettingsProvider.Instance.Segments ?? Array.Empty<SegmentEntry>());
 
             DataContext = context;
         }

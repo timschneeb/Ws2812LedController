@@ -7,6 +7,7 @@ namespace Ws2812LedController.Core.Effects;
 
 public class Blink : BaseEffect
 {
+    public override string FriendlyName => "Blink";
     public override string Description => "Alternate between two colors";
     public override int Speed { get; set; } = 2000;
     

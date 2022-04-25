@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:Ws2812RealtimeDesktopClient.ViewModels"
+             xmlns:model="clr-namespace:Ws2812LedController.Core.Model;assembly=Ws2812LedController.Core"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              Padding="0, 10" 
              x:DataType="viewModels:AssignEffectDialogViewModel"
@@ -20,7 +21,19 @@
             </TextBlock>
             <ComboBox MinWidth="400"
                       Items="{Binding AvailableEffects}"
-                      SelectedItem="{Binding Effect}" />
+                      SelectedItem="{Binding Effect}">
+                <ComboBox.DataTemplates>
+                    <DataTemplate x:DataType="model:EffectDescriptor">
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="{CompiledBinding FriendlyName}" />
+                            <TextBlock Classes="CaptionTextBlockStyle"
+                                       Text="{CompiledBinding Description}" 
+                                       TextTrimming="CharacterEllipsis"
+                                       TextWrapping="NoWrap" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ComboBox.DataTemplates>
+            </ComboBox>
 
         </StackPanel>
 </UserControl>

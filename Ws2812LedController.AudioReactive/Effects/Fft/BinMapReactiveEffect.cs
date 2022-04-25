@@ -10,6 +10,7 @@ namespace Ws2812LedController.AudioReactive.Effects.Fft;
 
 public class BinMapReactiveEffect : BaseAudioReactiveEffect
 {
+    public override string FriendlyName => "Bin map";
     public override string Description => "Map FFT bins to LED segment";
     public override int Speed { set; get; } = 1000 / 60;
     public int FirstBin { set; get; } = 2;

@@ -2,9 +2,9 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Ws2812LedController.Core;
 using Ws2812LedController.Core.Model;
-using Ws2812LedController.Core.Model.Serializable;
 using Ws2812LedController.Core.Utils;
 using Ws2812LedController.WebApi.Converters;
+using Ws2812LedController.WebApi.Serializable;
 
 namespace Ws2812LedController.WebApi.Controllers;
 

@@ -9,12 +9,14 @@ namespace Ws2812LedController.AudioReactive.Effects.Fft;
 
 public class PuddlesReactiveEffect : BaseAudioReactiveEffect, IHasFftBinSelection, IHasPeakDetection
 {
+    public override string FriendlyName => "Puddles";
+
     public override string Description => "Blast colored puddles based on volume";
     public override int Speed { set; get; } = 1000 / 60;
     public byte AnimationSpeed { set; get; } = 32;
     public byte Intensity { set; get; } = 4;
     public CRGBPalette16 Palette { set; get; } = new(CRGBPalette16.Palette.Ocean);
-    public FftCBinSelector FftCBinSelector { set; get; } = new(0);
+    public FftCBinSelector FftCBinSelector { set; get; } = new(0, 2);
     public double Threshold { set; get; } = 128;
     
     protected override async Task<int> PerformFrameAsync(LedSegmentGroup segment, LayerId layer)

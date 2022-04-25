@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Drawing;
+using Ws2812LedController.Core.CancellationMethod;
 using Ws2812LedController.Core.Effects;
 using Ws2812LedController.Core.Effects.Base;
 using Ws2812LedController.Core.Effects.PowerEffects;
@@ -53,6 +54,12 @@ public class LedSegmentController : IDisposable
     public void RemoveAllMirrors()
     {
         SegmentGroup.RemoveAllMirrors();
+    }
+
+    public async Task<bool> CancelLayerAsync(LayerId layer)
+    {
+        return await (CurrentEffects[(int)layer]?.CancellationMethod.CancelAsync(2000) ??
+                      Task.FromResult(false));
     }
     
     public async Task PowerAsync(bool power)

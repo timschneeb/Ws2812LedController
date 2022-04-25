@@ -13,6 +13,7 @@ namespace Ws2812LedController.AudioReactive.Effects.Volume;
  */
 public class LightUpReactiveEffect : BaseAudioReactiveEffect, IHasVolumeAnalysis, IHasPeakDetection
 {
+    public override string FriendlyName => "Light up";
     public override string Description => "Light single LEDs based on volume peaks up";
     public override int Speed { set; get; } = 1000 / 60;
     public int FadeSpeed { set; get; } = 6;

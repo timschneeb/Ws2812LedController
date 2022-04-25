@@ -8,6 +8,7 @@ namespace Ws2812LedController.AudioReactive.Effects.Fft;
 
 public class FreqPixelsReactiveEffect : BaseAudioReactiveEffect, IHasFrequencyLimits
 {
+    public override string FriendlyName => "Frequency pixels";
     public override string Description => "Random pixels coloured by frequency";
     public override int Speed { set; get; } = 1000 / 60;
     public int StartFrequency { set; get; } = 93;

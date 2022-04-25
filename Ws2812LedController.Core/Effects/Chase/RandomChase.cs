@@ -8,6 +8,7 @@ namespace Ws2812LedController.Core.Effects.Chase;
 
 public class RandomChase : BaseChase
 {
+    public override string FriendlyName => "Random chase";
     public override string Description => "Custom color running on random background";
     private byte _lastRandomColor = 0;
 

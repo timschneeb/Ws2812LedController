@@ -4,13 +4,14 @@ using FftSharp;
 using Ws2812LedController.AudioReactive.Dsp;
 using Ws2812LedController.AudioReactive.Model;
 using Ws2812LedController.Core.Effects.Base;
+using Ws2812LedController.Core.Model;
 
 namespace Ws2812LedController.AudioReactive.Effects.Base;
 
+[FriendlyName("Base audio reactive effect options")]
 public abstract class BaseAudioReactiveEffect : BaseEffect
 {
     protected readonly ConcurrentQueue<double[][]> SamplesQueue = new();
-    public override int Speed { set; get; } = 1000 / 60;
     public virtual int MinVolume { set; get; } = -70;
     public virtual double Multiplier { set; get; } = 1;
     public virtual double AvgSmoothingStrength { set; get; } = 10;

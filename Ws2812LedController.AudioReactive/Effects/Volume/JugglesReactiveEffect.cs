@@ -9,6 +9,7 @@ namespace Ws2812LedController.AudioReactive.Effects.Volume;
 
 public class JugglesReactiveEffect : BaseAudioReactiveEffect, IHasVolumeAnalysis
 {
+    public override string FriendlyName => "Juggles";
     public override string Description => "Simple scanning light with brightness derived from volume levels";
     public override int Speed { set; get; } = 1000 / 60;
     public int AnimationSpeed { set; get; } = 64;

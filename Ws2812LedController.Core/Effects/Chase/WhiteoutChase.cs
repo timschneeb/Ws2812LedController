@@ -5,6 +5,7 @@ namespace Ws2812LedController.Core.Effects.Chase;
 
 public class WhiteoutChase : BaseChase
 {
+    public override string FriendlyName => "Whiteout chase";
     public override string Description => "White running on custom background";
 
     public WhiteoutChase()

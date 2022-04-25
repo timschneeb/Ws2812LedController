@@ -3,8 +3,11 @@ using Ws2812LedController.Core.Model;
 
 namespace Ws2812LedController.Core.Effects.Base;
 
+[FriendlyName("Base effect options")]
 public abstract class BaseEffect
 {
+    [NonEffectParameter]
+    public abstract string FriendlyName { get; }
     [NonEffectParameter]
     public abstract string Description { get; }
 
@@ -12,9 +15,10 @@ public abstract class BaseEffect
     public BaseCancellationMethod CancellationMethod { init; get; } = new CancellationTokenMethod();
     [NonEffectParameter]
     public virtual bool IsSingleShot => false;
-    public abstract int Speed { set; get; }
+    [NonEffectParameterAttribute]
     public bool IsFrozen { set; get; }
-    
+    public abstract int Speed { set; get; }
+
     public event EventHandler<bool>? Finished;
     protected uint Frame { private set; get; }
 

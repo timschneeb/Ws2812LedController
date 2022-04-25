@@ -5,6 +5,7 @@ namespace Ws2812LedController.Core.Effects.Chase;
 
 public class BicolorChase : BaseChase
 {
+    public override string FriendlyName => "Bicolor chase";
     public override string Description => "Bicolor chase mode";
     
     public Color ColorA

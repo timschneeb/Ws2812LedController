@@ -36,7 +36,10 @@ public abstract class BaseCancellationMethod : IDisposable
         {
             return true;
         }
-        Cancel();
+        else
+        {
+            Cancel();
+        }
         return await _tokenSource.Token.WaitHandle.WaitOneAsync(timeout, CancellationToken.None);
     }
 

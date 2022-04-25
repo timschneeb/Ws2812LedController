@@ -6,6 +6,7 @@ namespace Ws2812LedController.Core.Effects.Alternate;
 
 public class RandomAlternate : BaseAlternate
 {
+    public override string FriendlyName => "Alternate (random)";
     public override string Description => "Random colored pixels running";
     private byte _randomLedIndex = 0;
     

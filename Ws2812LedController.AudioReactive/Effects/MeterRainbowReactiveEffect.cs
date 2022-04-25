@@ -10,9 +10,10 @@ namespace Ws2812LedController.AudioReactive.Effects;
 
 public class MeterRainbowReactiveEffect : BaseAudioReactiveEffect, IHasOptionalFftBinSelection
 {
+    public override string FriendlyName => "Meter rainbow";
     public override string Description => "Expand LEDs based on FFT or volume peaks";
     public override int Speed { set; get; } = 1000 / 60;
-    public FftCBinSelector? FftCBinSelector { set; get; }
+    public FftCBinSelector? FftCBinSelector { set; get; } = null;
     /** Only non-fluent rainbow */
     public int ColorWheelSpeed { set; get; } = 3;
     public int DecayFrameTimeout { set; get; } = 0;
@@ -99,7 +100,7 @@ public class MeterRainbowReactiveEffect : BaseAudioReactiveEffect, IHasOptionalF
 
         Rainbow(segment, layer);
 
-        _colorWheelPos = _colorWheelPos - ColorWheelSpeed;
+        _colorWheelPos -= ColorWheelSpeed;
         if (_colorWheelPos < 0)
         {
             _colorWheelPos = 255;

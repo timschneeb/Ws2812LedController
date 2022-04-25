@@ -10,6 +10,7 @@ namespace Ws2812LedController.AudioReactive.Effects;
 
 public class NoiseMeterReactiveEffect : BaseAudioReactiveEffect
 {
+    public override string FriendlyName => "Noise meter";
     public override string Description => "Volume reactive vu-meter";
     public override int Speed { set; get; } = 1000 / 60;
     public byte FadeSpeed { set; get; } = 120;

@@ -9,6 +9,7 @@ namespace Ws2812LedController.Core.Effects;
 
 public class Fade : BaseEffect
 {
+    public override string FriendlyName => "Fade";
     public override string Description => "Fades the LEDs between two colors";
     public override int Speed { get; set; } = 3000;
     

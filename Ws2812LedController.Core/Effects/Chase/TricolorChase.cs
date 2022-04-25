@@ -5,6 +5,7 @@ namespace Ws2812LedController.Core.Effects.Chase;
 
 public class TricolorChase : BaseTricolorChase
 {
+    public override string FriendlyName => "Tricolor chase";
     public override string Description => "Tricolor chase mode";
 
     public Color ColorA

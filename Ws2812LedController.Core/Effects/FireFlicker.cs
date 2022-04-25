@@ -8,6 +8,8 @@ namespace Ws2812LedController.Core.Effects;
 
 public class FireFlicker : BaseEffect
 {
+    public override string FriendlyName => "Fire flicker";
+
     public override string Description => "Random flickering";
     public override int Speed { get; set; } = 1000;
     

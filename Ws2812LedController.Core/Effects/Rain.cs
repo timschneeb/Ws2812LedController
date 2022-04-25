@@ -8,6 +8,8 @@ namespace Ws2812LedController.Core.Effects;
 
 public class Rain : BaseEffect
 {
+    public override string FriendlyName => "Rain";
+
     public override string Description => "Combination of the Fireworks effect and the running effect to create rain";
     public override int Speed { get; set; } = 1000;
     

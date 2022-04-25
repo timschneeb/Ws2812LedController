@@ -5,6 +5,8 @@ namespace Ws2812LedController.Core.Effects.Sparkle;
 
 public class Sparkle : BaseSparkle
 {
+    public override string FriendlyName => "Sparkle";
+
     public override string Description => "Blinks one LED at a time";
 
     public Color ForegroundColor

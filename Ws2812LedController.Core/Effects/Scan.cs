@@ -6,6 +6,7 @@ namespace Ws2812LedController.Core.Effects;
 
 public class Scan : BaseEffect
 {
+    public override string FriendlyName => "Scan";
     public override string Description => "Runs a block of pixels back and forth.";
     public override int Speed { get; set; } = 500;
     public bool Dual { get; set; } = false;

@@ -8,6 +8,7 @@ namespace Ws2812LedController.AudioReactive.Effects.Volume;
 
 public class PlasmoidReactiveEffect : BaseAudioReactiveEffect
 {
+    public override string FriendlyName => "Plasmoid";
     public override string Description => "Sine wave based plasma";
     public override int Speed { set; get; } = 1000 / 60;
     public byte Intensity { set; get; } = 128;

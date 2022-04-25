@@ -27,6 +27,11 @@ public class FftCBinSelector
         return Start == End ? fftBins[Start] : fftBins.Rms(Start, End);
     }
 
+    public override string ToString()
+    {
+        return $"Start: {Start}; End: {End}";
+    }
+
     public int Start { set; get; }
     public int End { set; get; }
 }

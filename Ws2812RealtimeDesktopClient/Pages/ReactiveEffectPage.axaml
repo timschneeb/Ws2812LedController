@@ -7,12 +7,14 @@
              xmlns:controls="clr-namespace:Ws2812RealtimeDesktopClient.Controls"
              xmlns:input="clr-namespace:FluentAvalonia.UI.Input;assembly=FluentAvalonia"
              xmlns:models="clr-namespace:Ws2812RealtimeDesktopClient.Models"
+             xmlns:model="clr-namespace:Ws2812LedController.Core.Model;assembly=Ws2812LedController.Core"
+             xmlns:system="clr-namespace:System;assembly=System.Runtime"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Ws2812RealtimeDesktopClient.Pages.ReactiveEffectPage"
              x:DataType="viewModels:ReactiveEffectPageViewModel">
     <UserControl.Resources>
-        <input:StandardUICommand x:Key="DeleteCommand" Kind="Delete" Label="Remove"
-                                 Description="Remove effect" Command="{Binding RemoveEffect}" />
+        <input:XamlUICommand x:Key="DeleteCommand" IconSource="{StaticResource DeleteIcon}" Label="Remove"
+                             Description="Remove effect" Command="{Binding RemoveEffect}" />
         <input:StandardUICommand x:Key="LoadCommand" Kind="Open" Label="Load"
                                  Description="Load composition" Command="{Binding LoadComposition}" />
         <input:StandardUICommand x:Key="SaveCommand" Kind="Save" Label="Save"
@@ -22,71 +24,91 @@
         <input:XamlUICommand x:Key="AddCommand" Label="Assign" IconSource="{StaticResource NewIcon}"
                              Description="Assign effect to segment" Command="{Binding AssignEffect}" />
     </UserControl.Resources>
-    
-    <ScrollViewer HorizontalScrollBarVisibility="Disabled"
-                  VerticalScrollBarVisibility="Auto">
-        <StackPanel>
-            <Panel MinHeight="90" Name="HeaderRegion" Background="{StaticResource TopLevelPageBackgroundImage}">
-                <Rectangle>
-                    <Rectangle.Fill>
-                        <LinearGradientBrush StartPoint="0,0"
-                                             EndPoint="0,1365">
-                            <GradientStop Offset="0" Color="Transparent" />
-                            <GradientStop Offset="0.035" Color="{DynamicResource SolidBackgroundFillColorTertiary}" />
-                        </LinearGradientBrush>
-                    </Rectangle.Fill>
-                </Rectangle>
 
-                <StackPanel>
-                    <TextBlock Text="{Binding PageHeader}" VerticalAlignment="Top"
-                               Classes="TitleTextBlockStyle"
-                               Padding="32 20 0 0" />
-                    <TextBlock Margin="32 0" Text="{Binding PageSubtitle}" TextWrapping="Wrap" />
-                </StackPanel>
-            </Panel>
+    <Grid RowDefinitions="Auto,*">
+        <Panel MinHeight="90" Name="HeaderRegion" Background="{StaticResource TopLevelPageBackgroundImage}">
+            <Rectangle>
+                <Rectangle.Fill>
+                    <LinearGradientBrush StartPoint="0,0"
+                                         EndPoint="0,1365">
+                        <GradientStop Offset="0" Color="Transparent" />
+                        <GradientStop Offset="0.035" Color="{DynamicResource SolidBackgroundFillColorTertiary}" />
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
 
-            <StackPanel Spacing="4" Margin="18 9"
-                        DockPanel.Dock="Top">
-                <ui:CommandBar DefaultLabelPosition="Right">
-                    <ui:CommandBar.PrimaryCommands>
-                        <ui:CommandBarButton Command="{StaticResource LoadCommand}" />
-                        <ui:CommandBarButton Command="{StaticResource SaveCommand}" />
-                        <ui:CommandBarSeparator />
-                        <ui:CommandBarButton Command="{StaticResource AddCommand}" />
-                        <ui:CommandBarButton Command="{StaticResource CopyCommand}" 
-                                             CommandParameter="{Binding #AssignmentSelector.SelectedItem}"/>
-                        <ui:CommandBarButton Command="{StaticResource DeleteCommand}"
-                                             CommandParameter="{Binding #AssignmentSelector.SelectedItem}" />
-
-                        <ui:CommandBarElementContainer
-                            IsVisible="{CompiledBinding ShowSelectors}">
-                            <ComboBox Name="AssignmentSelector"
-                                      VerticalAlignment="Center" 
-                                      MinWidth="140"
-                                      Margin="4 3 0 0"
-                                      SelectedItem="{CompiledBinding SelectedAssignment}" />
-                        </ui:CommandBarElementContainer>
-                        <ui:CommandBarElementContainer
-                            IsVisible="{CompiledBinding ShowSelectors}">
-                            <ComboBox Name="EffectSelector"
-                                      VerticalAlignment="Center" 
-                                      MinWidth="140"
-                                      Margin="4 3 0 0"
-                                      Items="{CompiledBinding AvailableEffects}"
-                                      SelectedItem="{CompiledBinding SelectedEffect}" />
-                        </ui:CommandBarElementContainer>
-                    </ui:CommandBar.PrimaryCommands>
-                </ui:CommandBar>
-                
-                <DataGrid Name="PropertyGrid">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Property" Binding="{Binding Name}" Width="2*" />
-                        <DataGridTextColumn Header="Value" Binding="{Binding Value}" Width="4*" />
-                    </DataGrid.Columns>
-                </DataGrid>
+            <StackPanel>
+                <TextBlock Text="{Binding PageHeader}" VerticalAlignment="Top"
+                           Classes="TitleTextBlockStyle"
+                           Padding="32 20 0 0" />
+                <TextBlock Margin="32 0" Text="{Binding PageSubtitle}" TextWrapping="Wrap" />
             </StackPanel>
+        </Panel>
+        <Grid Grid.Row="1"
+              RowDefinitions="Auto,4,*" Margin="18 9"
+              DockPanel.Dock="Top">
+            <ui:CommandBar
+                Grid.Row="0"
+                DefaultLabelPosition="Right">
+                <ui:CommandBar.PrimaryCommands>
+                    <ui:CommandBarButton Command="{StaticResource LoadCommand}" />
+                    <ui:CommandBarButton Command="{StaticResource SaveCommand}" />
+                    <ui:CommandBarSeparator />
+                    <ui:CommandBarButton Command="{StaticResource AddCommand}" />
+                    <ui:CommandBarButton Command="{StaticResource CopyCommand}"
+                                         CommandParameter="{Binding #AssignmentSelector.SelectedItem}" />
+                    <ui:CommandBarButton Command="{StaticResource DeleteCommand}"
+                                         CommandParameter="{Binding #AssignmentSelector.SelectedItem}" />
 
-        </StackPanel>
-    </ScrollViewer>
+                    <ui:CommandBarElementContainer
+                        IsVisible="{CompiledBinding ShowSelectors}">
+                        <ComboBox Name="AssignmentSelector"
+                                  VerticalAlignment="Center"
+                                  MinWidth="140"
+                                  Margin="4 3 0 0"
+                                  Items="{CompiledBinding Assignments}"
+                                  SelectedItem="{CompiledBinding SelectedAssignment}">
+                            <ComboBox.DataTemplates>
+                                <DataTemplate x:DataType="models:EffectAssignment">
+                                    <TextBlock Text="{CompiledBinding SegmentName}" />
+                                </DataTemplate>
+                            </ComboBox.DataTemplates>
+                        </ComboBox>
+                    </ui:CommandBarElementContainer>
+                    <ui:CommandBarElementContainer
+                        IsVisible="{CompiledBinding ShowSelectors}">
+                        <ComboBox Name="EffectSelector"
+                                  VerticalAlignment="Center"
+                                  MinWidth="140"
+                                  Margin="4 3 0 0"
+                                  Items="{CompiledBinding AvailableEffects}"
+                                  SelectedItem="{CompiledBinding SelectedEffect}">
+                            <ComboBox.DataTemplates>
+                                <DataTemplate x:DataType="model:EffectDescriptor">
+                                    <TextBlock Text="{CompiledBinding FriendlyName}" />
+                                </DataTemplate>
+                            </ComboBox.DataTemplates>
+                        </ComboBox>
+                    </ui:CommandBarElementContainer>
+                </ui:CommandBar.PrimaryCommands>
+            </ui:CommandBar>
+
+            <DataGrid
+                Grid.Row="2"
+                Name="PropertyGrid" CellEditEnded="PropertyGrid_OnCellEditEnded"
+                Items="{CompiledBinding PropertyGridItems}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Property"
+                                        IsReadOnly="True"
+                                        x:DataType="models:PropertyRow"
+                                        Binding="{CompiledBinding FriendlyName}"
+                                        Width="2*" />
+                    <DataGridTemplateColumn Header="Value"
+                                            x:DataType="models:PropertyRow"
+                                            Width="4*" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+    </Grid>
 
 </UserControl>

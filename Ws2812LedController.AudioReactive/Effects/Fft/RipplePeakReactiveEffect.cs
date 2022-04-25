@@ -11,11 +11,12 @@ namespace Ws2812LedController.AudioReactive.Effects.Fft;
 
 public class RipplePeakReactiveEffect : BaseAudioReactiveEffect, IHasFftBinSelection, IHasPeakDetection
 {
+    public override string FriendlyName => "Ripple peak";
     public override string Description => "Peak detection triggers ripples";
     public override int Speed { set; get; } = 1000 / 60;
     [ValueRange(max: 32)]
     public byte MaxRipples { set; get; } = 16; /* Up to 32 */
-    public byte FadeStrength { set; get; } = 80;
+    public byte FadeSpeed { set; get; } = 80;
     public int MaxSteps { set; get; } = 16;
     public FftCBinSelector FftCBinSelector { set; get; } = new(0);
     public double Threshold { get; set; } = 100;
@@ -72,7 +73,7 @@ public class RipplePeakReactiveEffect : BaseAudioReactiveEffect, IHasFftBinSelec
         /* Fade to black by x */ 
         for(var i = 0; i < segment.Width; ++i) 
         {
-            segment.SetPixel(i, Scale.nscale8x3(segment.PixelAt(i, layer), (short)(255 - /*fadeBy*/ FadeStrength)),layer);
+            segment.SetPixel(i, Scale.nscale8x3(segment.PixelAt(i, layer), (short)(255 - /*fadeBy*/ FadeSpeed)),layer);
         }
 
 //  static uint8_t colour;                                  // Ripple colour is randomized.

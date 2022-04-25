@@ -1,6 +1,6 @@
 using Ws2812LedController.Core.CancellationMethod;
 
-namespace Ws2812LedController.Core.Model.Serializable;
+namespace Ws2812LedController.WebApi.Serializable;
 
 public class CancellationMethodData
 {

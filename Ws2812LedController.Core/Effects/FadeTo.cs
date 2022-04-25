@@ -8,6 +8,7 @@ namespace Ws2812LedController.Core.Effects;
 
 public class FadeTo : BaseEffect
 {
+    public override string FriendlyName => "Fade to...";
     public override string Description => "Fade from current to new color";
     public override bool IsSingleShot => true;
     public override int Speed { get; set; } = 20;

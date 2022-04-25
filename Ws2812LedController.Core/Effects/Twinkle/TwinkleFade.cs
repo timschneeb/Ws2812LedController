@@ -5,6 +5,7 @@ namespace Ws2812LedController.Core.Effects.Twinkle;
 
 public class TwinkleFade : BaseTwinkleFade
 {
+    public override string FriendlyName => "Twinkle (fade)";
     public override string Description => "Blink several LEDs on, fading out";
 
     public Color ForegroundColor

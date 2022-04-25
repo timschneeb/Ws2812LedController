@@ -7,6 +7,7 @@ namespace Ws2812LedController.Core.Effects;
 
 public class ColorWipeRandom : ColorWipe
 {
+    public override string FriendlyName => "Color wipe (random)";
     public override string Description => "Turns all LEDs after each other to a random color.";
     public override int Speed { get; set; } = 2000;
 

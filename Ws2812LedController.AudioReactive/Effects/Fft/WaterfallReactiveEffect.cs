@@ -11,6 +11,7 @@ namespace Ws2812LedController.AudioReactive.Effects.Fft;
 
 public class WaterfallReactiveEffect : BaseAudioReactiveEffect, IHasFftBinSelection, IHasPeakDetection, IHasFrequencyLimits
 {
+    public override string FriendlyName => "Waterfall";
     public override string Description => "FFT version of a Waterfall";
     public override int Speed { set; get; } = 1000 / 60;
     public bool ColorBasedOnHz { set; get; } = false;

@@ -9,10 +9,11 @@ namespace Ws2812LedController.AudioReactive.Effects.Fft;
 
 public class BlurzReactiveEffect : BaseAudioReactiveEffect
 {
+    public override string FriendlyName => "Blurz";
     public override string Description => "Flash a FFT bin per frame and then fade out";
     public override int Speed { set; get; } = 1000 / 60;
     public byte BlurIntensity { set; get; } = 255;
-    public byte FadeStrength { set; get; } = 10;
+    public byte FadeSpeed { set; get; } = 10;
     public CRGBPalette16 Palette { set; get; } = new(CRGBPalette16.Palette.Lava);
 
     public override void Reset()
@@ -38,7 +39,7 @@ public class BlurzReactiveEffect : BaseAudioReactiveEffect
         /* Fade to black by x */ 
         for(var i = 0; i < segment.Width; ++i) 
         {
-            segment.SetPixel(i, Scale.nscale8x3(segment.PixelAt(i, layer), (short)(255 - /*fadeBy*/ FadeStrength)),layer);
+            segment.SetPixel(i, Scale.nscale8x3(segment.PixelAt(i, layer), (short)(255 - /*fadeBy*/ FadeSpeed)),layer);
         }
 
         var loc = Random.Shared.Next(segment.Width);

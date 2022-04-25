@@ -11,6 +11,8 @@ namespace Ws2812LedController.AudioReactive.Effects.Fft;
 
 public class NoiseMoveReactiveEffect : BaseAudioReactiveEffect, IHasFftBinSelection
 {
+    public override string FriendlyName => "Noise move";
+
     public override string Description => "	Using perlin noise as movement for different frequency bins";
     public override int Speed { set; get; } = 1000 / 60;
     public int AnimationSpeed { set; get; } = (int)(128);

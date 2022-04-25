@@ -11,6 +11,7 @@ namespace Ws2812LedController.AudioReactive.Effects.Volume;
 
 public class MatripixReactiveEffect : BaseAudioReactiveEffect, IHasVolumeAnalysis
 {
+    public override string FriendlyName => "Matripix";
     public override string Description => "Simple running light with brightness derived from volume levels";
     public override int Speed { set; get; } = 1000 / 60;
     public byte FramesPerStep { set; get; } = 1;

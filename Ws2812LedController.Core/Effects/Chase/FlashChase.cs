@@ -5,6 +5,7 @@ namespace Ws2812LedController.Core.Effects.Chase;
 
 public class FlashChase : BaseFlashChase
 {
+    public override string FriendlyName => "Flash chase";
     public override string Description => "Flashes running on custom background";
     
     public Color ForegroundColor

@@ -8,6 +8,7 @@ namespace Ws2812LedController.Core.Effects;
 
 public class MultiStrobe : BaseEffect
 {
+    public override string FriendlyName => "Multi strobe";
     public override string Description => "Strobe effect with different strobe count and pause, controlled by speed";
     public override int Speed { get; set; } = 1000;
     

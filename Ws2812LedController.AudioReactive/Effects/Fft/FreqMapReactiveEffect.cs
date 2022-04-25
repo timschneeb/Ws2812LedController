@@ -8,6 +8,8 @@ namespace Ws2812LedController.AudioReactive.Effects.Fft;
 
 public class FreqMapReactiveEffect : BaseAudioReactiveEffect, IHasFrequencyLimits
 {
+    public override string FriendlyName => "Frequency map";
+
     public override string Description => "Map major FFT peaks to LED strip length";
     public override int Speed { set; get; } = 1000 / 60;
     public int StartFrequency { set; get; } = 93;

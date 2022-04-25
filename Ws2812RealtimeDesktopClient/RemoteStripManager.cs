@@ -1,10 +1,14 @@
 using System.Diagnostics;
+using Avalonia.Collections;
+using Avalonia.Media;
 using Ws2812LedController.Core;
+using Ws2812LedController.Core.Effects.Base;
 using Ws2812LedController.Core.Model;
 using Ws2812LedController.UdpServer;
 using Ws2812LedController.UdpServer.Packets;
 using Ws2812RealtimeDesktopClient.Models;
 using Ws2812RealtimeDesktopClient.Utilities;
+using Color = System.Drawing.Color;
 
 namespace Ws2812RealtimeDesktopClient;
 
@@ -17,7 +21,8 @@ public class RemoteStripManager
     private LedManager? _mgr;
     private LedStrip? _remote;
     private EnetClient? _client;
-    public List<SegmentEntry> SegmentEntries { get; } = SettingsProvider.Instance.Segments.ToList();
+    public AvaloniaList<SegmentEntry> SegmentEntries { get; } = new(SettingsProvider.Instance.Segments ?? Array.Empty<SegmentEntry>());
+    public AvaloniaList<EffectAssignment> EffectAssignments { get; }
 
     public static RemoteStripManager Instance => Lazy.Value;
 
@@ -25,10 +30,29 @@ public class RemoteStripManager
     public event Action<ProtocolType, DisconnectReason>? Disconnected;
     public event Action<ProtocolType>? ConnectionStateChanged;
 
+   
     public bool IsUdpConnected { private set; get; } = false;
     public bool IsRestConnected { private set; get; } = false;
     private RemoteStripManager()
     {
+        // Inflate unsaved property information
+        var savedAssign = SettingsProvider.Instance.ReactiveEffectAssignments ?? Array.Empty<EffectAssignment>();
+        
+        foreach (var assign in savedAssign)
+        {
+            var desc = ReactiveEffectDescriptorList.Instance.Descriptors.FirstOrDefault(x => x.Name == assign.EffectName);
+            if(desc == null) continue;
+
+            foreach (var prop in assign.Properties)
+            {
+                var propInfo = desc.Properties.FirstOrDefault(x => x.Name == prop.Name);
+                if(propInfo == null) continue;
+                Console.WriteLine(prop.Name + "=" + prop.Value);
+                prop.Update(propInfo, true);
+            }
+        }
+        EffectAssignments = new AvaloniaList<EffectAssignment>(savedAssign);
+        
         Connected += OnConnected;
         Disconnected += OnDisconnected;
     }
@@ -55,7 +79,8 @@ public class RemoteStripManager
         _mgr = new LedManager();
         _remote = new LedStrip(new RemoteLedStrip(_canvas));
         await SyncSegmentsAsync(SegmentEntries.ToArray());
-        
+        await SyncEffectAssignmentsAsync(EffectAssignments.ToArray());
+
         _client = new EnetClient(ip);
         _client.Connected += OnUdpConnected;
         _client.Timeout += OnUdpTimeout;
@@ -148,12 +173,118 @@ public class RemoteStripManager
         }
     }
 
+    #region Effect management
+    public async Task SyncEffectAssignmentsAsync(EffectAssignment[] entries)
+    {
+        if (_mgr == null)
+        {
+            Console.WriteLine("SyncEffectAssignmentsAsync: LedManager is null");
+        }
+        else
+        {
+            /*foreach (var assignment in EffectAssignments.ToList())
+            {
+                await DeleteEffectAssignmentAsync(assignment.SegmentName);
+            }*/
+        }
+        
+        foreach(var entry in entries)
+        {
+            await AddEffectAssignmentAsync(entry);
+        }
+    }
+
+    public void UpdateEffectProperties(EffectAssignment entry)
+    {
+        Console.WriteLine("UpdateEffectProperties " + entry.SegmentName);
+        var ctrl = _mgr?.Get(entry.SegmentName);
+        if (ctrl != null)
+        {
+            Console.WriteLine("ctrl != null");
+            foreach (var property in entry.Properties)
+            {
+                var effectType = ctrl.CurrentEffects[0]?.GetType();
+                var propertyInfo = effectType?.GetProperty(property.Name);
+                if (propertyInfo == null)
+                {
+                    Console.WriteLine("NOT FOUND: "+property.Name);
+                    return;
+                }
+                Console.WriteLine("Set value: "+property.Name + " to " + property.Value);
+                propertyInfo.SetValue(ctrl.CurrentEffects[0], property.Value);
+            }
+        }
+    }
+
+    public async Task AddEffectAssignmentAsync(EffectAssignment entry)
+    {
+        var desc = ReactiveEffectDescriptorList.Instance.Descriptors.FirstOrDefault(x => x.Name == entry.EffectName);
+        Debug.Assert(desc != null, "Effect descriptor not found");
+        var effect = (BaseEffect?)Activator.CreateInstance(desc.InternalType);
+        Debug.Assert(effect != null, "Failed to create effect instance");
+        
+        entry.Properties = new AvaloniaList<PropertyRow>();
+        foreach (var property in desc.Properties)
+        {
+            if (entry.Properties.Any(x => x.Name == property.Name))
+            {
+                continue;
+            }
+            entry.Properties.Add(new PropertyRow(property));
+        }
+        
+        if (_mgr == null)
+        {
+            Console.WriteLine("AddSegment: LedManager or LedStrip is null");
+        }
+        else
+        {
+            var ctrl = _mgr.Get(entry.SegmentName);
+            if (ctrl != null)
+            {
+                await ctrl.SetEffectAsync(effect);
+                UpdateEffectProperties(entry);
+            }
+        }
+        
+        if (EffectAssignments.Any(x => x.SegmentName == entry.SegmentName))
+        {
+            EffectAssignments[EffectAssignments.IndexOf(EffectAssignments.First(x => x.SegmentName == entry.SegmentName))] = entry;
+        }
+        else
+        {
+            EffectAssignments.Add(entry);
+        }
+    }
+
+    public async Task DeleteEffectAssignmentAsync(string segment, bool keepInList = false)
+    {
+        if (!keepInList)
+        {
+            EffectAssignments.Where(x => x.SegmentName == segment).ToList()
+                .ForEach(x => EffectAssignments.Remove(x));
+        }
+        
+        if (_mgr == null)
+        {
+            Console.WriteLine("DeleteSegmentAsync: LedManager is null");
+            return;
+        }
+
+        var ctrl = _mgr.Get(segment);
+        if (ctrl != null)
+        {
+            await ctrl.CancelLayerAsync(LayerId.BaseLayer);
+            ctrl.SegmentGroup.Clear(Color.Black, LayerId.BaseLayer);
+        }
+    }
+    #endregion
+    
+    
     #region Segment management
     /** Segments are implicitly reset by this function */
     public async Task SyncSegmentsAsync(SegmentEntry[] entries)
     {
-        SegmentEntries.Clear();
-
         if (_mgr == null)
         {
             Console.WriteLine("SyncSegmentsAsync: LedManager is null");
@@ -171,7 +302,8 @@ public class RemoteStripManager
 
     public async Task UpdateSegmentAsync(SegmentEntry entry, string originalName)
     {
-        var oldEntryIdx = SegmentEntries.FindIndex(x => x.Name == originalName);
+        var oldEntry = SegmentEntries.FirstOrDefault(x => x.Name == originalName);
+        var oldEntryIdx = oldEntry == null ? -1 : SegmentEntries.IndexOf(oldEntry);
         if (oldEntryIdx == -1)
         {
             AddSegment(entry);
@@ -184,9 +316,6 @@ public class RemoteStripManager
             goto SKIP_SEG_UPDATE;
         }
 
-        var seg = _mgr.Get(originalName);
-        Debug.Assert(seg != null, "LedSegmentController must not be null at this point");
-        
         if(SegmentEntries[oldEntryIdx].Start != entry.Start || SegmentEntries[oldEntryIdx].Width != entry.Width)
         {
             await _mgr.UnregisterSegmentAsync(originalName, _remote);
@@ -197,11 +326,10 @@ public class RemoteStripManager
             _mgr.RenameSegment(originalName, entry.Name);
         }
 
-        if(SegmentEntries[oldEntryIdx].InvertX != entry.InvertX)
-        {
-            seg.SourceSegment.InvertX = entry.InvertX;
-        }
-        
+        var seg = _mgr.Get(entry.Name);
+        Debug.Assert(seg != null, "LedSegmentController must not be null at this point");
+        seg.SourceSegment.InvertX = entry.InvertX;
+
         ReattachMirrors();
         
         SKIP_SEG_UPDATE:
@@ -210,7 +338,14 @@ public class RemoteStripManager
 
     public void AddSegment(SegmentEntry entry)
     {
-        SegmentEntries.Add(entry);
+        if (SegmentEntries.Any(x => x.Name == entry.Name))
+        {
+            SegmentEntries[SegmentEntries.IndexOf(SegmentEntries.First(x => x.Name == entry.Name))] = entry;
+        }
+        else
+        {
+            SegmentEntries.Add(entry);
+        }
         
         if (_mgr == null || _remote == null)
         {
@@ -225,7 +360,8 @@ public class RemoteStripManager
 
     public async Task DeleteSegmentAsync(string name)
     {
-        SegmentEntries.RemoveAll(x => x.Name == name);
+        EffectAssignments.Where(x => x.SegmentName == name).ToList()
+            .ForEach(x => EffectAssignments.Remove(x));        
         
         if (_mgr == null)
         {

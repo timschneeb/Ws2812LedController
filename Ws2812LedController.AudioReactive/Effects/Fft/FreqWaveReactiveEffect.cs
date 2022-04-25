@@ -10,10 +10,11 @@ namespace Ws2812LedController.AudioReactive.Effects.Fft;
 
 public class FreqWaveReactiveEffect : BaseAudioReactiveEffect, IHasFrequencyLimits
 {
+    public override string FriendlyName => "Frequency wave";
     public override string Description => "Wave pushing outwards from center colored by frequency";
     public override int Speed { set; get; } = 1000 / 60;
-    public Edge StartFromEdge = Edge.None;
-    public byte FadeStrength { set; get; } = 10;
+    public Edge StartFromEdge { set; get; } = Edge.None;
+    public byte FadeSpeed { set; get; } = 10;
     public int Intensity { set; get; } = 255;
     public byte Sensitivity { set; get; } = 10;
     public int StartFrequency { set; get; } = 70;
@@ -32,7 +33,7 @@ public class FreqWaveReactiveEffect : BaseAudioReactiveEffect, IHasFrequencyLimi
         /* Fade to black by x */ 
         for(var i = 0; i < segment.Width; ++i) 
         {
-            segment.SetPixel(i, Scale.nscale8x3(segment.PixelAt(i, layer), (short)(255 - /*fadeBy*/ FadeStrength)),layer);
+            segment.SetPixel(i, Scale.nscale8x3(segment.PixelAt(i, layer), (short)(255 - /*fadeBy*/ FadeSpeed)),layer);
         }
         
         if (FftMajorPeak[0] <= 0 || FftMajorPeak[1] <= 0)

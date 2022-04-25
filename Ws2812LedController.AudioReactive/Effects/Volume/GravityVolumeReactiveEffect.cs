@@ -10,6 +10,7 @@ namespace Ws2812LedController.AudioReactive.Effects.Volume;
 
 public class GravityVolumeReactiveEffect : BaseAudioReactiveEffect, IHasVolumeAnalysis
 {
+    public override string FriendlyName => "Gravity volume";
     public override string Description => "Volume reactive vu-meter from edge/center with gravity and perlin noise";
     public override int Speed { set; get; } = 1000 / 60;
     public bool Centered { set; get; } = false;

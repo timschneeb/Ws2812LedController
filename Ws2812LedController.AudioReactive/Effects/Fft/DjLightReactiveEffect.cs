@@ -9,6 +9,7 @@ namespace Ws2812LedController.AudioReactive.Effects.Fft;
 
 public class DjLightReactiveEffect : BaseAudioReactiveEffect
 {
+    public override string FriendlyName => "DJ Light";
     public override string Description => "An effect emanating from the center to the edges";
     public override int Speed { set; get; } = 1000 / 60;
     

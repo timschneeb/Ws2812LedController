@@ -9,6 +9,7 @@ namespace Ws2812LedController.AudioReactive.Effects.Fft;
 
 public class RocktavesReactiveEffect : BaseAudioReactiveEffect
 {
+    public override string FriendlyName => "Rocktaves";
     public override string Description => "Colors the same for each note between octaves, with sine wave going back and forth";
     public override int Speed { set; get; } = 1000 / 60;
 

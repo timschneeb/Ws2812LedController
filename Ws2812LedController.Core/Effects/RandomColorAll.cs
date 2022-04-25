@@ -7,6 +7,7 @@ namespace Ws2812LedController.Core.Effects;
 
 public class RandomColorAll : BaseEffect
 {
+    public override string FriendlyName => "Random color";
     public override string Description => "Lights all LEDs in one random color up. Then switches them to the next random color.";
     public override int Speed { get; set; } = 1000;
     

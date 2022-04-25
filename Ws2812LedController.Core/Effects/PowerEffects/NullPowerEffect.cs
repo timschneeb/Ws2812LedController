@@ -5,6 +5,7 @@ namespace Ws2812LedController.Core.Effects.PowerEffects;
 
 public class NullPowerEffect : BasePowerEffect
 {
+    public override string FriendlyName => "Default";
     public override string Description => "Turn LEDs instantly on/off when toggling power states";
     public override int Speed { get; set; } = 100;
     public override bool IsSingleShot => true;

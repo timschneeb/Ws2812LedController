@@ -8,6 +8,8 @@ namespace Ws2812LedController.Core.Effects.Chase;
 
 public class TheatreRainbowChase : BaseTricolorChase
 {
+    public override string FriendlyName => "Theatre chase (rainbow)";
+
     public override string Description => "Theatre-style crawling lights with rainbow effect";
 
     public Color Color { get; set; }
