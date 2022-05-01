@@ -12,7 +12,12 @@ public class SetEffectData
     public class Property
     {
         public string? Name { set; get; }        
-        public object? Value { set; get; }        
+        public object? Value { set; get; }
+
+        public override string ToString()
+        {
+            return $"{Name}={Value}";
+        }
     }
 }
 

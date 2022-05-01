@@ -105,7 +105,7 @@ public class LedSegmentController : IDisposable
         await SetEffectAsync(PowerEffect, CancelMode.Now, true, LayerId.PowerSwitchLayer);
     }
 
-    public async Task SetEffectAsync(BaseEffect effect, CancelMode cancelMode = CancelMode.Now, bool noPowerOn = false, LayerId layer = LayerId.BaseLayer)
+    public async Task SetEffectAsync(BaseEffect effect, CancelMode cancelMode = CancelMode.Now, bool noPowerOn = false, LayerId layer = LayerId.BaseLayer, bool blockUntilConsumed = false)
     {
         SegmentGroup.MasterSegment.Strip.Canvas.ExclusiveMode = false;
         
@@ -149,6 +149,12 @@ public class LedSegmentController : IDisposable
         {
             _queue[(int)layer].Enqueue(effect);
         }
+
+        // Don't put _queue in lock statement here due to possible deadlock
+        while (!_queue[(int)layer].IsEmpty && blockUntilConsumed)
+        {
+            await Task.Delay(1);
+        }
     }
     
     public async void ProcessEvents(LayerId layer)
@@ -166,7 +172,7 @@ public class LedSegmentController : IDisposable
 
                 if (!dataAvailable || CurrentEffects[(int)layer] == null)
                 {
-                    await Task.Delay(100).WaitAsync(_cancelSource.Token);
+                    await Task.Delay(10).WaitAsync(_cancelSource.Token);
                     continue;
                 }
 

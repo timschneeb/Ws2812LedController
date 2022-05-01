@@ -68,6 +68,7 @@ public class SegmentController : ControllerBase
             return NotFound();
         }
 
+        Console.WriteLine($"PostBrightness: {segmentName} -> {brightness}");
         segment.SourceSegment.MaxBrightness = brightness;
         
         return new OkResult();
@@ -96,6 +97,7 @@ public class SegmentController : ControllerBase
             return NotFound();
         }
 
+        Console.WriteLine($"PowerAsync: {segmentName} -> {powered}");
         await segment.PowerAsync(powered);
         
         return new OkResult();

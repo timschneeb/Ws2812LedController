@@ -105,6 +105,8 @@ public class EffectController : ControllerBase, IJsonOptionHelper
             cancelProp.SetValue(effect, cancel);
         }
 
+        Console.WriteLine($"PostEffect: {segmentName}/{data.Name} -> {string.Join(",", data.Properties?.Cast<object?>() ?? Array.Empty<object?>())}");
+
         // Fire-and-forget call; only power on automatically if the base layer is modified
         var _ = segment.SetEffectAsync(effect, data.PrevCancelMode ?? CancelMode.Now, layer != LayerId.BaseLayer, layer);
         

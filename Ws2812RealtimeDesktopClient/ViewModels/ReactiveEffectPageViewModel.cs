@@ -68,7 +68,10 @@ namespace Ws2812RealtimeDesktopClient.ViewModels
                 case nameof(SelectedEffect):
                     if (_selectedAssignment != null && _selectedEffect != null && !_ignoreEffectChange)
                     {
+                        // Different effect; don't carry over properties
+                        _selectedAssignment.Properties = new AvaloniaList<PropertyRow>();
                         _selectedAssignment.EffectName = _selectedEffect.Name;
+
                         var copy = _selectedAssignment;
                         await RemoteStripManager.Instance.DeleteEffectAssignmentAsync(_selectedAssignment.SegmentName, true);
                         await RemoteStripManager.Instance.AddEffectAssignmentAsync(copy);

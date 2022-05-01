@@ -232,14 +232,29 @@ public class RemoteStripManager
         var effect = (BaseEffect?)Activator.CreateInstance(desc.InternalType);
         Debug.Assert(effect != null, "Failed to create effect instance");
         
-        entry.Properties = new AvaloniaList<PropertyRow>();
+        var newProperties = new AvaloniaList<PropertyRow>();
         foreach (var property in desc.Properties)
         {
-            if (entry.Properties.Any(x => x.Name == property.Name))
+            if (entry.Properties != null && entry.Properties.Any(x => x.Name == property.Name))
             {
-                continue;
+                newProperties.Add(entry.Properties.First(x => x.Name == property.Name));
             }
-            entry.Properties.Add(new PropertyRow(property));
+            else
+            {
+                newProperties.Add(new PropertyRow(property));
+            }
+        }
+        entry.Properties = newProperties;
+        
+        if (EffectAssignments.Any(x => x.SegmentName == entry.SegmentName))
+        {
+            /* Reset canvas segment without actually deleting */
+            await DeleteEffectAssignmentAsync(entry.SegmentName, true);
+            EffectAssignments[EffectAssignments.IndexOf(EffectAssignments.First(x => x.SegmentName == entry.SegmentName))] = entry;
+        }
+        else
+        {
+            EffectAssignments.Add(entry);
         }
         
         if (_mgr == null)
@@ -251,18 +266,9 @@ public class RemoteStripManager
             var ctrl = _mgr.Get(entry.SegmentName);
             if (ctrl != null)
             {
-                await ctrl.SetEffectAsync(effect);
+                await ctrl.SetEffectAsync(effect, blockUntilConsumed: true);
                 UpdateEffectProperties(entry);
             }
-        }
-        
-        if (EffectAssignments.Any(x => x.SegmentName == entry.SegmentName))
-        {
-            EffectAssignments[EffectAssignments.IndexOf(EffectAssignments.First(x => x.SegmentName == entry.SegmentName))] = entry;
-        }
-        else
-        {
-            EffectAssignments.Add(entry);
         }
     }
 
