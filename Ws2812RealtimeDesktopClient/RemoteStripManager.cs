@@ -37,20 +37,29 @@ public class RemoteStripManager
     {
         // Inflate unsaved property information
         var savedAssign = SettingsProvider.Instance.ReactiveEffectAssignments ?? Array.Empty<EffectAssignment>();
-        
-        foreach (var assign in savedAssign)
-        {
-            var desc = ReactiveEffectDescriptorList.Instance.Descriptors.FirstOrDefault(x => x.Name == assign.EffectName);
-            if(desc == null) continue;
 
-            foreach (var prop in assign.Properties)
+        for (var i = 0; i < savedAssign.Length; i++)
+        {
+            var desc =
+                ReactiveEffectDescriptorList.Instance.Descriptors.FirstOrDefault(x => x.Name == savedAssign[i].EffectName);
+            if (desc == null) continue;
+
+            savedAssign[i].Properties = new AvaloniaList<PropertyRow>(savedAssign[i].Properties.ToList().Where(x => x != null!));
+            foreach (var prop in desc.Properties)
             {
-                var propInfo = desc.Properties.FirstOrDefault(x => x.Name == prop.Name);
-                if(propInfo == null) continue;
-                Console.WriteLine(prop.Name + "=" + prop.Value);
-                prop.Update(propInfo, true);
+                var propInfo = savedAssign[i].Properties.FirstOrDefault(x => x.Name == prop.Name);
+                if (propInfo != null)
+                {
+                    Console.WriteLine(prop.Name + "=" + prop.Value);
+                    propInfo.Update(prop, true);
+                }
+                else
+                {
+                    savedAssign[i].Properties.Add(new PropertyRow(prop));
+                }
             }
         }
+
         EffectAssignments = new AvaloniaList<EffectAssignment>(savedAssign);
         
         Connected += OnConnected;

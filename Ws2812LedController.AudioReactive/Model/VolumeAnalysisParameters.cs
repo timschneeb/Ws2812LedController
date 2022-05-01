@@ -1,6 +1,9 @@
+using System.Runtime.Serialization;
+
 namespace Ws2812LedController.AudioReactive.Model;
 
-public class AgcVolumeAnalysisOption : IVolumeAnalysisOption
+[Serializable]
+public class AgcVolumeAnalysisOption : IVolumeAnalysisOption, ISerializable
 {
     public AgcVolumeAnalysisOption(byte intensity = 64)
     {
@@ -8,10 +11,20 @@ public class AgcVolumeAnalysisOption : IVolumeAnalysisOption
     }
 
     public byte Intensity { set; get; }
+    
+    public AgcVolumeAnalysisOption(SerializationInfo info, StreamingContext context)
+    {
+        Intensity = (byte)(info.GetValue(nameof(Intensity), typeof(byte)) ?? 64);
+    }
+            
+    public void GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+        info.AddValue(nameof(Intensity), Intensity);
+    }
 }
 
-
-public class FixedVolumeAnalysisOption : IVolumeAnalysisOption
+[Serializable]
+public class FixedVolumeAnalysisOption : IVolumeAnalysisOption, ISerializable
 {
     public FixedVolumeAnalysisOption(int minimumMagnitude = 1000, int maximumMagnitude = 8000)
     {
@@ -21,6 +34,18 @@ public class FixedVolumeAnalysisOption : IVolumeAnalysisOption
 
     public int MinimumMagnitude { set; get; }
     public int MaximumMagnitude { set; get; }
+    
+    public FixedVolumeAnalysisOption(SerializationInfo info, StreamingContext context)
+    {
+        MinimumMagnitude = (int)(info.GetValue(nameof(MinimumMagnitude), typeof(int)) ?? 1000);
+        MaximumMagnitude = (int)(info.GetValue(nameof(MaximumMagnitude), typeof(int)) ?? 8000);
+    }
+            
+    public void GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+        info.AddValue(nameof(MinimumMagnitude), MinimumMagnitude);
+        info.AddValue(nameof(MaximumMagnitude), MaximumMagnitude);
+    }
 }
 
 public interface IVolumeAnalysisOption

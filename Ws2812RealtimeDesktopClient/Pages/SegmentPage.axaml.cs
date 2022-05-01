@@ -28,6 +28,7 @@ namespace Ws2812RealtimeDesktopClient.Pages
             if (DataContext is SegmentPageViewModel vm)
             {
                 SettingsProvider.Instance.Segments = vm.Segments.ToArray();
+                SettingsProvider.Save();
             }
         }
 

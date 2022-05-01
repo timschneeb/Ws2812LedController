@@ -1,8 +1,10 @@
 using System.Diagnostics;
+using System.Runtime.Serialization;
 
 namespace Ws2812LedController.AudioReactive.Dsp;
 
-public class FftCBinSelector
+[Serializable]
+public class FftCBinSelector : ISerializable
 {
     public FftCBinSelector(int start, int end)
     {
@@ -34,4 +36,16 @@ public class FftCBinSelector
 
     public int Start { set; get; }
     public int End { set; get; }
+    
+    public FftCBinSelector(SerializationInfo info, StreamingContext context)
+    {
+        Start = (int)(info.GetValue(nameof(Start), typeof(int)) ?? 0);
+        End = (int)(info.GetValue(nameof(End), typeof(int)) ?? 0);
+    }
+            
+    public void GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+        info.AddValue(nameof(Start), Start);
+        info.AddValue(nameof(End), End);
+    }
 }

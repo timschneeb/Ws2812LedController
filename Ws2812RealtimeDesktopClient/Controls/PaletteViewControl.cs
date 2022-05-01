@@ -1,9 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Layout;
-using Avalonia.Media;
-using Castle.Core.Internal;
-using SkiaSharp;
 
 namespace Ws2812RealtimeDesktopClient.Controls
 {
@@ -11,7 +8,7 @@ namespace Ws2812RealtimeDesktopClient.Controls
     {
         static PaletteViewControl()
         {
-            AffectsRender<ColorBlockControl>(ColorsProperty);
+            AffectsRender<PaletteViewControl>(ColorsProperty);
         }
 
         public PaletteViewControl()

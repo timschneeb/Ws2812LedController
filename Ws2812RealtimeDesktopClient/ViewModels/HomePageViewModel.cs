@@ -3,6 +3,7 @@ using FluentAvalonia.UI.Navigation;
 using Ws2812RealtimeDesktopClient.Models;
 using Ws2812RealtimeDesktopClient.Pages;
 using Ws2812RealtimeDesktopClient.Services;
+using Ws2812RealtimeDesktopClient.Utilities;
 
 namespace Ws2812RealtimeDesktopClient.ViewModels
 {
@@ -15,9 +16,13 @@ namespace Ws2812RealtimeDesktopClient.ViewModels
             RemoteStripManager.Instance.ConnectionStateChanged += OnConnectionStateChanged;
             NavigationService.Instance.Frame.Navigated +=
                 (_, _) => RaisePropertyChanged(nameof(ShowNoSegmentsWarning));
+            
+            // Force update
+            OnConnectionStateChanged(ProtocolType.Rest);
         }
-        
-        
+
+        public MiniCommand InvokeCommand { get; } = new MiniCommand(o => {});
+
         private void OnConnectionStateChanged(ProtocolType obj)
         {
             ServerConnectionState = RemoteStripManager.Instance.IsUdpConnected ||

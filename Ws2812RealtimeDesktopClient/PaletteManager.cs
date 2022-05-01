@@ -30,6 +30,7 @@ public class PaletteManager
             PaletteEntries = new AvaloniaList<PaletteEntry>();
             InstallDefaultPalettes(true);
             SettingsProvider.Instance.Palettes = PaletteEntries.ToArray();
+            SettingsProvider.Save();
         }
         else
         {
@@ -70,11 +71,13 @@ public class PaletteManager
         {
             PaletteEntries.Add(entry);
             SettingsProvider.Instance.Palettes = PaletteEntries.ToArray();
+            SettingsProvider.Save();
             return;
         }
         
         PaletteEntries[oldEntryIdx] = entry;
         SettingsProvider.Instance.Palettes = PaletteEntries.ToArray();
+        SettingsProvider.Save();
     }
     
     public void DeletePalette(string name)
@@ -82,6 +85,7 @@ public class PaletteManager
         PaletteEntries.Where(x => x.Name == name).ToList()
             .ForEach(x => PaletteEntries.Remove(x));
         SettingsProvider.Instance.Palettes = PaletteEntries.ToArray();
+        SettingsProvider.Save();
     }
     #endregion
 }

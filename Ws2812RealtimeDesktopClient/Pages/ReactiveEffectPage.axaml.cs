@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing;
 using System.Globalization;
 using Avalonia;
 using Avalonia.Controls;
@@ -11,6 +10,7 @@ using Avalonia.Data.Converters;
 using Avalonia.Layout;
 using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.Templates;
+using Avalonia.Media;
 using FluentAvalonia.UI.Controls;
 using FluentAvalonia.UI.Media;
 using Ws2812LedController.AudioReactive.Dsp;
@@ -22,6 +22,7 @@ using Ws2812RealtimeDesktopClient.Converters;
 using Ws2812RealtimeDesktopClient.Models;
 using Ws2812RealtimeDesktopClient.Utilities;
 using Ws2812RealtimeDesktopClient.ViewModels;
+using Color = System.Drawing.Color;
 using ComboBox = Avalonia.Controls.ComboBox;
 
 namespace Ws2812RealtimeDesktopClient.Pages
@@ -53,6 +54,14 @@ namespace Ws2812RealtimeDesktopClient.Pages
                 {
                     Margin = new Thickness(8, 0),
                     [!ToggleButton.IsCheckedProperty] = new Binding("Value", BindingMode.TwoWay)
+                };
+            }
+            if (row?.Type == typeof(FftCBinSelector))
+            {
+                return new FftBinSelectorFlyoutHost()
+                {
+                    IsOptional = row.IsNullable,
+                    [!FftBinSelectorFlyoutHost.FftBinsProperty] = new Binding("Value", BindingMode.TwoWay)
                 };
             }
             if (row?.Type == typeof(CRGBPalette16))
@@ -144,8 +153,9 @@ namespace Ws2812RealtimeDesktopClient.Pages
                 };
             }
             
-            return new TextBox()
+            return new TextBlock()
             {
+                Background = new SolidColorBrush(Colors.Red),
                 [!TextBlock.TextProperty] = new Binding("Value", BindingMode.TwoWay)
             };
         }
@@ -153,6 +163,9 @@ namespace Ws2812RealtimeDesktopClient.Pages
         private IControl BuildPreviewControl(object itemModel, INameScope _)
         {
             var row = (itemModel as PropertyRow);
+            
+            Console.WriteLine($"ReactiveEffectPage.BuildPreviewControl: {row?.Name} ({row?.Type})");
+
             if (row?.Type == typeof(CRGBPalette16))
             {
                 return new PaletteViewControl()
@@ -221,6 +234,7 @@ namespace Ws2812RealtimeDesktopClient.Pages
                 if (DataContext is ReactiveEffectPageViewModel vm)
                 {
                     SettingsProvider.Instance.ReactiveEffectAssignments = vm.Assignments.ToArray();
+                    SettingsProvider.Save();
                 }
             }
         }
@@ -235,6 +249,8 @@ namespace Ws2812RealtimeDesktopClient.Pages
             if (DataContext is ReactiveEffectPageViewModel vm)
             {
                 SettingsProvider.Instance.ReactiveEffectAssignments = vm.Assignments.ToArray();
+                SettingsProvider.Save();
+                
                 Console.WriteLine("PropertyGrid_OnCellEditEnded ------------------- " + Random.Shared.Next());
                 if (vm.SelectedAssignment != null)
                 {

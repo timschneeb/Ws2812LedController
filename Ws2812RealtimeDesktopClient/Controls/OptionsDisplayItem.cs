@@ -139,7 +139,7 @@ namespace Ws2812RealtimeDesktopClient.Controls
             _layoutRoot.PointerCaptureLost += OnLayoutRootPointerCaptureLost;
         }
 
-        private void OnLayoutRootPointerPressed(object sender, PointerPressedEventArgs e)
+        private void OnLayoutRootPointerPressed(object? sender, PointerPressedEventArgs e)
         {
             if (e.GetCurrentPoint(this).Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonPressed)
             {
@@ -148,7 +148,7 @@ namespace Ws2812RealtimeDesktopClient.Controls
             }
         }
 
-        private void OnLayoutRootPointerReleased(object sender, PointerReleasedEventArgs e)
+        private void OnLayoutRootPointerReleased(object? sender, PointerReleasedEventArgs e)
         {
             var pt = e.GetCurrentPoint(this);
             if (_isPressed && pt.Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonReleased)
@@ -163,12 +163,12 @@ namespace Ws2812RealtimeDesktopClient.Controls
                 if (Navigates)
                 {
                     RaiseEvent(new RoutedEventArgs(NavigationRequestedEvent, this));
-                    NavigationCommand?.Execute(null);                                        
+                    NavigationCommand.Execute(null);                                        
                 }
             }
         }
 
-        private void OnLayoutRootPointerCaptureLost(object sender, PointerCaptureLostEventArgs e)
+        private void OnLayoutRootPointerCaptureLost(object? sender, PointerCaptureLostEventArgs e)
         {
             _isPressed = false;
             PseudoClasses.Set(":pressed", false);
@@ -176,6 +176,6 @@ namespace Ws2812RealtimeDesktopClient.Controls
 
         private bool _isPressed;
         private bool _isExpanded;
-        private Border _layoutRoot;
+        private Border? _layoutRoot;
     }
 }

@@ -39,6 +39,7 @@
                                                  Description="{CompiledBinding ServerConnectionState}"
                                                  Icon="Globe"
                                                  Navigates="True"
+                                                 NavigationCommand="{Binding InvokeCommand}"
                                                  Name="ConnectionItem" />
                     
                 </StackPanel>
@@ -49,6 +50,7 @@
                                                  Description="Please split your LED strip into individual segments to start using this application properly"
                                                  Icon="Important"
                                                  Navigates="True"
+                                                 NavigationCommand="{Binding InvokeCommand}"
                                                  Name="NoSegmentItem" />
                     
                 </StackPanel>

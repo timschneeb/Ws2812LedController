@@ -22,8 +22,7 @@
         <PackageReference Include="Avalonia.AvaloniaEdit" Version="0.10.12.1" />
         <PackageReference Include="Avalonia.Desktop" Version="0.10.13" />
         <PackageReference Include="Avalonia.Diagnostics" Version="0.10.13" />
-        <PackageReference Include="Config.Net" Version="4.15.0" />
-        <PackageReference Include="Config.Net.Json" Version="4.15.0" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     </ItemGroup>
     <ItemGroup>
       <Compile Update="Dialogs\EditSegmentContentDialog.axaml.cs">

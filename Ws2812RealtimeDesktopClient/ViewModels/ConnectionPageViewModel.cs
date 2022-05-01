@@ -8,8 +8,8 @@ namespace Ws2812RealtimeDesktopClient.ViewModels
 {
     public class ConnectionPageViewModel : ViewModelBase
     {
-        private InfoBadge _udpBadge;
-        private InfoBadge _restBadge;
+        private readonly InfoBadge _udpBadge;
+        private readonly InfoBadge _restBadge;
         public ConnectionPageViewModel(InfoBadge udpBadge, InfoBadge restBadge)
         {
             _udpBadge = udpBadge;
@@ -22,8 +22,7 @@ namespace Ws2812RealtimeDesktopClient.ViewModels
             IpAddress = SettingsProvider.Instance.IpAddress;
             StripWidth = SettingsProvider.Instance.StripWidth;
             
-            RestStatus = "Not connected";
-            UdpStatus = "Not connected";
+            UpdateConnectionStatuses();
         }
         
         ~ConnectionPageViewModel()
@@ -42,31 +41,21 @@ namespace Ws2812RealtimeDesktopClient.ViewModels
         {
             await RemoteStripManager.Instance.DisconnectAsync();
         }
+
+        public void UpdateConnectionStatuses()
+        {
+            UdpStatus = RemoteStripManager.Instance.IsUdpConnected ? "Connected" : "Not connected";
+            RestStatus = RemoteStripManager.Instance.IsRestConnected ? "Connected" : "Not connected";
+        }
         
         private void OnDisconnected(ProtocolType protocol, DisconnectReason _)
         {
-            switch (protocol)
-            {
-                case ProtocolType.Udp:
-                    UdpStatus = "Not connected";
-                    break;
-                case ProtocolType.Rest:
-                    RestStatus = "Not connected";
-                    break;
-            }
+            UpdateConnectionStatuses();
         }
 
         private void OnConnected(ProtocolType protocol)
         {
-            switch (protocol)
-            {
-                case ProtocolType.Udp:
-                    UdpStatus = "Connected";
-                    break;
-                case ProtocolType.Rest:
-                    RestStatus = "Connected";
-                    break;
-            }
+            UpdateConnectionStatuses();
         }
 
         private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -83,6 +72,7 @@ namespace Ws2812RealtimeDesktopClient.ViewModels
             {
                 RaiseAndSetIfChanged(ref _stripWidth, value);
                 SettingsProvider.Instance.StripWidth = _stripWidth;
+                SettingsProvider.Save();
             }
             get => _stripWidth;
         }
@@ -96,6 +86,7 @@ namespace Ws2812RealtimeDesktopClient.ViewModels
             {
                 RaiseAndSetIfChanged(ref _ip, value);
                 SettingsProvider.Instance.IpAddress = _ip;
+                SettingsProvider.Save();
             }
         }
 

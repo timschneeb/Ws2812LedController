@@ -153,28 +153,28 @@ public class LedSegmentController : IDisposable
     
     public async void ProcessEvents(LayerId layer)
     {
-        while (true)
+        try
         {
-            var dataAvailable = false;
-            lock (_queue)
+            while (!_cancelSource.IsCancellationRequested)
             {
-                dataAvailable = _queue[(int)layer].TryDequeue(out var effect);
-                CurrentEffects[(int)layer] = effect;
-            }
-
-            if (!dataAvailable || CurrentEffects[(int)layer] == null)
-            {
-                await Task.Delay(100).WaitAsync(_cancelSource.Token);
-                if (_cancelSource.IsCancellationRequested)
+                var dataAvailable = false;
+                lock (_queue)
                 {
-                    return;
+                    dataAvailable = _queue[(int)layer].TryDequeue(out var effect);
+                    CurrentEffects[(int)layer] = effect;
                 }
-                continue;
+
+                if (!dataAvailable || CurrentEffects[(int)layer] == null)
+                {
+                    await Task.Delay(100).WaitAsync(_cancelSource.Token);
+                    continue;
+                }
+
+                /* Leave rendering to PwrEffect while powering on/off */
+                await CurrentEffects[(int)layer]!.PerformAsync(SegmentGroup, layer);
             }
-            
-            /* Leave rendering to PwrEffect while powering on/off */
-            await CurrentEffects[(int)layer]!.PerformAsync(SegmentGroup, layer);
         }
+        catch(TaskCanceledException){}
     }
 
     internal async Task TerminateLoopAsync(int msTimeout)

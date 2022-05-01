@@ -66,8 +66,8 @@ namespace Ws2812LedController.Console
                 Color = Color.FromArgb(0,0,0,0)
             }, CancelMode.Enqueue,  false, LayerId.NotificationLayer);
 */
-            var button = new PowerToggleButton(27);
-            button.PowerStateChanged += PowerButton_OnPowerStateChanged;
+            //var button = new PowerToggleButton(27);
+            //button.PowerStateChanged += PowerButton_OnPowerStateChanged;
 
             _enetServer = new EnetServer();
             _enetServer.Start();

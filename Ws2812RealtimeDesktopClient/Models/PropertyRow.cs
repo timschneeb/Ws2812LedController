@@ -1,10 +1,7 @@
 using System.Reflection;
-using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using Ws2812LedController.AudioReactive.Utils;
 using Ws2812LedController.Core.Model;
-using Ws2812LedController.Core.Utils;
-using Ws2812RealtimeDesktopClient.ViewModels;
 
 namespace Ws2812RealtimeDesktopClient.Models;
 
@@ -12,11 +9,10 @@ public class PropertyRow
 {
     public string Name { set; get; }
     public object? Value { set; get; }
+    public Type Type { set; get; }
     
     [JsonIgnore]
     public string FriendlyName { set; get; }
-    [JsonIgnore]
-    public Type Type { set; get; }
     [JsonIgnore]
     public bool IsNullable { set; get; }
     [JsonIgnore]
@@ -40,7 +36,7 @@ public class PropertyRow
 
         FriendlyName = FriendlyPropertyNameTable.Lookup(prop.Name) ?? prop.Name + " (???)";
         Type = prop.InternalType;
-        IsNullable = Nullable.GetUnderlyingType(prop.PropertyInfo.PropertyType) != null;
+        IsNullable = Nullable.GetUnderlyingType(prop.PropertyInfo.PropertyType) != null || prop.DefaultValue == null;
         Attributes = prop.PropertyInfo.GetCustomAttributes();
 
         var desc = ReactiveEffectDescriptorList.Instance.Descriptors

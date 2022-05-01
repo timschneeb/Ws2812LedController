@@ -4,6 +4,7 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Ws2812RealtimeDesktopClient.Controls;
 using Ws2812RealtimeDesktopClient.Services;
+using Ws2812RealtimeDesktopClient.Utilities;
 using Ws2812RealtimeDesktopClient.ViewModels;
 
 namespace Ws2812RealtimeDesktopClient.Pages
@@ -12,7 +13,7 @@ namespace Ws2812RealtimeDesktopClient.Pages
     {
         public HomePage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
             DataContext = new HomePageViewModel();
         }
 
@@ -32,8 +33,8 @@ namespace Ws2812RealtimeDesktopClient.Pages
         {
             AvaloniaXamlLoader.Load(this);
         }
-
-        private void OnDisplayItemNavigationRequested(object sender, RoutedEventArgs e)
+        
+        private void OnDisplayItemNavigationRequested(object? sender, RoutedEventArgs e)
         {
             if (e.Source is OptionsDisplayItem odi)
             {

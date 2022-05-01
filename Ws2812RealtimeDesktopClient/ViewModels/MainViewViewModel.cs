@@ -71,6 +71,7 @@ namespace Ws2812RealtimeDesktopClient.ViewModels
                     var faTheme = AvaloniaLocator.Current.GetService<FluentAvaloniaTheme>();
                     SettingsProvider.Instance.Theme = value;
                     faTheme.RequestedTheme = value;
+                    SettingsProvider.Save();
                 }
             }
         }
@@ -96,6 +97,7 @@ namespace Ws2812RealtimeDesktopClient.ViewModels
 
                         AvaloniaLocator.Current.GetService<FluentAvaloniaTheme>()!.CustomAccentColor = CustomAccentColor;
                         SettingsProvider.Instance.CustomAccentColor = CustomAccentColor;
+                        SettingsProvider.Save();
                     }
                     else
                     {
@@ -104,6 +106,7 @@ namespace Ws2812RealtimeDesktopClient.ViewModels
                     }
                     
                     SettingsProvider.Instance.UseCustomAccentColor = _useCustomAccentColor;
+                    SettingsProvider.Save();
                 }
             }
         }
@@ -129,6 +132,7 @@ namespace Ws2812RealtimeDesktopClient.ViewModels
                 {
                     AvaloniaLocator.Current.GetService<FluentAvaloniaTheme>()!.CustomAccentColor = value;
                     SettingsProvider.Instance.CustomAccentColor = value;
+                    SettingsProvider.Save();
 
                     _ignoreSetListBoxColor = true;
                     ListBoxColor = value;
@@ -152,6 +156,7 @@ namespace Ws2812RealtimeDesktopClient.ViewModels
             {
                 _currentAppTheme = args.NewTheme;
                 SettingsProvider.Instance.Theme = _currentAppTheme;
+                SettingsProvider.Save();
                 RaisePropertyChanged(nameof(CurrentAppTheme));
             }
         }
