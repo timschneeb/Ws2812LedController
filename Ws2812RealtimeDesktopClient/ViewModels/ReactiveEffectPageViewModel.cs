@@ -4,6 +4,7 @@ using System.Text.Json;
 using Avalonia.Collections;
 using Avalonia.Controls;
 using FluentAvalonia.UI.Controls;
+using Force.DeepCloner;
 using Ws2812LedController.Core.Model;
 using Ws2812RealtimeDesktopClient.Dialogs;
 using Ws2812RealtimeDesktopClient.Models;
@@ -110,9 +111,33 @@ namespace Ws2812RealtimeDesktopClient.ViewModels
             }
         }
         
-        public void CopyEffect()
+        public async Task CopyEffect()
         {
+            if (_selectedAssignment == null)
+            {
+                return;
+            }
             
+            var result = await OpenCopyDialog(_selectedAssignment.SegmentName);
+            if (result != null)
+            {
+                var source = _selectedAssignment;
+                var target = Assignments.FirstOrDefault(x => x.SegmentName == result) ?? new EffectAssignment();
+                target.SegmentName = result;
+                target.EffectName = source.EffectName;
+                target.Properties = new AvaloniaList<PropertyRow>();
+                foreach (var prop in source.Properties.ToArray())
+                {
+                    target.Properties.Add(prop.DeepClone());
+                }
+                
+                await RemoteStripManager.Instance.AddEffectAssignmentAsync(target);
+                RaisePropertyChanged(nameof(Assignments));
+                 
+                SelectedAssignment = target;
+                SelectedEffect = AvailableEffects.FirstOrDefault(x => x.Name == target.EffectName);
+                UpdatePropertyGrid();
+            }
         }
 
         public void LoadComposition()
@@ -149,15 +174,7 @@ namespace Ws2812RealtimeDesktopClient.ViewModels
         {
             if (RemoteStripManager.Instance.SegmentEntries.Count < 1)
             {
-                var noSegmentsDialog = new ContentDialog()
-                {
-                    Content = "Please create a new segment before assigning an effect. Press 'Go to...' to navigate to the segment management page.",
-                    Title = "No segments defined",
-                    PrimaryButtonText = "Go to...",
-                    CloseButtonText = "Cancel"
-                };
-                noSegmentsDialog.PrimaryButtonClick += (_, _) => NavigationService.Instance.Navigate(typeof(SegmentPage));
-                await noSegmentsDialog.ShowAsync();
+                await DialogUtils.ShowNoSegmentsDialog();
                 return null;
             }
 
@@ -176,8 +193,6 @@ namespace Ws2812RealtimeDesktopClient.ViewModels
             
             void OnPrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
             {
-                var defer = args.GetDeferral();
-
                 var isEffectEmpty = (viewModel.Effect?.Name.Trim().Length ?? 0) < 1;
                 var isNameEmpty = viewModel.Segment.Trim().Length < 1;
                     
@@ -195,18 +210,7 @@ namespace Ws2812RealtimeDesktopClient.ViewModels
                         msg = "Effect must be selected";
                     }
                         
-                    var resultHint = new ContentDialog()
-                    {
-                        Content = msg,
-                        Title = "Error",
-                        PrimaryButtonText = "Close"
-                    };
-
-                    _ = resultHint.ShowAsync().ContinueWith(_ => defer.Complete());
-                }
-                else
-                {
-                    defer.Complete();
+                    _ = DialogUtils.ShowMessageDialog("Error", msg);
                 }
             }
 
@@ -215,6 +219,47 @@ namespace Ws2812RealtimeDesktopClient.ViewModels
             dialog.PrimaryButtonClick -= OnPrimaryButtonClick;
             
             return result == ContentDialogResult.None ? null : viewModel.ApplyTo(entry);
+        }    
+        
+        private async Task<string?> OpenCopyDialog(string sourceSegment)
+        {
+            switch (RemoteStripManager.Instance.SegmentEntries.Count)
+            {
+                case < 1:
+                    await DialogUtils.ShowNoSegmentsDialog();
+                    return null;
+                case < 2:
+                    await DialogUtils.ShowNoSegmentsDialog("No other segments exist. Please create a new segment to copy to.");
+                    return null;
+            }
+
+            var dialog = new ContentDialog()
+            {
+                Title = "Copy effect to segment",
+                PrimaryButtonText = "Copy",
+                CloseButtonText = "Cancel"
+            };
+
+            var viewModel = new CopyEffectDialogViewModel(dialog, sourceSegment);
+            dialog.Content = new CopyEffectContentDialog()
+            {
+                DataContext = viewModel
+            };
+            
+            void OnPrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+            {
+                if (viewModel.Segment == null)
+                {
+                    args.Cancel = true;
+                    _ = DialogUtils.ShowMessageDialog("Error", "No target segment selected");
+                }
+            }
+
+            dialog.PrimaryButtonClick += OnPrimaryButtonClick;
+            var result = await dialog.ShowAsync();
+            dialog.PrimaryButtonClick -= OnPrimaryButtonClick;
+
+            return result == ContentDialogResult.None ? null : viewModel.Segment;
         }
     }
 }

@@ -9,7 +9,12 @@ public class AgcVolumeAnalysisOption : IVolumeAnalysisOption, ISerializable
     {
         Intensity = intensity;
     }
-
+    
+    public AgcVolumeAnalysisOption()
+    {
+        Intensity = 64;
+    }
+    
     public byte Intensity { set; get; }
     
     public AgcVolumeAnalysisOption(SerializationInfo info, StreamingContext context)
@@ -21,6 +26,7 @@ public class AgcVolumeAnalysisOption : IVolumeAnalysisOption, ISerializable
     {
         info.AddValue(nameof(Intensity), Intensity);
     }
+    public override string ToString() => $"Automatic gain control (Intensity: {Intensity})";
 }
 
 [Serializable]
@@ -30,6 +36,12 @@ public class FixedVolumeAnalysisOption : IVolumeAnalysisOption, ISerializable
     {
         MinimumMagnitude = minimumMagnitude;
         MaximumMagnitude = maximumMagnitude;
+    } 
+    
+    public FixedVolumeAnalysisOption()
+    {
+        MinimumMagnitude = 1000;
+        MaximumMagnitude = 8000;
     }
 
     public int MinimumMagnitude { set; get; }
@@ -46,6 +58,7 @@ public class FixedVolumeAnalysisOption : IVolumeAnalysisOption, ISerializable
         info.AddValue(nameof(MinimumMagnitude), MinimumMagnitude);
         info.AddValue(nameof(MaximumMagnitude), MaximumMagnitude);
     }
+    public override string ToString() => $"Fixed (Magnitude range from {MinimumMagnitude} to {MaximumMagnitude})";
 }
 
 public interface IVolumeAnalysisOption

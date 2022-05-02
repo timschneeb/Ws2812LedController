@@ -22,6 +22,7 @@
         <PackageReference Include="Avalonia.AvaloniaEdit" Version="0.10.12.1" />
         <PackageReference Include="Avalonia.Desktop" Version="0.10.13" />
         <PackageReference Include="Avalonia.Diagnostics" Version="0.10.13" />
+        <PackageReference Include="DeepCloner" Version="0.10.4" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     </ItemGroup>
     <ItemGroup>
@@ -39,6 +40,14 @@
       </Compile>
       <Compile Update="Dialogs\EditPaletteContentDialog.axaml.cs">
         <DependentUpon>EditPaletteContentDialog.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Dialogs\CopyEffectContentDialog.axaml.cs">
+        <DependentUpon>CopyEffectContentDialog.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Controls\VolumeAnalysisOptionControl.axaml.cs">
+        <DependentUpon>VolumeAnalysisOptionControl.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
     </ItemGroup>

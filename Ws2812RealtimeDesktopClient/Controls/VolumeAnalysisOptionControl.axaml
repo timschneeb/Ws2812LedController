@@ -1,0 +1,45 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:Ws2812RealtimeDesktopClient.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Ws2812RealtimeDesktopClient.Controls.VolumeAnalysisOptionControl"
+             x:DataType="controls:VolumeAnalysisOptionControl">
+    <StackPanel Spacing="8" Margin="8">
+        <ComboBox Name="AssignmentSelector"
+                  VerticalAlignment="Center"
+                  HorizontalAlignment="Stretch"
+                  Items="{CompiledBinding OptionTypes}"
+                  SelectedIndex="{CompiledBinding SelectedOption}">
+        </ComboBox>
+        
+        <!-- AGC -->
+        <TextBlock VerticalAlignment="Center"
+                   IsVisible="{CompiledBinding IsAgc}">
+            Intensity
+        </TextBlock>
+        <NumericUpDown Minimum="0" Maximum="255"
+                       IsVisible="{CompiledBinding IsAgc}"
+                       Value="{Binding VolumeAnalysisOption.Intensity, FallbackValue=0}"
+                       ShowButtonSpinner="True"/>
+        <!-- Fixed -->
+        <TextBlock VerticalAlignment="Center"
+                   IsVisible="{CompiledBinding IsFixed}">
+            Minimum magnitude
+        </TextBlock>
+        <NumericUpDown Minimum="0"
+                       IsVisible="{CompiledBinding IsFixed}"
+                       Value="{Binding VolumeAnalysisOption.MinimumMagnitude, FallbackValue=0}"
+                       ShowButtonSpinner="True"
+                       AttachedToVisualTree="Visual_OnAttachedToVisualTree" />
+        <TextBlock VerticalAlignment="Center"
+                   IsVisible="{CompiledBinding IsFixed}">
+            Maximum magnitude
+        </TextBlock>
+        <NumericUpDown Minimum="0"
+                       IsVisible="{CompiledBinding IsFixed}"
+                       Value="{Binding VolumeAnalysisOption.MaximumMagnitude, FallbackValue=0}"
+                       ShowButtonSpinner="True"/>
+    </StackPanel>
+</UserControl>

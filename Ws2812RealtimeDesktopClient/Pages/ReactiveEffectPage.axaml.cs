@@ -63,6 +63,13 @@ namespace Ws2812RealtimeDesktopClient.Pages
                     IsOptional = row.IsNullable,
                     [!FftBinSelectorFlyoutHost.FftBinsProperty] = new Binding("Value", BindingMode.TwoWay)
                 };
+            } 
+            if (row?.Type == typeof(IVolumeAnalysisOption))
+            {
+                return new VolumeAnalysisOptionFlyoutHost()
+                {
+                    [!VolumeAnalysisOptionFlyoutHost.VolumeAnalysisOptionProperty] = new Binding("Value", BindingMode.TwoWay)
+                };
             }
             if (row?.Type == typeof(CRGBPalette16))
             {
@@ -216,10 +223,9 @@ namespace Ws2812RealtimeDesktopClient.Pages
             {
                 case bool o:
                     return o ? "True" : "False";
-                case FixedVolumeAnalysisOption o:
-                    return $"Fixed (Magnitude range from {o.MinimumMagnitude} to {o.MaximumMagnitude})";
-                case AgcVolumeAnalysisOption o:
-                    return $"Automatic gain control (Intensity: {o.Intensity})";
+                case FixedVolumeAnalysisOption:
+                case AgcVolumeAnalysisOption:
+                    return row.Value.ToString() ?? "???";
                 default:
                 {
                     return $"{row.Value} (Unsupported type)";
