@@ -6,6 +6,7 @@ public class Settings
 {
     public SegmentEntry[]? Segments { set; get; }
     public EffectAssignment[]? ReactiveEffectAssignments { set; get; }
+    public PresetEntry[]? Presets { set; get; }
     public PaletteEntry[]? Palettes { set; get; }
     public string Theme { set; get; }
     public bool UseCustomAccentColor { set; get; }

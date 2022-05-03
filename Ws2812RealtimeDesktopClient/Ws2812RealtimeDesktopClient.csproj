@@ -50,6 +50,10 @@
         <DependentUpon>VolumeAnalysisOptionControl.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="Dialogs\EditPresetContentDialog.axaml.cs">
+        <DependentUpon>EditPresetContentDialog.axaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
     <ItemGroup>
       <UpToDateCheckInput Remove="Pages\CoreControlPages\BasicInputControlsPage.axaml" />

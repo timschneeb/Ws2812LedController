@@ -6,6 +6,7 @@ using Ws2812LedController.Core;
 using Ws2812LedController.Core.Colors;
 using Ws2812LedController.Core.FastLedCompatibility;
 using Ws2812LedController.Core.Model;
+using Ws2812LedController.Core.Utils;
 
 namespace Ws2812LedController.AudioReactive.Effects.Fft;
 
@@ -20,7 +21,8 @@ public class RipplePeakReactiveEffect : BaseAudioReactiveEffect, IHasFftBinSelec
     [ValueRange(0,512)]
     public int MaxSteps { set; get; } = 16;
     public FftCBinSelector FftCBinSelector { set; get; } = new(0);
-    public double Threshold { get; set; } = 100;
+    public double Threshold { get; set; } = 25;
+    public bool WrapStrip { set; get; } = false;
     public CRGBPalette16 Palette { set; get; } = new(CRGBPalette16.Palette.Lava);
     public bool RainbowColors { set; get; } = false;
 
@@ -135,8 +137,12 @@ public class RipplePeakReactiveEffect : BaseAudioReactiveEffect, IHasFftBinSelec
                         var brightness = (byte)(_counter / _ripples[i].State * 2);
                         var color = RainbowColors ? ColorWheel.ColorAtIndex(idx, brightness) : 
                             ColorBlend.Blend(Color.Black, Palette.ColorFromPalette((byte)_ripples[i].Color, 255, TBlendType.None), brightness);
-                        segment.SetPixel((_ripples[i].Position + _ripples[i].State + segment.Width) % segment.Width, color, layer);
-                        segment.SetPixel((_ripples[i].Position - _ripples[i].State + segment.Width) % segment.Width, color, layer);
+                        
+                        var posA = _ripples[i].Position + _ripples[i].State;
+                        var posB = _ripples[i].Position - _ripples[i].State;
+                        
+                        segment.SetPixel(WrapStrip ? (posA + segment.Width) % segment.Width : posA.Clamp(0, segment.Width - 1), color, layer);
+                        segment.SetPixel(WrapStrip ? (posB + segment.Width) % segment.Width : posB.Clamp(0, segment.Width - 1), color, layer);
                         _ripples[i].State++; // Next step.
                     }
                     break;

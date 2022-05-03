@@ -42,7 +42,7 @@ public static class FriendlyPropertyNameTable
             { "ColorBasedOnHz", "Derive colors from frequency" },
             { "MinimumMagnitude", "Minimum magnitude" },
             { "MaximumMagnitude", "Maximum magnitude" },
-
+            { "WrapStrip", "Wrap strip edges" },
         };
     }
     

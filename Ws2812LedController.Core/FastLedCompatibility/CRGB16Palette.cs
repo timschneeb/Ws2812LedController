@@ -106,8 +106,9 @@ public class CRGBPalette16 : ISerializable
 
 	public enum Palette
 	{
+		Lava,
 		Ocean,
-		Lava
+		Neon,
 	}
 	
 	public readonly Color[] Entries = new Color[16];
@@ -165,6 +166,9 @@ public class CRGBPalette16 : ISerializable
 					Color.FromArgb(0xFF,0x00,0x00),
 					Color.FromArgb(0x8B,0x00,0x00),
 				};
+				break;
+			case Palette.Neon:
+				fill_gradient_RGB(16, Color.FromArgb(63, 0, 255), Color.FromArgb(210, 0, 255));
 				break;
 		}
 	}
