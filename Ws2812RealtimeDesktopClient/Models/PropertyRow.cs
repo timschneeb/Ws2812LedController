@@ -2,6 +2,7 @@ using System.Reflection;
 using Newtonsoft.Json;
 using Ws2812LedController.AudioReactive.Utils;
 using Ws2812LedController.Core.Model;
+using Ws2812RealtimeDesktopClient.Utilities;
 
 namespace Ws2812RealtimeDesktopClient.Models;
 
@@ -18,7 +19,7 @@ public class PropertyRow
     [JsonIgnore]
     public string Group { set; get; }
     [JsonIgnore]
-    public IEnumerable<Attribute> Attributes { set; get; }
+    public IEnumerable<object> Attributes { set; get; }
     
     public PropertyRow(){}
     public PropertyRow(EffectProperty prop)

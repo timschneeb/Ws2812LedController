@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.ComponentModel;
+using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
@@ -22,9 +23,30 @@ namespace Ws2812RealtimeDesktopClient.Views
             MinWidth = 450;
             MinHeight = 400;
             		
+            (Application.Current as App)!.TrayIconClicked += OnTrayIconClicked;
 		}
 
-		protected override void OnOpened(EventArgs e)
+        private void OnTrayIconClicked()
+        {
+            if (IsVisible)
+            {
+                Hide();
+            }
+            else
+            {
+                Show();
+            }
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            e.Cancel = true;
+            Hide();
+            
+            base.OnClosing(e);
+        }
+
+        protected override void OnOpened(EventArgs e)
 		{
 			base.OnOpened(e);
 

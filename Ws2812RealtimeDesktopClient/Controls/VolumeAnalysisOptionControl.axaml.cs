@@ -4,10 +4,8 @@ using Avalonia.Collections;
 using Avalonia.Controls;
 using Avalonia.Data;
 using Avalonia.Input;
-using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
-using Ws2812LedController.AudioReactive.Dsp;
 using Ws2812LedController.AudioReactive.Model;
 
 namespace Ws2812RealtimeDesktopClient.Controls;
@@ -33,19 +31,20 @@ public class VolumeAnalysisOptionControl : UserControl
         if (e.Property == VolumeAnalysisOptionProperty)
         {
             UpdateTypeSelection();
-            Console.WriteLine("VolumeAnalysisOptionProperty CHG: SelectedOption=" + SelectedOption);
         } 
         if (e.Property == SelectedOptionProperty)
         {
-            VolumeAnalysisOption = SelectedOption == 1 ? new FixedVolumeAnalysisOption() : new AgcVolumeAnalysisOption();
-            Console.WriteLine("SelectedOptionProperty CHG: VolumeAnalysisOption=" + VolumeAnalysisOption.GetType());
+            // Ignore initial set
+            if (e.OldValue != null)
+            {
+                VolumeAnalysisOption = SelectedOption == 1 ? new FixedVolumeAnalysisOption() : new AgcVolumeAnalysisOption();
+            }
         }
         
         if (e.Property == VolumeAnalysisOptionProperty || e.Property == SelectedOptionProperty)
         {
             IsAgc = SelectedOption == 0;
             IsFixed = SelectedOption == 1;
-            Console.WriteLine($"Any CHG: IsAgc={IsAgc}; IsFixed={IsFixed}");
         }
     }
 
@@ -68,11 +67,11 @@ public class VolumeAnalysisOptionControl : UserControl
         set => SetValue(VolumeAnalysisOptionProperty, value);
     } 
     
-    public static readonly StyledProperty<int> SelectedOptionProperty =
-        AvaloniaProperty.Register<VolumeAnalysisOptionControl, int>(nameof(SelectedOption),
-            defaultBindingMode: BindingMode.TwoWay);
+    public static readonly StyledProperty<int?> SelectedOptionProperty =
+        AvaloniaProperty.Register<VolumeAnalysisOptionControl, int?>(nameof(SelectedOption),
+            defaultBindingMode: BindingMode.TwoWay, defaultValue: null);
 		
-    public int SelectedOption
+    public int? SelectedOption
     {
         get => GetValue(SelectedOptionProperty);
         set => SetValue(SelectedOptionProperty, value);

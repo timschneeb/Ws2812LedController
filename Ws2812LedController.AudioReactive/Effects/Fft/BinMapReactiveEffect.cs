@@ -13,8 +13,11 @@ public class BinMapReactiveEffect : BaseAudioReactiveEffect
     public override string FriendlyName => "Bin map";
     public override string Description => "Map FFT bins to LED segment";
     public override int Speed { set; get; } = 1000 / 60;
+    [ValueRange(0, 255)]
     public int FirstBin { set; get; } = 2;
+    [ValueRange(0, 255)]
     public int LastBin { set; get; } = 100;
+    [ValueRange(0, 255)]
     public int SoundSquelch { set; get; } = 50;
     public CRGBPalette16 Palette { set; get; } = new(CRGBPalette16.Palette.Lava);
 

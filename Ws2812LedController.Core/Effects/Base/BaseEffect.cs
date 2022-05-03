@@ -17,6 +17,7 @@ public abstract class BaseEffect
     public virtual bool IsSingleShot => false;
     [NonEffectParameterAttribute]
     public bool IsFrozen { set; get; }
+    [ValueRange(0, int.MaxValue)]
     public abstract int Speed { set; get; }
 
     public event EventHandler<bool>? Finished;

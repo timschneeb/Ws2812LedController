@@ -56,4 +56,17 @@
 		
     </Application.Styles>
 
+    <TrayIcon.Icons>
+        <TrayIcons>
+            <TrayIcon Icon="/Assets/avalonia-logo.ico" 
+                      ToolTipText="Ws2812 Realtime Desktop Client" 
+                      Clicked="TrayIcon_OnClicked">
+                <TrayIcon.Menu>
+                    <NativeMenu>
+                        <NativeMenuItem Header="Exit" Command="{Binding ExitCommand}" />
+                    </NativeMenu>
+                </TrayIcon.Menu>
+            </TrayIcon>
+        </TrayIcons>
+    </TrayIcon.Icons>
 </Application>

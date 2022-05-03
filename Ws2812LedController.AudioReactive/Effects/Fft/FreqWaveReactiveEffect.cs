@@ -15,11 +15,14 @@ public class FreqWaveReactiveEffect : BaseAudioReactiveEffect, IHasFrequencyLimi
     public override int Speed { set; get; } = 1000 / 60;
     public Edge StartFromEdge { set; get; } = Edge.None;
     public byte FadeSpeed { set; get; } = 10;
-    public int Intensity { set; get; } = 255;
+    public byte Intensity { set; get; } = 255;
     public byte Sensitivity { set; get; } = 10;
     public int StartFrequency { set; get; } = 70;
     public int EndFrequency { set; get; } = 5000;
+    
+    [ValueRange(0, int.MaxValue)]
     public int MinFftPeakMagnitude { set; get; } = 100;
+    [ValueRange(0, int.MaxValue)]
     public int MaxFftPeakMagnitude { set; get; } = 1800;
     
     protected override async Task<int> PerformFrameAsync(LedSegmentGroup segment, LayerId layer)

@@ -1,4 +1,4 @@
-namespace Ws2812LedController.AudioReactive.Model;
+namespace Ws2812LedController.Core.Model;
 
 public class ValueRangeAttribute : Attribute
 {

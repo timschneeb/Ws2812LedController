@@ -17,7 +17,7 @@ public class LightUpPaletteReactiveEffect : BaseAudioReactiveEffect, IHasVolumeA
     public override string FriendlyName => "Light up palette";
     public override string Description => "Light single LEDs based on volume peaks up. Use colors from randomized palettes";
     public override int Speed { set; get; } = 1000 / 60;
-    public int FadeSpeed { set; get; } = 6;
+    public byte FadeSpeed { set; get; } = 6;
     public IVolumeAnalysisOption VolumeAnalysisOptions { set; get; } = new AgcVolumeAnalysisOption(128);
     public double Threshold { set; get; } = 1500;
 

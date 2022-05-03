@@ -13,7 +13,9 @@ public abstract class BaseAudioReactiveEffect : BaseEffect
 {
     protected readonly ConcurrentQueue<double[][]> SamplesQueue = new();
     public virtual int MinVolume { set; get; } = -70;
+    [ValueRange(0, 100)]
     public virtual double Multiplier { set; get; } = 1;
+    [ValueRange(0, 200)]
     public virtual double AvgSmoothingStrength { set; get; } = 10;
 
     private double[] _procNullBuffer = Array.Empty<double>();
@@ -279,6 +281,12 @@ public abstract class BaseAudioReactiveEffect : BaseEffect
             Array.Fill(_privateBuffer, 0);
         }
         
+        // Apply multiplier
+        for (var index = 0; index < _privateBuffer.Length; index++)
+        {
+            _privateBuffer[index] *= Multiplier;
+        }
+
         // Let's work with u16 values in this area, so I don't need to rewrite existing stuff
         for (var i = 0; i < _privateBuffer.Length; i++)
         {
@@ -291,12 +299,6 @@ public abstract class BaseAudioReactiveEffect : BaseEffect
         Smooth(ref _privateBuffer);
         CalculateAgcAverage();
         
-        // Apply multiplier
-        for (var index = 0; index < _privateBuffer.Length; index++)
-        {
-            _privateBuffer[index] *= Multiplier;
-        }
-
         return _privateBuffer;
     }
 

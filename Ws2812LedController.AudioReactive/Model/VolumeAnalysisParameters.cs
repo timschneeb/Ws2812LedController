@@ -1,4 +1,5 @@
 using System.Runtime.Serialization;
+using Ws2812LedController.Core.Model;
 
 namespace Ws2812LedController.AudioReactive.Model;
 
@@ -44,7 +45,9 @@ public class FixedVolumeAnalysisOption : IVolumeAnalysisOption, ISerializable
         MaximumMagnitude = 8000;
     }
 
+    [ValueRange(0, int.MaxValue)]
     public int MinimumMagnitude { set; get; }
+    [ValueRange(0, int.MaxValue)]
     public int MaximumMagnitude { set; get; }
     
     public FixedVolumeAnalysisOption(SerializationInfo info, StreamingContext context)

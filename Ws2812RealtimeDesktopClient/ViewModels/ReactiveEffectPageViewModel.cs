@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.ComponentModel;
+using System.Globalization;
 using System.Text.Json;
 using Avalonia.Collections;
 using Avalonia.Controls;
@@ -45,6 +46,11 @@ namespace Ws2812RealtimeDesktopClient.ViewModels
                     new DataGridPathGroupDescription("Group")
                 }
             };
+
+            PropertyGridItems.SortDescriptions.Add(new DataGridComparerSortDesctiption(new PropertyGroupSorter()
+            { 
+                 
+            }, ListSortDirection.Ascending));
         }
         
         private async void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)

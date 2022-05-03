@@ -14,9 +14,10 @@ public class RipplePeakReactiveEffect : BaseAudioReactiveEffect, IHasFftBinSelec
     public override string FriendlyName => "Ripple peak";
     public override string Description => "Peak detection triggers ripples";
     public override int Speed { set; get; } = 1000 / 60;
-    [ValueRange(max: 32)]
+    [ValueRange(0,32)]
     public byte MaxRipples { set; get; } = 16; /* Up to 32 */
     public byte FadeSpeed { set; get; } = 80;
+    [ValueRange(0,512)]
     public int MaxSteps { set; get; } = 16;
     public FftCBinSelector FftCBinSelector { set; get; } = new(0);
     public double Threshold { get; set; } = 100;

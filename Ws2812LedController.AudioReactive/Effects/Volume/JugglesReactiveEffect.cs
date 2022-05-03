@@ -12,7 +12,7 @@ public class JugglesReactiveEffect : BaseAudioReactiveEffect, IHasVolumeAnalysis
     public override string FriendlyName => "Juggles";
     public override string Description => "Simple scanning light with brightness derived from volume levels";
     public override int Speed { set; get; } = 1000 / 60;
-    public int AnimationSpeed { set; get; } = 64;
+    public byte AnimationSpeed { set; get; } = 64;
     public byte Count { set; get; } = 2;
     public IVolumeAnalysisOption VolumeAnalysisOptions { set; get; } = new AgcVolumeAnalysisOption(64);
     public CRGBPalette16 Palette { set; get; } = new(CRGBPalette16.Palette.Lava);

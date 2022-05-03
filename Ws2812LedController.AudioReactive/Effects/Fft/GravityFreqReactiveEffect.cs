@@ -13,6 +13,7 @@ public class GravityFreqReactiveEffect : BaseAudioReactiveEffect, IHasFrequencyL
 
     public override string Description => "VU Meter from center. Log of frequency is index to center colour";
     public override int Speed { set; get; } = 1000 / 60;
+    [ValueRange(0, 1024)]
     public int AnimationSpeed { set; get; } = 16;
     public int Intensity { set; get; } = 2;
     public int StartFrequency { set; get; } = 70;
