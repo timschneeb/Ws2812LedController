@@ -10,7 +10,7 @@
     <UserControl.Resources>
         <input:StandardUICommand x:Key="DeleteCommand" Kind="Delete" Label="Delete"
                                  Description="Delete preset" Command="{Binding DeleteItem}" />
-        <input:XamlUICommand x:Key="EditCommand" Label="Edit" IconSource="{StaticResource EditIcon}"
+        <input:XamlUICommand x:Key="EditCommand" Label="Rename" IconSource="{StaticResource EditIcon}"
                                  Description="Rename preset" Command="{Binding  RenameItem}" />
     </UserControl.Resources>
 
