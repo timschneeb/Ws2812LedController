@@ -1,0 +1,22 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:Ws2812RealtimeDesktopClient.ViewModels"
+             xmlns:models="clr-namespace:Ws2812RealtimeDesktopClient.Models"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             Padding="0, 6, 0, 4" 
+             x:DataType="viewModels:LoadPresetDialogViewModel"
+             x:Class="Ws2812RealtimeDesktopClient.Dialogs.LoadPresetContentDialog">
+    <ComboBox MinWidth="300"
+              HorizontalAlignment="Stretch"
+              Items="{Binding AvailablePresets}"
+              SelectedItem="{Binding Preset}"
+              AttachedToVisualTree="InputField_OnAttachedToVisualTree">
+        <ComboBox.DataTemplates>
+            <DataTemplate x:DataType="models:PresetEntry">
+                <TextBlock Text="{CompiledBinding Name}" />
+            </DataTemplate>
+        </ComboBox.DataTemplates>
+    </ComboBox>
+</UserControl>

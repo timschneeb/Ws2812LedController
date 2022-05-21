@@ -51,7 +51,7 @@ public class SynchronizedLedReceiver
                             }
                             else
                             {
-                                _mgr.Value.Get("full")!.SegmentGroup.SetPixel(i, packet.Colors[i].ToColor(), packet.Layer);
+                                _mgr.Value.GetFull()!.SegmentGroup.SetPixel(i, packet.Colors[i].ToColor(), packet.Layer);
                             }
                         }
                         break;
@@ -64,7 +64,7 @@ public class SynchronizedLedReceiver
                             }
                             else
                             {
-                                _mgr.Value.Get("full")!.SegmentGroup.SetPixel(packet.Indices[i], packet.Colors[i].ToColor(), packet.Layer);
+                                _mgr.Value.GetFull()!.SegmentGroup.SetPixel(packet.Indices[i], packet.Colors[i].ToColor(), packet.Layer);
                             }
                         }
                         break;

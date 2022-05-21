@@ -19,7 +19,7 @@ namespace Ws2812LedController.Simulator
         private readonly LedStrip _strip = new(124, true);
         private readonly LedSegment _segmentA;
         private readonly LedSegment _segmentB;
-        private readonly LedManager _mgr = new();
+        private readonly LedManager _mgr;
 
         private const int PixelSize = 16;
 
@@ -32,6 +32,8 @@ namespace Ws2812LedController.Simulator
         
         public MainWindow()
         {
+            _mgr = new LedManager(new Ref<LedStrip>(() => _strip));
+            
             var segmentFull = _strip.FullSegment;
             _segmentA = _strip.CreateSegment(0, 40);
             _segmentB = _strip.CreateSegment(40, 40);
@@ -78,22 +80,22 @@ namespace Ws2812LedController.Simulator
                                 {
                                     return new ResultPacket()
                                     {
-                                        Result = _mgr.Get("full")!.SourceSegment.MaxBrightness,
+                                        Result = _mgr.GetFull()!.SourceSegment.MaxBrightness,
                                         SourcePacketId = sg.TypeId
                                     };
                                 }
-                                _mgr.Get("full")!.SourceSegment.MaxBrightness = (byte)sg.Value;
+                                _mgr.GetFull()!.SourceSegment.MaxBrightness = (byte)sg.Value;
                                 break;
                             case SetGetRequestId.Power:
                                 if (sg.Action == SetGetAction.Get)
                                 {
                                     return new ResultPacket()
                                     {
-                                        Result = (byte)(_mgr.Get("full")!.CurrentState == PowerState.On ? 1 : 0),
+                                        Result = (byte)(_mgr.GetFull()!.CurrentState == PowerState.On ? 1 : 0),
                                         SourcePacketId = sg.TypeId
                                     };
                                 }
-                                var _ = _mgr.Get("full")!.PowerAsync(sg.Value == 1);
+                                var _ = _mgr.GetFull()!.PowerAsync(sg.Value == 1);
                                 break;
                         }
                     }
@@ -101,7 +103,7 @@ namespace Ws2812LedController.Simulator
                 case PacketTypeId.ClearCanvas:
                     if (arg is ClearCanvasPacket clr)
                     {
-                        _mgr.Get("full")!.SegmentGroup.Clear(clr.Color.ToColor(), clr.Layer);
+                        _mgr.GetFull()!.SegmentGroup.Clear(clr.Color.ToColor(), clr.Layer);
                     }
                     break;
                 case PacketTypeId.PaintInstruction:
@@ -114,13 +116,13 @@ namespace Ws2812LedController.Simulator
                                 case PaintInstructionMode.Full:
                                     for (var i = 0; i < paint.Colors.Length; i++)
                                     {
-                                        _mgr.Get("full")!.SegmentGroup.SetPixel(i, paint.Colors[i].ToColor(), paint.Layer);
+                                        _mgr.GetFull()!.SegmentGroup.SetPixel(i, paint.Colors[i].ToColor(), paint.Layer);
                                     }
                                     break;
                                 case PaintInstructionMode.Selective:
                                     for (var i = 0; i < paint.Indices.Length; i++)
                                     {
-                                        _mgr.Get("full")!.SegmentGroup.SetPixel(paint.Indices[i], paint.Colors[i].ToColor(), paint.Layer);
+                                        _mgr.GetFull()!.SegmentGroup.SetPixel(paint.Indices[i], paint.Colors[i].ToColor(), paint.Layer);
                                     }
                                     break;
                             }
@@ -144,7 +146,6 @@ namespace Ws2812LedController.Simulator
 
         private async void Init()
         {
-            _mgr.RegisterSegment("full", _strip.FullSegment);
             _mgr.RegisterSegment("a", _segmentA);
             _mgr.RegisterSegment("b", _segmentB);
 
@@ -152,7 +153,7 @@ namespace Ws2812LedController.Simulator
             _mgr.MirrorTo("a", "b");
             _mgr.Get("b");*/
 
-            var ctrl = _mgr.Get("full")!;
+            var ctrl = _mgr.GetFull()!;
             //ctrl.SourceSegment.Mask = new LedMask((color, i, width) => (i % 3 != 0) ? Color.DarkSlateGray : color);
 
             await ctrl.SetEffectAsync(new RainbowCycle());

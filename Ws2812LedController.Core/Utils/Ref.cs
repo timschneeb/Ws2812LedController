@@ -18,7 +18,7 @@ public sealed class Ref<T>
         get => _getter();
         set
         {
-            Debug.Assert(_setter == null, "Ref<T>.Value.set: Reference is read-only; setter is null");
+            Debug.Assert(_setter != null, "Ref<T>.Value.set: Reference is read-only; setter is null");
             _setter?.Invoke(value);
         }
     }

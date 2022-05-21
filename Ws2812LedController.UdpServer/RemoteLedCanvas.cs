@@ -15,7 +15,7 @@ public class RemoteLedCanvas
     public BitmapWrapper Bitmap { private set; get; }
     public event EventHandler<IPacket>? NewPacketAvailable;
 
-    public RemoteLedCanvas(LayerId layer, int offset, int length, RenderMode renderMode)
+    public RemoteLedCanvas(LayerId layer, int offset, int length, RenderMode renderMode = RenderMode.ManagedTask)
     {
         _layer = layer;
         _offset = offset;

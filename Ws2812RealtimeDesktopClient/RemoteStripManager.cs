@@ -4,6 +4,7 @@ using Avalonia.Media;
 using Ws2812LedController.Core;
 using Ws2812LedController.Core.Effects.Base;
 using Ws2812LedController.Core.Model;
+using Ws2812LedController.Core.Utils;
 using Ws2812LedController.UdpServer;
 using Ws2812LedController.UdpServer.Packets;
 using Ws2812RealtimeDesktopClient.Models;
@@ -38,26 +39,9 @@ public class RemoteStripManager
         // Inflate unsaved property information
         var savedAssign = SettingsProvider.Instance.ReactiveEffectAssignments ?? Array.Empty<EffectAssignment>();
 
-        for (var i = 0; i < savedAssign.Length; i++)
+        foreach (var assign in savedAssign)
         {
-            var desc =
-                ReactiveEffectDescriptorList.Instance.Descriptors.FirstOrDefault(x => x.Name == savedAssign[i].EffectName);
-            if (desc == null) continue;
-
-            savedAssign[i].Properties = new AvaloniaList<PropertyRow>(savedAssign[i].Properties.ToList().Where(x => x != null!));
-            foreach (var prop in desc.Properties)
-            {
-                var propInfo = savedAssign[i].Properties.FirstOrDefault(x => x.Name == prop.Name);
-                if (propInfo != null)
-                {
-                    Console.WriteLine(prop.Name + "=" + prop.Value);
-                    propInfo.Update(prop, true);
-                }
-                else
-                {
-                    savedAssign[i].Properties.Add(new PropertyRow(prop));
-                }
-            }
+            assign.InflateProperties();
         }
 
         EffectAssignments = new AvaloniaList<EffectAssignment>(savedAssign);
@@ -84,9 +68,10 @@ public class RemoteStripManager
         
         await DisconnectUdpAsync(false);
         
-        _canvas = new RemoteLedCanvas(LayerId.ExclusiveEnetLayer, 0, maxLength.Value, RenderMode.ManagedTask);
-        _mgr = new LedManager();
+        _canvas = new RemoteLedCanvas(LayerId.ExclusiveEnetLayer, 0, maxLength.Value, RenderMode.ManagedTask);       
         _remote = new LedStrip(new RemoteLedStrip(_canvas));
+        _mgr = new LedManager(new Ref<LedStrip>(() => _remote));
+
         await SyncSegmentsAsync(SegmentEntries.ToArray());
         await SyncEffectAssignmentsAsync(EffectAssignments.ToArray());
 
@@ -183,23 +168,23 @@ public class RemoteStripManager
     }
 
     #region Effect management
-    public async Task SyncEffectAssignmentsAsync(EffectAssignment[] entries)
+    public async Task SyncEffectAssignmentsAsync(EffectAssignment[] entries, bool delete = false)
     {
         if (_mgr == null)
         {
             Console.WriteLine("SyncEffectAssignmentsAsync: LedManager is null");
         }
-        else
+        else if(delete)
         {
-            /*foreach (var assignment in EffectAssignments.ToList())
+            foreach (var assignment in EffectAssignments.ToList())
             {
                 await DeleteEffectAssignmentAsync(assignment.SegmentName);
-            }*/
+            }
         }
         
         foreach(var entry in entries)
         {
-            await AddEffectAssignmentAsync(entry);
+            await AddOrUpdateEffectAssignmentAsync(entry);
         }
     }
 
@@ -225,7 +210,7 @@ public class RemoteStripManager
         }
     }
 
-    public async Task AddEffectAssignmentAsync(EffectAssignment entry)
+    public async Task AddOrUpdateEffectAssignmentAsync(EffectAssignment entry)
     {
         var desc = ReactiveEffectDescriptorList.Instance.Descriptors.FirstOrDefault(x => x.Name == entry.EffectName);
         Debug.Assert(desc != null, "Effect descriptor not found");
@@ -305,7 +290,7 @@ public class RemoteStripManager
         }
         else
         {
-             await _mgr.UnregisterAllSegmentsAsync(_remote);
+             await _mgr.UnregisterAllSegmentsAsync();
         }
         
         foreach(var entry in entries)
@@ -318,12 +303,12 @@ public class RemoteStripManager
     {
         var oldEntry = SegmentEntries.FirstOrDefault(x => x.Name == originalName);
         var oldEntryIdx = oldEntry == null ? -1 : SegmentEntries.IndexOf(oldEntry);
-        if (oldEntryIdx == -1)
+        if (oldEntryIdx == -1) // TODO always -1; move Segments Array from SegmentPage to this class
         {
             AddSegment(entry);
             return;
         }
-
+        
         if (_mgr == null || _remote == null)
         {
             Console.WriteLine("UpdateSegment: LedManager or LedStrip is null");
@@ -332,14 +317,14 @@ public class RemoteStripManager
 
         if(SegmentEntries[oldEntryIdx].Start != entry.Start || SegmentEntries[oldEntryIdx].Width != entry.Width)
         {
-            await _mgr.UnregisterSegmentAsync(originalName, _remote);
-            _mgr.RegisterSegment(entry.Name, _remote, entry.Start, entry.Width);
+            await _mgr.UnregisterSegmentAsync(originalName);
+            _mgr.RegisterSegment(entry.Name, entry.Start, entry.Width);
         }
         else if (SegmentEntries[oldEntryIdx].Name != entry.Name)
         {
             _mgr.RenameSegment(originalName, entry.Name);
         }
-
+        
         var seg = _mgr.Get(entry.Name);
         Debug.Assert(seg != null, "LedSegmentController must not be null at this point");
         seg.SourceSegment.InvertX = entry.InvertX;
@@ -367,7 +352,7 @@ public class RemoteStripManager
             return;
         }
 
-        _mgr.RegisterSegment(entry.Name, _remote, entry.Start, entry.Width);
+        _mgr.RegisterSegment(entry.Name, entry.Start, entry.Width);
         _mgr.Get(entry.Name)!.SourceSegment.InvertX = entry.InvertX;
         ReattachMirrors();
     }
@@ -384,7 +369,7 @@ public class RemoteStripManager
         }
 
         ReattachMirrors();
-        await _mgr.UnregisterSegmentAsync(name, _remote);
+        await _mgr.UnregisterSegmentAsync(name);
     }
 
     public void ReattachMirrors()

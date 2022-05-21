@@ -113,10 +113,11 @@ namespace Ws2812RealtimeDesktopClient.Pages
 
         private async void OnEditEvent(SegmentEntry obj)
         {
+            var oldName = obj.Name;
             var item = await OpenEditDialog(obj);
             if (item != null)
             {
-                (DataContext as SegmentPageViewModel)?.UpdateItem(item, obj.Name);
+                (DataContext as SegmentPageViewModel)?.UpdateItem(item, oldName);
             }
         }
 

@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Avalonia.Collections;
 using Avalonia.Media;
+using Force.DeepCloner;
 using Ws2812LedController.Core;
 using Ws2812LedController.Core.Effects.Base;
 using Ws2812LedController.Core.FastLedCompatibility;
@@ -29,9 +30,9 @@ public class PresetManager
     }
     
     #region Preset management
-    public void AddOrUpdatePreset(PresetEntry entry, string? originalName)
+    public void AddOrUpdatePreset(PresetEntry entry, string? originalName = null)
     {
-        var oldEntry = PresetEntries.FirstOrDefault(x => x.Name == originalName);
+        var oldEntry = PresetEntries.FirstOrDefault(x => x.Name == (originalName ?? entry.Name));
         var oldEntryIdx = oldEntry == null ? -1 : PresetEntries.IndexOf(oldEntry);
         
         if (oldEntryIdx == -1)

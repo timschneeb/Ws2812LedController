@@ -38,8 +38,7 @@ namespace Ws2812LedController.Console
             var segmentDeskR = strip.CreateSegment(124+79, 79);
             var segmentHeater = strip.CreateSegment(124+79*2, 81);
             
-            _mgr = new LedManager();
-            _mgr.RegisterSegment("full", strip.FullSegment);
+            _mgr = new LedManager(new Ref<LedStrip>(() => strip));
             _mgr.RegisterSegment("bed", segmentBed);
             _mgr.RegisterSegment("desk_left", segmentDeskL);
             _mgr.RegisterSegment("desk_right", segmentDeskR);
@@ -53,7 +52,7 @@ namespace Ws2812LedController.Console
                 segment.PowerEffect = new WipePowerEffect();
             }
             
-            var ctrl = _mgr.Get("full")!;
+            var ctrl = _mgr.GetFull()!;
             await ctrl.SetEffectAsync(new RainbowCycle());
            /* await ctrl.SetEffectAsync(new LarsonScanner()
             {
@@ -107,22 +106,22 @@ namespace Ws2812LedController.Console
                                 {
                                     return new ResultPacket()
                                     {
-                                        Result = _mgr.Get("full")!.SourceSegment.MaxBrightness,
+                                        Result = _mgr.GetFull()!.SourceSegment.MaxBrightness,
                                         SourcePacketId = sg.TypeId
                                     };
                                 }
-                                _mgr.Get("full")!.SourceSegment.MaxBrightness = (byte)sg.Value;
+                                _mgr.GetFull()!.SourceSegment.MaxBrightness = (byte)sg.Value;
                                 break;
                             case SetGetRequestId.Power:
                                 if (sg.Action == SetGetAction.Get)
                                 {
                                     return new ResultPacket()
                                     {
-                                        Result = (byte)(_mgr.Get("full")!.CurrentState == PowerState.On ? 1 : 0),
+                                        Result = (byte)(_mgr.GetFull()!.CurrentState == PowerState.On ? 1 : 0),
                                         SourcePacketId = sg.TypeId
                                     };
                                 }
-                                var _ = _mgr.Get("full")!.PowerAsync(sg.Value == 1);
+                                var _ = _mgr.GetFull()!.PowerAsync(sg.Value == 1);
                                 break;
                         }
                     }
@@ -130,7 +129,7 @@ namespace Ws2812LedController.Console
                 case PacketTypeId.ClearCanvas:
                     if (arg is ClearCanvasPacket clr)
                     {
-                        _mgr.Get("full")!.SegmentGroup.Clear(clr.Color.ToColor(), clr.Layer);
+                        _mgr.GetFull()!.SegmentGroup.Clear(clr.Color.ToColor(), clr.Layer);
                     }
                     break;
                 case PacketTypeId.PaintInstruction:
@@ -146,7 +145,7 @@ namespace Ws2812LedController.Console
 
         private static async void PowerButton_OnPowerStateChanged(object? sender, bool e)
         {
-            var segment = _mgr.Get("full");
+            var segment = _mgr.GetFull();
             if (segment == null)
             {
                 return;
@@ -158,7 +157,7 @@ namespace Ws2812LedController.Console
 
         private static async void LircOnKeyPress(object? sender, IrKeyPressEventArgs e)
         {
-            var fullSeg = _mgr.Get("full");
+            var fullSeg = _mgr.GetFull();
             if (fullSeg == null)
             {
                 return;
@@ -222,7 +221,7 @@ namespace Ws2812LedController.Console
                     goto HandleSpecialButtons;
             }
             
-            _mgr.Get("full")?.SegmentGroup.Clear(Color.FromArgb(0,0,0,0), LayerId.ExclusiveEnetLayer);
+            _mgr.GetFull()?.SegmentGroup.Clear(Color.FromArgb(0,0,0,0), LayerId.ExclusiveEnetLayer);
             await fullSeg.SetEffectAsync(new Static()
             {
                 Color = color

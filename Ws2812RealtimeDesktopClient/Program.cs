@@ -1,4 +1,5 @@
-﻿using System.Runtime.ExceptionServices;
+﻿using System.Diagnostics;
+using System.Runtime.ExceptionServices;
 using Avalonia;
 
 namespace Ws2812RealtimeDesktopClient
@@ -11,7 +12,9 @@ namespace Ws2812RealtimeDesktopClient
         public static void Main(string[] args)
         {
             AppDomain.CurrentDomain.FirstChanceException += AppDomainOnFirstChanceException;
-
+            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+            Trace.Listeners.Add(new ConsoleTraceListener());
+            
             BuildAvaloniaApp()
                 .StartWithClassicDesktopLifetime(args);
         }

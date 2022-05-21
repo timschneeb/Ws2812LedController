@@ -15,7 +15,7 @@ public abstract class BaseEffect
     public BaseCancellationMethod CancellationMethod { init; get; } = new CancellationTokenMethod();
     [NonEffectParameter]
     public virtual bool IsSingleShot => false;
-    [NonEffectParameterAttribute]
+    [NonEffectParameter]
     public bool IsFrozen { set; get; }
     [ValueRange(0, int.MaxValue)]
     public abstract int Speed { set; get; }

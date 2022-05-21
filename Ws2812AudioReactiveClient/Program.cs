@@ -3,6 +3,7 @@ using Ws2812LedController.AudioReactive.Effects.Fft;
 using Ws2812LedController.Core;
 using Ws2812LedController.Core.FastLedCompatibility;
 using Ws2812LedController.Core.Model;
+using Ws2812LedController.Core.Utils;
 using Ws2812LedController.UdpServer;
 using Ws2812LedController.UdpServer.Packets;
 
@@ -15,21 +16,18 @@ public static class Entrypoint
     public static async Task Main()
     {
         var canvas = new RemoteLedCanvas(LayerId.ExclusiveEnetLayer, 0, /*124*/ 363, RenderMode.ManagedTask);
-
-        var mgr = new LedManager();
         var remote = new LedStrip(new RemoteLedStrip(canvas));
-
+        var mgr = new LedManager(new Ref<LedStrip>(() => remote));
+        
         var segmentBed = remote.CreateSegment(0, 124);
         var segmentDeskL = remote.CreateSegment(124, 79);
         var segmentDeskR = remote.CreateSegment(124+79, 79);
         var segmentHeater = remote.CreateSegment(124+79*2, 81);
         
-        mgr.RegisterSegment("full", remote.FullSegment);
         mgr.RegisterSegment("bed", segmentBed);
         mgr.RegisterSegment("desk_left", segmentDeskL);
         mgr.RegisterSegment("desk_right", segmentDeskR);
         mgr.RegisterSegment("heater", segmentHeater);
-
 
         var client = new EnetClient("192.168.178.56");
         canvas.NewPacketAvailable += (_, packet) => client.Enqueue(packet); 

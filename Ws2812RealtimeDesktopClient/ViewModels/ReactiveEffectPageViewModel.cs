@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Text.Json;
 using Avalonia.Collections;
 using Avalonia.Controls;
+using Avalonia.Threading;
 using FluentAvalonia.UI.Controls;
 using Force.DeepCloner;
 using Ws2812LedController.Core.Model;
@@ -48,11 +49,11 @@ namespace Ws2812RealtimeDesktopClient.ViewModels
             };
 
             PropertyGridItems.SortDescriptions.Add(new DataGridComparerSortDesctiption(new PropertyGroupSorter()
-            { 
-                 
+            {
+
             }, ListSortDirection.Ascending));
         }
-        
+
         private async void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
@@ -70,6 +71,7 @@ namespace Ws2812RealtimeDesktopClient.ViewModels
                         UpdatePropertyGrid();
                         _ignoreEffectChange = false;
                     }
+
                     break;
                 }
                 case nameof(SelectedEffect):
@@ -80,11 +82,13 @@ namespace Ws2812RealtimeDesktopClient.ViewModels
                         _selectedAssignment.EffectName = _selectedEffect.Name;
 
                         var copy = _selectedAssignment;
-                        await RemoteStripManager.Instance.DeleteEffectAssignmentAsync(_selectedAssignment.SegmentName, true);
-                        await RemoteStripManager.Instance.AddEffectAssignmentAsync(copy);
+                        await RemoteStripManager.Instance.DeleteEffectAssignmentAsync(_selectedAssignment.SegmentName,
+                            true);
+                        await RemoteStripManager.Instance.AddOrUpdateEffectAssignmentAsync(copy);
                         SelectedAssignment = copy;
                         RaisePropertyChanged(nameof(Assignments));
                     }
+
                     break;
             }
         }
@@ -94,36 +98,36 @@ namespace Ws2812RealtimeDesktopClient.ViewModels
 
         public async Task AssignEffect()
         {
-             var result = await OpenAssignDialog(null);
-             if (result != null)
-             {
-                 await RemoteStripManager.Instance.AddEffectAssignmentAsync(result);
-                 RaisePropertyChanged(nameof(Assignments));
-                 
-                 SelectedAssignment = result;
-                 SelectedEffect = AvailableEffects.FirstOrDefault(x => x.Name == result.EffectName);
-                 UpdatePropertyGrid();
-             }
-        } 
-        
+            var result = await OpenAssignDialog(null);
+            if (result != null)
+            {
+                await RemoteStripManager.Instance.AddOrUpdateEffectAssignmentAsync(result);
+                RaisePropertyChanged(nameof(Assignments));
+
+                SelectedAssignment = result;
+                SelectedEffect = AvailableEffects.FirstOrDefault(x => x.Name == result.EffectName);
+                UpdatePropertyGrid();
+            }
+        }
+
         public async Task RemoveEffect(object? param)
         {
             if (param is EffectAssignment ass)
             {
-                await RemoteStripManager.Instance.DeleteEffectAssignmentAsync(ass.SegmentName); 
+                await RemoteStripManager.Instance.DeleteEffectAssignmentAsync(ass.SegmentName);
                 SelectedAssignment = Assignments.FirstOrDefault();
                 RaisePropertyChanged(nameof(Assignments));
                 UpdatePropertyGrid();
             }
         }
-        
+
         public async Task CopyEffect()
         {
             if (_selectedAssignment == null)
             {
                 return;
             }
-            
+
             var result = await OpenCopyDialog(_selectedAssignment.SegmentName);
             if (result != null)
             {
@@ -136,24 +140,36 @@ namespace Ws2812RealtimeDesktopClient.ViewModels
                 {
                     target.Properties.Add(prop.DeepClone());
                 }
-                
-                await RemoteStripManager.Instance.AddEffectAssignmentAsync(target);
+
+                await RemoteStripManager.Instance.AddOrUpdateEffectAssignmentAsync(target);
                 RaisePropertyChanged(nameof(Assignments));
-                 
+
                 SelectedAssignment = target;
                 SelectedEffect = AvailableEffects.FirstOrDefault(x => x.Name == target.EffectName);
                 UpdatePropertyGrid();
             }
         }
 
-        public void LoadComposition()
+        public async Task LoadComposition()
         {
-            
+            var preset = await OpenLoadDialog();
+            if (preset != null && preset.Effects != null)
+            {
+                await RemoteStripManager.Instance.SyncEffectAssignmentsAsync(preset.Effects, true);
+                RaisePropertyChanged(nameof(Assignments));
+
+                SelectedAssignment = Assignments.FirstOrDefault();
+                SelectedEffect = AvailableEffects.FirstOrDefault(x => x.Name == SelectedAssignment?.EffectName);
+            }
         }
 
-        public void SaveComposition()
+        public async Task SaveComposition()
         {
-            
+            var preset = await OpenSaveDialog(RemoteStripManager.Instance.EffectAssignments.ToArray());
+            if (preset != null && preset.Effects != null)
+            {
+                PresetManager.Instance.AddOrUpdatePreset(preset);
+            }
         }
 
         public AvaloniaList<EffectAssignment> Assignments => RemoteStripManager.Instance.EffectAssignments;
@@ -163,7 +179,7 @@ namespace Ws2812RealtimeDesktopClient.ViewModels
             set => RaiseAndSetIfChanged(ref _selectedAssignment, value);
             get => _selectedAssignment;
         }
-        
+
         public EffectDescriptor? SelectedEffect
         {
             set => RaiseAndSetIfChanged(ref _selectedEffect, value);
@@ -172,10 +188,10 @@ namespace Ws2812RealtimeDesktopClient.ViewModels
 
         public bool ShowSelectors => Assignments.Count > 0;
         public EffectDescriptor[] AvailableEffects => ReactiveEffectDescriptorList.Instance.Descriptors;
-        
+
         public string PageHeader => "Reactive effects";
         public string PageSubtitle => "Set-up audio/video reactive real-time effects";
-        
+
         private async Task<EffectAssignment?> OpenAssignDialog(EffectAssignment? entry)
         {
             if (RemoteStripManager.Instance.SegmentEntries.Count < 1)
@@ -196,12 +212,12 @@ namespace Ws2812RealtimeDesktopClient.ViewModels
             {
                 DataContext = viewModel
             };
-            
+
             void OnPrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
             {
                 var isEffectEmpty = (viewModel.Effect?.Name.Trim().Length ?? 0) < 1;
                 var isNameEmpty = viewModel.Segment.Trim().Length < 1;
-                    
+
                 args.Cancel = isEffectEmpty || isNameEmpty;
 
                 if (args.Cancel)
@@ -215,7 +231,7 @@ namespace Ws2812RealtimeDesktopClient.ViewModels
                     {
                         msg = "Effect must be selected";
                     }
-                        
+
                     _ = DialogUtils.ShowMessageDialog("Error", msg);
                 }
             }
@@ -223,10 +239,10 @@ namespace Ws2812RealtimeDesktopClient.ViewModels
             dialog.PrimaryButtonClick += OnPrimaryButtonClick;
             var result = await dialog.ShowAsync();
             dialog.PrimaryButtonClick -= OnPrimaryButtonClick;
-            
+
             return result == ContentDialogResult.None ? null : viewModel.ApplyTo(entry);
-        }    
-        
+        }
+
         private async Task<string?> OpenCopyDialog(string sourceSegment)
         {
             switch (RemoteStripManager.Instance.SegmentEntries.Count)
@@ -235,7 +251,8 @@ namespace Ws2812RealtimeDesktopClient.ViewModels
                     await DialogUtils.ShowNoSegmentsDialog();
                     return null;
                 case < 2:
-                    await DialogUtils.ShowNoSegmentsDialog("No other segments exist. Please create a new segment to copy to.");
+                    await DialogUtils.ShowNoSegmentsDialog(
+                        "No other segments exist. Please create a new segment to copy to.");
                     return null;
             }
 
@@ -251,7 +268,7 @@ namespace Ws2812RealtimeDesktopClient.ViewModels
             {
                 DataContext = viewModel
             };
-            
+
             void OnPrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
             {
                 if (viewModel.Segment == null)
@@ -266,6 +283,100 @@ namespace Ws2812RealtimeDesktopClient.ViewModels
             dialog.PrimaryButtonClick -= OnPrimaryButtonClick;
 
             return result == ContentDialogResult.None ? null : viewModel.Segment;
+        }
+        
+        private async Task<PresetEntry?> OpenLoadDialog()
+        {
+            if (PresetManager.Instance.PresetEntries.Count < 1)
+            {
+                await DialogUtils.ShowMessageDialog("No presets", "There are no presets saved. Please create one first.");
+                return null;
+            }
+
+            var dialog = new ContentDialog()
+            {
+                Title = "Load preset",
+                PrimaryButtonText = "Load",
+                CloseButtonText = "Cancel"
+            };
+
+            var viewModel = new LoadPresetDialogViewModel(dialog);
+            dialog.Content = new LoadPresetContentDialog()
+            {
+                DataContext = viewModel
+            };
+            
+            void OnPrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+            {
+                if (viewModel.Preset == null)
+                {
+                    args.Cancel = true;
+                    _ = DialogUtils.ShowMessageDialog("Error", "No preset selected");
+                }
+            }
+
+            dialog.PrimaryButtonClick += OnPrimaryButtonClick;
+            var result = await dialog.ShowAsync();
+            dialog.PrimaryButtonClick -= OnPrimaryButtonClick;
+
+            foreach (var assign in viewModel.Preset?.Effects ?? Array.Empty<EffectAssignment>())
+            {
+                assign.InflateProperties();
+            }
+            
+            return result == ContentDialogResult.None ? null : viewModel.Preset;
+        }   
+        private async Task<PresetEntry?> OpenSaveDialog(EffectAssignment[] assignments)
+        {
+            if (assignments.Length < 1)
+            {
+                await DialogUtils.ShowMessageDialog("No effects set", "Please assign at least one effect to a segment to continue.");
+                return null;
+            }
+
+            var dialog = new ContentDialog()
+            {
+                Title = "Save preset",
+                PrimaryButtonText = "Save",
+                CloseButtonText = "Cancel"
+            };
+
+            var viewModel = new SavePresetDialogViewModel(dialog);
+            dialog.Content = new SavePresetContentDialog()
+            {
+                DataContext = viewModel
+            };
+
+            Task<PresetEntry>? task = null;
+            void OnPrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+            {
+                if (viewModel.PresetName.Length < 1)
+                {
+                    args.Cancel = true;
+                    _ = DialogUtils.ShowMessageDialog("Error", "Preset name is empty");
+                    return;
+                }
+
+                var defer = args.GetDeferral();
+                dialog.Title = "Saving preset...";
+                dialog.PrimaryButtonText = "Saving...";
+                
+                task = Task.Run(async () =>
+                {
+                    var x = new PresetEntry(viewModel.PresetName)
+                    {
+                        Effects = assignments.DeepClone()
+                    };
+                    await Dispatcher.UIThread.InvokeAsync(() => defer?.Complete());
+                    return x;
+                });
+            }
+
+            dialog.PrimaryButtonClick += OnPrimaryButtonClick;
+            var result = await dialog.ShowAsync();
+            dialog.PrimaryButtonClick -= OnPrimaryButtonClick;
+
+            return result == ContentDialogResult.None || task == null ? null : await task;
         }
     }
 }

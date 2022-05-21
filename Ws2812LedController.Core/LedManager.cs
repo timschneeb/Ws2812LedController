@@ -1,14 +1,23 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Drawing;
+using Ws2812LedController.Core.Utils;
 
 namespace Ws2812LedController.Core;
 
 public class LedManager
 {
+    private readonly Ref<LedStrip> _strip;
     private readonly List<LedSegmentController> _segments = new();
+    private readonly LedSegmentController _full;
     public ReadOnlyCollection<LedSegmentController> Segments => _segments.AsReadOnly();
 
+    public LedManager(Ref<LedStrip> strip)
+    {
+        _strip = strip;
+        _full = new LedSegmentController("full", _strip.Value.FullSegment);
+    }
+    
     public void RegisterSegment(string name, LedSegment segment)
     {
         Debug.Assert(_segments.All(x => x.Name != name), "Segment name already registered");
@@ -16,31 +25,31 @@ public class LedManager
         _segments.Add(new LedSegmentController(name, segment));
     }
     
-    public void RegisterSegment(string name, LedStrip strip, int start, int width)
+    public void RegisterSegment(string name, int start, int width)
     {
-        RegisterSegment(name, strip.CreateSegment(start, width));
+        RegisterSegment(name, _strip.Value.CreateSegment(start, width));
     }
     
-    public async Task<bool> UnregisterSegmentAsync(string name, LedStrip? strip)
+    public async Task<bool> UnregisterSegmentAsync(string name)
     {
         foreach (var ctrl in _segments.FindAll(x => x.Name == name))
         {
             await ctrl.TerminateLoopAsync(1000);
             ctrl.SegmentGroup.FillAllLayers(Color.FromArgb(0,0,0,0));
-            strip?.RemoveSegment(ctrl.SourceSegment);
+            _strip.Value.RemoveSegment(ctrl.SourceSegment);
             ctrl.Dispose();
         }
         
         return _segments.RemoveAll(x => x.Name == name) > 0;
     }
     
-    public async Task UnregisterAllSegmentsAsync(LedStrip? strip)
+    public async Task UnregisterAllSegmentsAsync()
     {
         foreach (var ctrl in _segments)
         {
             await ctrl.TerminateLoopAsync(1000);
             ctrl.SegmentGroup.FillAllLayers(Color.FromArgb(0,0,0,0));
-            strip?.RemoveSegment(ctrl.SourceSegment);
+            _strip.Value.RemoveSegment(ctrl.SourceSegment);
             ctrl.Dispose();
         }
         
@@ -61,6 +70,11 @@ public class LedManager
     public LedSegmentController? Get(string name)
     {
         return _segments.FirstOrDefault(x => x?.Name == name, null);
+    }
+    
+    public LedSegmentController GetFull()
+    {
+        return _full;
     }
 
     public Task PowerAllAsync(bool state, params LedSegmentController[] ctrls)

@@ -47,6 +47,39 @@ namespace Ws2812RealtimeDesktopClient.ViewModels
         
         public async Task UpdateItem(SegmentEntry segment, string oldName)
         {
+            // Migrate assignments and presets in case of name change
+            if (oldName != segment.Name)
+            {
+                // Modify assignments
+                foreach (var assign in RemoteStripManager.Instance.EffectAssignments)
+                {
+                    if (assign.SegmentName == oldName)
+                    {
+                        assign.SegmentName = segment.Name;
+                        await RemoteStripManager.Instance.AddOrUpdateEffectAssignmentAsync(assign);
+                    }
+                }
+                
+                // Modify presets
+                foreach (var preset in PresetManager.Instance.PresetEntries)
+                {
+                    var modified = false;
+                    foreach (var assign in preset.Effects ?? Array.Empty<EffectAssignment>())
+                    {
+                        if (assign.SegmentName == oldName)
+                        {
+                            modified = true;
+                            assign.SegmentName = segment.Name;
+                        }
+                    }
+
+                    if (modified)
+                    {
+                        PresetManager.Instance.AddOrUpdatePreset(preset, preset.Name);
+                    }
+                }
+            }
+            
             for (var i = 0; i < Segments.Count; i++)
             {
                 if (Segments[i].Name == oldName)

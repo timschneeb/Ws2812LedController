@@ -14,11 +14,6 @@ namespace Ws2812RealtimeDesktopClient.ViewModels
         
         public AvaloniaList<PresetEntry> Presets => PresetManager.Instance.PresetEntries;
 
-        public async Task UpdateItem(PresetEntry segment, string oldName)
-        {
-            PresetManager.Instance.AddOrUpdatePreset(segment, oldName);
-        }
-        
         public void DeleteItem(object? param)
         {
             if (param is PresetEntry entry)
@@ -36,6 +31,7 @@ namespace Ws2812RealtimeDesktopClient.ViewModels
                 {
                     PresetManager.Instance.AddOrUpdatePreset(result, entry.Name);
                 }
+                result?.UpdateFromViewModel();
             }
         }
         

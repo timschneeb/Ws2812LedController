@@ -47,7 +47,7 @@
 
                     </controls:CommandBar.PrimaryCommands>
                 </controls:CommandBar>
-                <ListBox Items="{Binding Segments}" Name="ListBox1" VirtualizationMode="None">
+                <ListBox Items="{Binding Presets}" Name="ListBox1" VirtualizationMode="None">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <Border Background="Transparent">
