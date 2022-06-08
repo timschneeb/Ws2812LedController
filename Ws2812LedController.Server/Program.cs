@@ -260,18 +260,20 @@ namespace Ws2812LedController.Console
                     await _mgr.PowerAllAsync(true, GetCtrls(_currentSegment));
                     break;
                 case KeyAction.BrightnessUp:
+                    var bu = (byte)(GetCtrls(_currentSegment).First().SourceSegment.MaxBrightness + 17);
                     foreach (var ctrl in GetCtrls(_currentSegment))
                     {
-                        ctrl.SourceSegment.MaxBrightness = (byte)(ctrl.SourceSegment.MaxBrightness + 20);
+                        ctrl.SourceSegment.MaxBrightness = bu;
                     }
                     
                     //fullSeg.SegmentGroup.MasterSegment.MaxBrightness =
                     //    (byte)(fullSeg.SegmentGroup.MasterSegment.MaxBrightness + 20);
                     break;
                 case KeyAction.BrightnessDown:
+                    var bd = (byte)(GetCtrls(_currentSegment).First().SourceSegment.MaxBrightness - 17);
                     foreach (var ctrl in GetCtrls(_currentSegment))
                     {
-                        ctrl.SourceSegment.MaxBrightness = (byte)(ctrl.SourceSegment.MaxBrightness - 20);
+                        ctrl.SourceSegment.MaxBrightness = bd;
                     }
                     
                     //fullSeg.SegmentGroup.MasterSegment.MaxBrightness =
