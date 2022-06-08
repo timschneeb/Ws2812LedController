@@ -77,6 +77,11 @@ public class LedManager
         return _full;
     }
 
+    public Task PowerAllAsync(bool state)
+    {
+        return Task.WhenAll((from seg in _segments select seg.PowerAsync(state)).ToList());
+    }
+    
     public Task PowerAllAsync(bool state, params LedSegmentController[] ctrls)
     {
         return Task.WhenAll((from seg in ctrls select seg.PowerAsync(state)).ToList());

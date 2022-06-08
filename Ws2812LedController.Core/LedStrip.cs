@@ -114,15 +114,25 @@ public class LedStrip : IDisposable
     
     private readonly int _layerCount = typeof(LayerId).GetEnumValues().Length;
 
+
+    
     protected void Render()
     {
+        Color GetMaskedPixel(LedSegment seg, int layer, int pxlIdx)
+        {
+            var c = seg.Layers[layer].LayerState[pxlIdx];
+            var mask = seg.Layers[layer].Mask;
+            return mask == null ? c : mask.Condition(c, pxlIdx, seg.Layers[layer].Width);
+        }
+        
         for (var pxlIdx = 0; pxlIdx < Canvas.Width; pxlIdx++)
         {
+            LedSegment? primaryPixelOwner = null;
             var finalPixel = Color.Black;
             for (var layer = 0; layer < _layerCount; layer++)
             {
                 var pixel = FullSegment.Layers[layer].IsActive
-                    ? FullSegment.Layers[layer].LayerState[pxlIdx]
+                    ? GetMaskedPixel(FullSegment, layer, pxlIdx)
                     : Color.FromArgb(0, 0, 0, 0);
                 for (var segIdx = 0; segIdx < SubSegments.Count; segIdx++)
                 {
@@ -131,16 +141,18 @@ public class LedStrip : IDisposable
                     {
                         continue;
                     }
+                    
+                    primaryPixelOwner ??= seg;
 
                     var relPxlIdx = seg.ToRelativeIndex(pxlIdx);
-                    var next = seg.Layers[layer].LayerState[relPxlIdx];
+                    var next = GetMaskedPixel(seg, layer, relPxlIdx);
                     pixel = ColorBlend.Blend(pixel, next, next.A, false);
                 }
 
                 finalPixel = ColorBlend.Blend(finalPixel, pixel, pixel.A, true);
             }
 
-            Canvas.SetPixel(pxlIdx, finalPixel, FullSegment.MaxBrightness /* TODO brightness */);
+            Canvas.SetPixel(pxlIdx, finalPixel, primaryPixelOwner?.MaxBrightness ?? FullSegment.MaxBrightness);
         }
 
         _device?.Update();

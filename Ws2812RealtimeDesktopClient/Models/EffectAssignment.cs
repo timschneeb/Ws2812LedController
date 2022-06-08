@@ -15,7 +15,6 @@ public class EffectAssignment
             ReactiveEffectDescriptorList.Instance.Descriptors.FirstOrDefault(x => x.Name == EffectName);
         if (desc == null)
         {
-            Console.WriteLine("");
             return;
         }
         

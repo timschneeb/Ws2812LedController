@@ -10,7 +10,7 @@ public class AudioProviderService
     public static AudioProviderService Instance => Lazy.Value;
     private AudioProviderService(string inputSink = "jamesdsp_sink.monitor")
     {
-        _sound = new SoundInputStream(inputSink);
+        _sound = new SoundInputStream(inputSink, 0.02, "PulseAudio");
         _sound.NewSamplesReceived += (_, bytes) => NewSamples?.Invoke(this, bytes);
         Start();
     }

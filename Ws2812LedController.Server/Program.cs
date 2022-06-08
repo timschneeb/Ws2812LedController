@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Runtime.ExceptionServices;
+using System.Timers;
 using Ws2812LedController.Core;
 using Ws2812LedController.Core.CancellationMethod;
 using Ws2812LedController.Core.Effects;
@@ -23,6 +24,21 @@ namespace Ws2812LedController.Console
         private static WebApiManager _webApiManager = null!;
         private static EnetServer _enetServer = null!;
         private static SynchronizedLedReceiver _syncLedReceiver = null!;
+
+        private const int ResetTimerTimeout = 30 * 1000;
+        private static System.Timers.Timer _currentSegmentResetTimer = new(ResetTimerTimeout);
+        private static int _currentSegment = 0;
+        private static CancellationTokenSource _currentSegmentMaskReset = new();
+        private static LedSegmentController[] GetCtrls(int idx)
+        {
+            return idx switch
+            {
+                1 => new[] { _mgr.Get("bed")! },
+                2 => new[] { _mgr.Get("desk_left")!, _mgr.Get("desk_right")! },
+                3 => new[] { _mgr.Get("heater")! },
+                _ => new[] { _mgr.Get("desk_left")!, _mgr.Get("desk_right")!, _mgr.Get("heater")!, _mgr.Get("bed")!}
+            };
+        }
         
         private static async Task Main(string[] args)
         {
@@ -43,6 +59,7 @@ namespace Ws2812LedController.Console
             _mgr.RegisterSegment("desk_left", segmentDeskL);
             _mgr.RegisterSegment("desk_right", segmentDeskR);
             _mgr.RegisterSegment("heater", segmentHeater);
+            await _mgr.PowerAllAsync(false);
             
             _webApiManager = new WebApiManager(new Ref<LedManager>(() => _mgr));
             _syncLedReceiver = new SynchronizedLedReceiver(new Ref<LedStrip>(() => strip), new Ref<LedManager>(() => _mgr));
@@ -51,9 +68,13 @@ namespace Ws2812LedController.Console
             {
                 segment.PowerEffect = new WipePowerEffect();
             }
-            
+
             var ctrl = _mgr.GetFull()!;
-            await ctrl.SetEffectAsync(new RainbowCycle());
+            await ctrl.SetEffectAsync(new Static
+            {
+                Color = Color.FromArgb(255, 255, 50, 0)
+            }, noPowerOn: true);
+            //await ctrl.SetEffectAsync(new RainbowCycle());
            /* await ctrl.SetEffectAsync(new LarsonScanner()
             {
                 Speed = 1000,
@@ -233,25 +254,73 @@ namespace Ws2812LedController.Console
             switch (e.Action)
             {
                 case KeyAction.PowerOff:
-                    await _mgr.PowerAllAsync(false, "bed", "desk_left", "desk_right", "heater");
+                    await _mgr.PowerAllAsync(false, GetCtrls(_currentSegment));
                     break;
                 case KeyAction.PowerOn:
-                    await _mgr.PowerAllAsync(true, "bed", "desk_left", "desk_right", "heater");
+                    await _mgr.PowerAllAsync(true, GetCtrls(_currentSegment));
                     break;
                 case KeyAction.BrightnessUp:
-                    fullSeg.SegmentGroup.MasterSegment.MaxBrightness =
-                        (byte)(fullSeg.SegmentGroup.MasterSegment.MaxBrightness + 30);
+                    foreach (var ctrl in GetCtrls(_currentSegment))
+                    {
+                        ctrl.SourceSegment.MaxBrightness = (byte)(ctrl.SourceSegment.MaxBrightness + 20);
+                    }
+                    
+                    //fullSeg.SegmentGroup.MasterSegment.MaxBrightness =
+                    //    (byte)(fullSeg.SegmentGroup.MasterSegment.MaxBrightness + 20);
                     break;
                 case KeyAction.BrightnessDown:
-                    fullSeg.SegmentGroup.MasterSegment.MaxBrightness =
-                        (byte)(fullSeg.SegmentGroup.MasterSegment.MaxBrightness - 30);
+                    foreach (var ctrl in GetCtrls(_currentSegment))
+                    {
+                        ctrl.SourceSegment.MaxBrightness = (byte)(ctrl.SourceSegment.MaxBrightness - 20);
+                    }
+                    
+                    //fullSeg.SegmentGroup.MasterSegment.MaxBrightness =
+                    //    (byte)(fullSeg.SegmentGroup.MasterSegment.MaxBrightness - 20);
                     break;
                 case KeyAction.Flash:
-                    await fullSeg.SetEffectAsync(new Firework()
+                    _currentSegment++;
+                    if (_currentSegment > 3)
                     {
-                        Speed = 5000,
-                        FadeRate = FadeRate.None
-                    });
+                        _currentSegment = 0;
+                    }
+                    
+                    _currentSegmentResetTimer.Stop();
+                    _currentSegmentResetTimer.Close();
+                    _currentSegmentResetTimer = new System.Timers.Timer(ResetTimerTimeout);
+                    _currentSegmentResetTimer.Elapsed += (_, _) => _currentSegment = 0;
+                    _currentSegmentResetTimer.Start();
+                    
+                    void SetSelected(bool on, int segId)
+                    {
+                        foreach (var ctrl in GetCtrls(segId))
+                        {
+                            ctrl.SourceSegment.Layers[(int)LayerId.NotificationLayer].Mask =
+                                on ? new LedMask((_, _, _) => Color.FromArgb(40,40,40)) : null;
+                        }
+                    }
+
+                    var segId = _currentSegment;
+                    _currentSegmentMaskReset.Cancel();
+                    _currentSegmentMaskReset.Token.WaitHandle.WaitOne(100);
+                    for (var i = 0; i <= 3; i++)
+                    {
+                        SetSelected(false, i);
+                    }
+                    SetSelected(true, segId);
+                    _currentSegmentMaskReset.Dispose();
+                    _currentSegmentMaskReset = new CancellationTokenSource();
+                    try
+                    {
+                        var token = _currentSegmentMaskReset.Token;
+                        await Task.Delay(1500, token).ContinueWith((_) =>
+                        {
+                            if (!token.IsCancellationRequested)
+                            {
+                                SetSelected(false, segId);
+                            }
+                        }, token);
+                    }
+                    catch(TaskCanceledException){}
                     break;
                 case KeyAction.Strobe:
                     await fullSeg.SetEffectAsync(new FireFlicker());

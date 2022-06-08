@@ -32,8 +32,9 @@ public class LedLayer
             i = RelEnd - i;
         }
 
-        var finalColor = Mask?.Condition(color, i, Width) ?? color;
-        SetPixelInternal(i, finalColor);
+        // We handle the Mask property now in LedStrip.Render for better responsiveness
+        // var finalColor = Mask?.Condition(color, i, Width) ?? color;
+        SetPixelInternal(i, color);
     }
 
     private void SetPixelInternal(int i, Color color)
