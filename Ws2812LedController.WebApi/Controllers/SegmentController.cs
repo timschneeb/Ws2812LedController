@@ -23,11 +23,13 @@ public class SegmentController : ControllerBase
     public ActionResult<IEnumerable<SegmentData>> Get()
     {
         var segments = _manager.Value.Segments;
-        var ret = new SegmentData[segments.Count];
+        var ret = new SegmentData[segments.Count + 1];
         for (var i = 0; i < segments.Count; i++)
         {
             ret[i] = new SegmentData(segments[i], _manager);
         }
+
+        ret[segments.Count] = new SegmentData(_manager.Value.GetFull(), _manager);
 
         return ret;
     }

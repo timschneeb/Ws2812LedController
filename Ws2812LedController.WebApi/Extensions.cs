@@ -9,6 +9,11 @@ public static class Extensions
 {
     public static LedSegmentController? FromSegmentName(this Ref<LedManager> mgr, string segmentName)
     {
+        if (segmentName == "full")
+        {
+            return mgr.Value.GetFull();
+        }
+        
         return mgr.Value.Segments.FirstOrDefault(x => segmentName == x.Name);
     }
     

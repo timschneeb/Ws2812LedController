@@ -13,7 +13,7 @@
  *  for the specific language governing permissions and limitations under the License.
  */
 include 'asynchttp_v1'
- 
+
 metadata {
 	definition (name: "Ws2812", namespace: "thepbone", author: "Tim Schneeberger", cstHandler: true) {
 		capability "Color"
@@ -26,7 +26,7 @@ metadata {
         capability "Health Check"
         capability "Light"
         capability "Actuator"
-         
+
         command "setColor"
         command "refresh"
 	}
@@ -47,18 +47,18 @@ metadata {
 			tileAttribute ("device.color", key: "COLOR_CONTROL") {
 				attributeState "color", action:"setColor"
 			}
-            
+
             tileAttribute("device.power", key: "SECONDARY_CONTROL") {
 				attributeState "power", label: '${currentValue} W'
 			}
 		}
 	}
-    
-   	
+
+
     standardTile("refresh", "device.refresh", inactiveLabel: false, decoration: "flat", width: 2, height: 2) {
         state "default", label:"", action:"refresh.refresh", icon:"st.secondary.refresh"
     }
-        
+
 	main(["switch"])
 	details(["switch", "power", "refresh"])
 }
@@ -82,7 +82,7 @@ def setStaticColor(red, green, blue) {
     def hex = "#"+Integer.toHexString((int)(((0xFF << 24) | (red << 16) | (green << 8) | blue) & 0xffffffffL));
     def params = [
         uri: 'https://led.timschneeberger.me',
-        path: '/api/segment/bed/layer/baselayer/effect',
+        path: '/api/segment/full/layer/baselayer/effect',
         body: [Name: "Static",
         	   Properties: [
                			[
@@ -93,7 +93,7 @@ def setStaticColor(red, green, blue) {
               ]
     ]
     log.debug params.body
-    
+
     asynchttp_v1.post(processColorResponse, params)
 }
 
@@ -120,40 +120,40 @@ def setPower(on) {
     asynchttp_v1.post(processPowerResponse, params, data)
 }
 
-def processPowerResponse(response, data) { 
+def processPowerResponse(response, data) {
     def actualState = data['request'];
 
     if(!processResponse(response)) {
     	// Error
         actualState = !actualState;
     }
-    
+
     sendEvent(name: "switch", value: actualState ? 'on' : 'off')
     pollPowerMeter()
 }
 
-def processBrightnessResponse(response, data) { 
+def processBrightnessResponse(response, data) {
     if(!processResponse(response)) {
     	// Error
         poll()
         return
     }
-    
+
     sendEvent(name: "level", value: data['request'])
     pollPowerMeter()
 }
 
-def processColorResponse(response, data) { 
+def processColorResponse(response, data) {
     if(!processResponse(response)) {
     	// Error
         poll()
         return
     }
-    
+
     pollPowerMeter()
 }
 
-def processResponse(response) { 
+def processResponse(response) {
     if (response.hasError()) {
         log.error "raw error response: $response.status $response.errorData"
     }
@@ -185,7 +185,7 @@ def setColor(value) {
 
 	sendEvent(name: "hue", value: value.hue)
     sendEvent(name: "saturation", value: value.saturation)
-    
+
 	if(value.hex) sendEvent(name: "color", value: value.hex)
 	if(value.switch) sendEvent(name: "switch", value: value.switch)
 }
@@ -208,7 +208,7 @@ def poll() {
         path: '/api/power'
     ]
     asynchttp_v1.get(updatePower, params)
-    
+
     def paramsB = [
         uri: 'https://led.timschneeberger.me',
         path: '/api/brightness'
@@ -232,7 +232,7 @@ def updatePowerMeter(response, data){
     	// Error
         state = "0"
     }
-    
+
     log.debug "$state W"
 	sendEvent(name: "power", value: state)
 }
