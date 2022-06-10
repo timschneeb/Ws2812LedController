@@ -74,6 +74,7 @@ namespace Ws2812LedController.Console
             {
                 Color = Color.FromArgb(255, 255, 50, 0)
             }, noPowerOn: true);
+            
             //await ctrl.SetEffectAsync(new RainbowCycle());
            /* await ctrl.SetEffectAsync(new LarsonScanner()
             {

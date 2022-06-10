@@ -11,7 +11,8 @@ public class LedManager
     private readonly List<LedSegmentController> _segments = new();
     private readonly LedSegmentController _full;
     public ReadOnlyCollection<LedSegmentController> Segments => _segments.AsReadOnly();
-
+    public LedStrip Strip => _strip.Value;
+    
     public LedManager(Ref<LedStrip> strip)
     {
         _strip = strip;

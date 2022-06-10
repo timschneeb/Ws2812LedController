@@ -105,6 +105,9 @@ public class LedStrip : IDisposable
                         break;
                     }
                 }
+                
+                // Console.Clear();
+                // Console.WriteLine(Math.Round(PowerConsumption, 2) + "W");
             }
         }
         catch (TaskCanceledException)
@@ -113,8 +116,6 @@ public class LedStrip : IDisposable
     }
     
     private readonly int _layerCount = typeof(LayerId).GetEnumValues().Length;
-
-
     
     protected void Render()
     {
@@ -154,7 +155,7 @@ public class LedStrip : IDisposable
 
             Canvas.SetPixel(pxlIdx, finalPixel, primaryPixelOwner?.MaxBrightness ?? FullSegment.MaxBrightness);
         }
-
+        
         _device?.Update();
         _customDevice?.Render();
         ActiveCanvasChanged?.Invoke(this, Canvas.State);
@@ -165,7 +166,27 @@ public class LedStrip : IDisposable
         _tokenSource.Cancel();
         await _tokenSource.Token.WaitHandle.WaitOneAsync(1000, CancellationToken.None);
     }
-    
+
+    // TODO move to ICustomStrip class
+    public double Voltage => 5.0;
+    public double PowerConsumption /* in Watt */ => Voltage * Amperage;
+    public double Amperage
+    {
+        get
+        {
+            const double ampsPerPixel = 0.02;
+            var wattage = 0.0;
+            for (var i = 0; i < Canvas.Width; i++)
+            {
+                var color = Canvas.PixelAt(i);
+                wattage += ((color.R / 255.0) * ampsPerPixel) * (color.A / 255.0);
+                wattage += ((color.G / 255.0) * ampsPerPixel) * (color.A / 255.0);
+                wattage += ((color.B / 255.0) * ampsPerPixel) * (color.A / 255.0);
+            }
+            return wattage;
+        }
+    }
+
     public void Dispose()
     {
         _tokenSource.Cancel();
