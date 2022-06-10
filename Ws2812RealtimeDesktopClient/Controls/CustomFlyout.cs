@@ -31,12 +31,6 @@ public sealed class CustomFlyout<T> : PickerFlyoutBase
         return pfp;
     }
     
-    protected override void OnOpening(CancelEventArgs args)
-    {
-        base.OnOpening(args);
-        (Popup.Child as PickerFlyoutPresenter)?.ShowHideButtons(ShouldShowConfirmationButtons());
-    }
-
     protected override void OnConfirmed()
     {
         Confirmed?.Invoke(this, EventArgs.Empty);
@@ -54,7 +48,7 @@ public sealed class CustomFlyout<T> : PickerFlyoutBase
         OnConfirmed();
     }
 
-    private T _picker;
+    private readonly T _picker;
 
     protected override bool ShouldShowConfirmationButtons() => false;
 }
