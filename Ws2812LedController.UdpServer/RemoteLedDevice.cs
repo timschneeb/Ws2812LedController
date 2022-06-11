@@ -18,5 +18,5 @@ public class RemoteLedDevice : ILedDevice
     }
     
     public double Voltage => 0;
-    public double AmpsPerPixel => 0;
+    public double AmpsPerSubpixel => 0;
 }

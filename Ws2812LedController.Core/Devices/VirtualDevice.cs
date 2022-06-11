@@ -1,6 +1,6 @@
 using System.Drawing;
 
-namespace Ws2812LedController.Core.Strips;
+namespace Ws2812LedController.Core.Devices;
 
 public class VirtualDevice : ILedDevice
 {
@@ -18,5 +18,5 @@ public class VirtualDevice : ILedDevice
     }
 
     public double Voltage => 5;
-    public double AmpsPerPixel => 0.02;
+    public double AmpsPerSubpixel => 0.02;
 }
