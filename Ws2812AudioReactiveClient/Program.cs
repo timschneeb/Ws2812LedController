@@ -16,7 +16,7 @@ public static class Entrypoint
     public static async Task Main()
     {
         var canvas = new RemoteLedCanvas(LayerId.ExclusiveEnetLayer, 0, /*124*/ 363, RenderMode.ManagedTask);
-        var remote = new LedStrip(new RemoteLedStrip(canvas));
+        var remote = new LedStrip(new RemoteLedDevice(canvas));
         var mgr = new LedManager(new Ref<LedStrip>(() => remote));
         
         var segmentBed = remote.CreateSegment(0, 124);

@@ -12,44 +12,17 @@ public class LedStrip : IDisposable
 {
     public LedSegment FullSegment { get; }
     public List<LedSegment> SubSegments { get; } = new();
-    public event EventHandler<Color[]>? ActiveCanvasChanged;
-    public BitmapWrapper Canvas { get; }
+    public BitmapWrapper Canvas => LedDevice.Canvas;
+    public ILedDevice LedDevice { get; }
     public int Framerate { set; get; } = 60;
-    
-    private readonly Ws28xx? _device;
-    private readonly ICustomStrip? _customDevice;
+
     private readonly Task _renderTask;
     private readonly CancellationTokenSource _tokenSource = new();
 
-    public LedStrip(int width, bool virtualized = false)
+    public LedStrip(ILedDevice ledDevice)
     {
-        if (virtualized)
-        {
-            Canvas = new BitmapWrapper(width);
-        }
-        else
-        {
-            var settings = new SpiConnectionSettings(0, 0)
-            {
-                ClockFrequency = 2_400_000,
-                Mode = SpiMode.Mode0,
-                DataBitLength = 8
-            };
-
-            var spi = SpiDevice.Create(settings);
-            _device = new Ws2812b(spi, width);
-            Canvas = new BitmapWrapper(_device.Image);
-        }
-
-        FullSegment = new LedSegment(0, width, this);
-        _renderTask = Task.Run(RenderTask);
-    }
-
-    public LedStrip(ICustomStrip customStrip)
-    {
-        _customDevice = customStrip;
-        FullSegment = new LedSegment(0, customStrip.Canvas.Width, this);
-        Canvas = customStrip.Canvas;
+        LedDevice = ledDevice;
+        FullSegment = new LedSegment(0, ledDevice.Canvas.Width, this);
         _renderTask = Task.Run(RenderTask);
     }
 
@@ -156,9 +129,7 @@ public class LedStrip : IDisposable
             Canvas.SetPixel(pxlIdx, finalPixel, primaryPixelOwner?.MaxBrightness ?? FullSegment.MaxBrightness);
         }
         
-        _device?.Update();
-        _customDevice?.Render();
-        ActiveCanvasChanged?.Invoke(this, Canvas.State);
+        LedDevice?.Render();
     }
 
     public async Task CancelAsync()

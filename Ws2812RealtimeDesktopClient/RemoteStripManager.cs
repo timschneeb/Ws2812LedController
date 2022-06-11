@@ -69,7 +69,7 @@ public class RemoteStripManager
         await DisconnectUdpAsync(false);
         
         _canvas = new RemoteLedCanvas(LayerId.ExclusiveEnetLayer, 0, maxLength.Value, RenderMode.ManagedTask);       
-        _remote = new LedStrip(new RemoteLedStrip(_canvas));
+        _remote = new LedStrip(new RemoteLedDevice(_canvas));
         _mgr = new LedManager(new Ref<LedStrip>(() => _remote));
 
         await SyncSegmentsAsync(SegmentEntries.ToArray());

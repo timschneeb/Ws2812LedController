@@ -8,6 +8,7 @@ using Ws2812LedController.Core.Effects;
 using Ws2812LedController.Core.Effects.Firework;
 using Ws2812LedController.Core.Effects.PowerEffects;
 using Ws2812LedController.Core.Model;
+using Ws2812LedController.Core.Strips;
 using Ws2812LedController.Core.Utils;
 using Ws2812LedController.PowerButton;
 using Ws2812LedController.Lirc;
@@ -47,8 +48,9 @@ namespace Ws2812LedController.Console
             var lirc = new IrReceiver();
             lirc.KeyPress += LircOnKeyPress;
             lirc.Start();
-            
-            var strip = new LedStrip(/* bed */ 124 + /* desk_left */ 79 + /* desk_right */ 79 + /* heater */ 81);
+
+            var device = new Ws2812Device( /* bed */ 124 + /* desk_left */ 79 + /* desk_right */ 79 + /* heater */ 81);
+            var strip = new LedStrip(device);
             var segmentBed = strip.CreateSegment(0, 124);
             var segmentDeskL = strip.CreateSegment(124, 79);
             var segmentDeskR = strip.CreateSegment(124+79, 79);

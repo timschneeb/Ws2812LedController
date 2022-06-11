@@ -5,6 +5,7 @@ using Avalonia.Threading;
 using Ws2812LedController.Core;
 using Ws2812LedController.Core.Effects;
 using Ws2812LedController.Core.Model;
+using Ws2812LedController.Core.Strips;
 using Ws2812LedController.Core.Utils;
 using Ws2812LedController.UdpServer;
 using Ws2812LedController.UdpServer.Model;
@@ -16,7 +17,7 @@ namespace Ws2812LedController.Simulator
 {
     public partial class MainWindow : Window
     {
-        private readonly LedStrip _strip = new(124, true);
+        private readonly VirtualDevice _virtualDevice = new(363);
         private readonly LedSegment _segmentA;
         private readonly LedSegment _segmentB;
         private readonly LedManager _mgr;
@@ -32,11 +33,12 @@ namespace Ws2812LedController.Simulator
         
         public MainWindow()
         {
-            _mgr = new LedManager(new Ref<LedStrip>(() => _strip));
+            var strip = new LedStrip(_virtualDevice);
+            _mgr = new LedManager(new Ref<LedStrip>(() => strip));
             
-            var segmentFull = _strip.FullSegment;
-            _segmentA = _strip.CreateSegment(0, 40);
-            _segmentB = _strip.CreateSegment(40, 40);
+            var segmentFull = strip.FullSegment;
+            _segmentA = strip.CreateSegment(0, 40);
+            _segmentB = strip.CreateSegment(40, 40);
             
             InitializeComponent();
             DataContext = this;
@@ -46,7 +48,7 @@ namespace Ws2812LedController.Simulator
             _controlSegmentA = this.FindControl<LedStripControl>("VirtualSegmentA");
             _controlSegmentB = this.FindControl<LedStripControl>("VirtualSegmentB");
             
-            _strip.ActiveCanvasChanged += OnActiveCanvasChanged;
+            _virtualDevice.RenderEvent += OnRenderEvent;
 
             _control.PixelSize = PixelSize;
             _control.Colors = segmentFull.State;
@@ -176,7 +178,7 @@ namespace Ws2812LedController.Simulator
             //ctrl.SegmentGroup.RemoveMirror(ctrl.SegmentGroup.Segments[1]);
         }
 
-        private void OnActiveCanvasChanged(object? sender, Color[] e)
+        private void OnRenderEvent(object? sender, Color[] e)
         {
             Dispatcher.UIThread.Post(() =>
             {
