@@ -17,6 +17,7 @@ public class LedSegmentController : IDisposable
     public BasePowerEffect PowerEffect { set; get; } = new NullPowerEffect();
 
     public PowerState CurrentState { private set; get; }
+    public bool IsPowered => CurrentState is PowerState.On or PowerState.PoweringOn;
 
     private readonly Task[] _loop;
     private readonly ConcurrentQueue<BaseEffect>[] _queue;

@@ -2,7 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Ws2812LedController.WebApi.Converters;
 
-namespace Ws2812LedController.WebApi.Controllers;
+namespace Ws2812LedController.WebApi;
 
 public interface IJsonOptionHelper
 {

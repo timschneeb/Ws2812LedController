@@ -10,6 +10,7 @@ using Ws2812LedController.Core.Effects.Firework;
 using Ws2812LedController.Core.Effects.PowerEffects;
 using Ws2812LedController.Core.Model;
 using Ws2812LedController.Core.Utils;
+using Ws2812LedController.HueApi;
 using Ws2812LedController.PowerButton;
 using Ws2812LedController.Lirc;
 using Ws2812LedController.UdpServer;
@@ -23,6 +24,7 @@ namespace Ws2812LedController.Console
     {
         private static LedManager _mgr = null!;
         private static WebApiManager _webApiManager = null!;
+        private static HueApiManager _hueApiManager = null!;
         private static EnetServer _enetServer = null!;
         private static SynchronizedLedReceiver _syncLedReceiver = null!;
 
@@ -64,6 +66,7 @@ namespace Ws2812LedController.Console
             await _mgr.PowerAllAsync(false);
             
             _webApiManager = new WebApiManager(new Ref<LedManager>(() => _mgr));
+            _hueApiManager = new HueApiManager(new Ref<LedManager>(() => _mgr));
             _syncLedReceiver = new SynchronizedLedReceiver(new Ref<LedStrip>(() => strip), new Ref<LedManager>(() => _mgr));
 
             foreach (var segment in _mgr.Segments)
@@ -181,14 +184,8 @@ namespace Ws2812LedController.Console
 
         private static async void LircOnKeyPress(object? sender, IrKeyPressEventArgs e)
         {
-            var fullSeg = _mgr.GetFull();
-            if (fullSeg == null)
-            {
-                return;
-            }
-
             System.Console.WriteLine(e);
-            
+
             /* Handle colors */
             Color color;
             switch (e.Action)
@@ -245,13 +242,44 @@ namespace Ws2812LedController.Console
                     goto HandleSpecialButtons;
             }
             
-            _mgr.GetFull()?.SegmentGroup.Clear(Color.FromArgb(0,0,0,0), LayerId.ExclusiveEnetLayer);
-            await fullSeg.SetEffectAsync(new Static()
+            foreach (var segment in _mgr.Segments)
             {
-                Color = color
-            });
-            return;
+                segment.SegmentGroup.Clear(Color.FromArgb(0,0,0,0), LayerId.ExclusiveEnetLayer);
+                
+                Static targetEffect;
+                if (segment.CurrentEffects[(int)LayerId.BaseLayer] is Static staticEffect)
+                {
+                    targetEffect = staticEffect;
+                }
+                else
+                {
+                    targetEffect = new Static()
+                    {
+                        Color = color
+                    };
 
+                    await segment.SetEffectAsync(targetEffect, blockUntilConsumed: true);
+                }
+                
+                // calculate the step level of every RGB channel for a smooth transition in requested transition time
+                var transitionTime = 4 * (17 - (segment.SegmentGroup.Width / 40)); // every extra led add a small delay that need to be counted for transition time match
+
+                targetEffect.Color = color;
+        
+                for (byte i = 0; i < 3; i++)
+                {
+                    if (segment.IsPowered)
+                    {
+                        targetEffect.StepLevel[i] = ((float)targetEffect.Color.ByIndex(i) - targetEffect.CurrentColor[i]) / transitionTime;
+                    }
+                    else
+                    {
+                        targetEffect.StepLevel[i] = (float)targetEffect.CurrentColor[i] / transitionTime;
+                    }
+                }
+            }
+            return;
+            
             HandleSpecialButtons:
             /* Handle non-color buttons */
             switch (e.Action)
@@ -328,16 +356,22 @@ namespace Ws2812LedController.Console
                     catch(TaskCanceledException){}
                     break;
                 case KeyAction.Strobe:
-                    await fullSeg.SetEffectAsync(new FireFlicker());
+                    foreach (var segment in _mgr.Segments)
+                    {
+                        await segment.SetEffectAsync(new FireFlicker());
+                    }
                     break;
                 case KeyAction.Fade:
-                    await fullSeg.SetEffectAsync(new Rainbow()
+                    foreach (var segment in _mgr.Segments)
                     {
-                        Speed = 10000
-                    });
+                        await segment.SetEffectAsync(new Rainbow()
+                        {
+                            Speed = 10000
+                        });
+                    }
                     break;
                 case KeyAction.Smooth:
-                    await fullSeg.SetEffectAsync(new RainbowCycle());
+                    await _mgr.GetFull()!.SetEffectAsync(new RainbowCycle());
                     break;
             }
         }

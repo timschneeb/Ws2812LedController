@@ -48,7 +48,23 @@ public static class Extensions
     {
         return (uint)(((c.A << 24) | (c.R << 16) | (c.G << 8) | c.B) & 0xffffffffL);
     }
+
+    public static T[] ToArray<T>(this Color c) where T : struct, IConvertible
+    {
+        return new[] { (T)(object)c.R, (T)(object)c.G, (T)(object)c.B };
+    }
     
+    public static byte ByIndex(this Color c, int index)
+    {
+        return index switch
+        {
+            0 => c.R,
+            1 => c.G,
+            2 => c.B,
+            _ => throw new ArgumentOutOfRangeException(nameof(index), index, null)
+        };
+    }
+
     public static Color ToColor(this uint value, bool opaque = false)
     {
         return Color.FromArgb(opaque ? 0xFF : (byte)((value >> 24) & 0xFF),

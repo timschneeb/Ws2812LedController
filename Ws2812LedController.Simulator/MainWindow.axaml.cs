@@ -7,6 +7,7 @@ using Ws2812LedController.Core.Devices;
 using Ws2812LedController.Core.Effects;
 using Ws2812LedController.Core.Model;
 using Ws2812LedController.Core.Utils;
+using Ws2812LedController.HueApi;
 using Ws2812LedController.UdpServer;
 using Ws2812LedController.UdpServer.Model;
 using Ws2812LedController.UdpServer.Packets;
@@ -29,6 +30,7 @@ namespace Ws2812LedController.Simulator
         private readonly LedStripControl _controlSegmentB;
 
         private readonly WebApiManager _webApiManager;
+        private readonly HueApiManager _hueApiManager;
         private readonly EnetServer _enetServer;
         
         public MainWindow()
@@ -58,6 +60,7 @@ namespace Ws2812LedController.Simulator
             _controlSegmentB.PixelSize = PixelSize;
 
             _webApiManager = new WebApiManager(new Ref<LedManager>(() => _mgr));
+            _hueApiManager = new HueApiManager(new Ref<LedManager>(() => _mgr));
             _enetServer = new EnetServer();
             _enetServer.Start();
             
@@ -143,6 +146,7 @@ namespace Ws2812LedController.Simulator
         protected override async void OnClosed(EventArgs e)
         {
             await _webApiManager.Terminate();
+            await _hueApiManager.Terminate();
             base.OnClosed(e);
         }
 
