@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Drawing;
+using Ws2812LedController.Core.Model;
 using Ws2812LedController.Core.Utils;
 
 namespace Ws2812LedController.Core;
@@ -12,6 +13,14 @@ public class LedManager
     private readonly LedSegmentController _full;
     public ReadOnlyCollection<LedSegmentController> Segments => _segments.AsReadOnly();
     public LedStrip Strip => _strip.Value;
+
+    public class PowerStateChangedEventArgs(PowerState state, string segmentName)
+    {
+        public PowerState State { get; } = state;
+        public string SegmentName { get; } = segmentName;
+    }
+
+    public event EventHandler<PowerStateChangedEventArgs>? SegmentPowerStateChanged;
     
     public LedManager(Ref<LedStrip> strip)
     {
@@ -23,7 +32,10 @@ public class LedManager
     {
         Debug.Assert(_segments.All(x => x.Name != name), "Segment name already registered");
         
-        _segments.Add(new LedSegmentController(name, segment));
+        var ctrl = new LedSegmentController(name, segment);
+        ctrl.PowerStateChanged += (sender, args) => 
+            SegmentPowerStateChanged?.Invoke(sender, new PowerStateChangedEventArgs(args, name));
+        _segments.Add(ctrl);
     }
     
     public void RegisterSegment(string name, int start, int width)

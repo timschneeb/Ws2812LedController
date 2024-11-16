@@ -8,6 +8,7 @@ using Ws2812LedController.Core.Effects;
 using Ws2812LedController.Core.Model;
 using Ws2812LedController.Core.Utils;
 using Ws2812LedController.HueApi;
+using Ws2812LedController.TpLinkPlug;
 using Ws2812LedController.UdpServer;
 using Ws2812LedController.UdpServer.Model;
 using Ws2812LedController.UdpServer.Packets;
@@ -32,6 +33,7 @@ namespace Ws2812LedController.Simulator
         private readonly WebApiManager _webApiManager;
         private readonly HueApiManager _hueApiManager;
         private readonly EnetServer _enetServer;
+        private readonly PowerPlug _powerPlug;
         
         public MainWindow()
         {
@@ -58,7 +60,8 @@ namespace Ws2812LedController.Simulator
             
             _controlSegmentA.PixelSize = PixelSize;
             _controlSegmentB.PixelSize = PixelSize;
-
+            
+            _powerPlug = new PowerPlug(new Ref<LedManager>(() => _mgr), "192.168.178.27");
             _webApiManager = new WebApiManager(new Ref<LedManager>(() => _mgr));
             _hueApiManager = new HueApiManager(new Ref<LedManager>(() => _mgr));
             _enetServer = new EnetServer();

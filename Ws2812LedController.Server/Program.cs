@@ -14,6 +14,7 @@ using Ws2812LedController.Core.Utils;
 using Ws2812LedController.HueApi;
 using Ws2812LedController.PowerButton;
 using Ws2812LedController.Lirc;
+using Ws2812LedController.TpLinkPlug;
 using Ws2812LedController.UdpServer;
 using Ws2812LedController.UdpServer.Model;
 using Ws2812LedController.UdpServer.Packets;
@@ -51,7 +52,7 @@ namespace Ws2812LedController.Console
             var lirc = new IrReceiver();
             lirc.KeyPress += LircOnKeyPress;
             lirc.Start();
-
+            
             var device = new Ws2812Device( /* bed */ 124 + /* desk_left */ 79 + /* desk_right */ 79 + /* heater */ 81);
             var strip = new LedStrip(device);
             var segmentBed = strip.CreateSegment(0, 124);
@@ -65,6 +66,8 @@ namespace Ws2812LedController.Console
             _mgr.RegisterSegment("desk_right", segmentDeskR);
             _mgr.RegisterSegment("heater", segmentHeater);
             await _mgr.PowerAllAsync(false);
+
+            var tpLinkPlug = new PowerPlug(new Ref<LedManager>(() => _mgr), "192.168.178.27");
             
             _webApiManager = new WebApiManager(new Ref<LedManager>(() => _mgr));
             _hueApiManager = new HueApiManager(new Ref<LedManager>(() => _mgr));

@@ -16,12 +16,23 @@ public class LedSegmentController : IDisposable
     public BaseEffect?[] CurrentEffects { get; }
     public BasePowerEffect PowerEffect { set; get; } = new NullPowerEffect();
 
-    public PowerState CurrentState { private set; get; }
-    public bool IsPowered => CurrentState is PowerState.On or PowerState.PoweringOn;
+    public PowerState CurrentState
+    {
+        private set
+        {
+            _currentState = value;
+            PowerStateChanged?.Invoke(this, value);
+        }
+        get => _currentState;
+    }
 
+    public bool IsPowered => CurrentState is PowerState.On;
+    public event EventHandler<PowerState>? PowerStateChanged;
+    
     private readonly Task[] _loop;
     private readonly ConcurrentQueue<BaseEffect>[] _queue;
     private readonly CancellationTokenSource _cancelSource = new();
+    private PowerState _currentState;
 
     public LedSegmentController(string name, LedSegment segment) : this(name, new LedSegmentGroup(segment)) {}
     public LedSegmentController(string name, LedSegmentGroup segmentGroup)
