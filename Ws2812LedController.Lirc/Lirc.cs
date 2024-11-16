@@ -21,7 +21,7 @@ public class IrReceiver
     }
     
     public event EventHandler<IrKeyPressEventArgs>? KeyPress;
-    public int KeyPressDebounce { set; get; } = 500;
+    public int KeyPressDebounce { set; get; } = 200;
     public int KeyHoldTimeout { set; get; } = 650;
 
     private int _previousKeyCode = 0;
@@ -81,35 +81,60 @@ public class IrReceiver
 
     public Dictionary<int, KeyAction> KeyMap => new()
     {
-        {128, KeyAction.BrightnessUp},
-        {129, KeyAction.BrightnessDown},
-        {130, KeyAction.PowerOff},
-        {131, KeyAction.PowerOn},
+        {0x5c, KeyAction.BrightnessUp},
+        {0x5d, KeyAction.BrightnessDown},
+        {0x41, KeyAction.Next}, // TODO
+        {0x40, KeyAction.PowerToggle},
         
-        {132, KeyAction.Red},
-        {133, KeyAction.Green},
-        {134, KeyAction.Blue},
-        {135, KeyAction.White},
+        {0x58, KeyAction.Red},
+        {0x59, KeyAction.Green},
+        {0x45, KeyAction.Blue},
+        {0x44, KeyAction.White},
         
-        {136, KeyAction.Orange},
-        {137, KeyAction.Turquoise},
-        {138, KeyAction.DarkPurple},
-        {139, KeyAction.Flash},
+        {0x54, KeyAction.DarkOrange}, // TODO
+        {0x55, KeyAction.MossGreen},
+        {0x49, KeyAction.AzureBlue},
+        {0x48, KeyAction.TempWarmHigh}, // TODO temperatures
+        
+        {0x50, KeyAction.Orange},
+        {0x51, KeyAction.LightGreen},
+        {0x4d, KeyAction.NavyBlue},
+        {0x4c, KeyAction.TempWarmLow},
+        
+        {0x1c, KeyAction.LightOrange}, // TODO
+        {0x1d, KeyAction.Turquoise},
+        {0x1e, KeyAction.DarkPurple},
+        {0x1f, KeyAction.TempCoolLow},
 
-        {140, KeyAction.Yellow},
-        {141, KeyAction.LightBlue},
-        {142, KeyAction.Purple},
-        {143, KeyAction.Strobe},
-
-        {144, KeyAction.LightGreen},
-        {145, KeyAction.AzureBlue},
-        {146, KeyAction.Pink},
-        {147, KeyAction.Fade},
-
-        {148, KeyAction.MossGreen},
-        {149, KeyAction.NavyBlue},
-        {150, KeyAction.Rose},
-        {151, KeyAction.Smooth},
+        {0x18, KeyAction.Yellow},
+        {0x19, KeyAction.LightBlue},
+        {0x1a, KeyAction.Rose},
+        {0x1b, KeyAction.TempCoolHigh},
+        
+        {0x14, KeyAction.RedUp},
+        {0x10, KeyAction.RedDown},
+        {0x15, KeyAction.GreenUp},
+        {0x11, KeyAction.GreenDown},
+        {0x16, KeyAction.BlueUp},
+        {0x12, KeyAction.BlueDown},
+        {0x0c, KeyAction.Diy1}, // TODO
+        {0x0d, KeyAction.Diy2},
+        {0x0e, KeyAction.Diy3},
+        {0x08, KeyAction.Diy4},
+        {0x09, KeyAction.Diy5},
+        {0x0a, KeyAction.Diy6},
+        
+        {0x17, KeyAction.SpeedUp},
+        {0x13, KeyAction.SpeedDown},
+        
+        
+                
+        //{0x0b, KeyAction.Strobe},
+        
+        {0x0f, KeyAction.Auto},
+        {0x0b, KeyAction.Flash},
+        {0x06, KeyAction.Fade3},
+        {0x07, KeyAction.Fade7},
     };
 }
 
@@ -130,11 +155,15 @@ public enum KeyAction
 {
     Unknown,
     
+    PowerToggle,
     PowerOff,
     PowerOn,
     BrightnessUp,
     BrightnessDown,
+    Next,
     Red,
+    DarkOrange,
+    LightOrange,
     Orange,
     Yellow,
     LightGreen,
@@ -152,6 +181,28 @@ public enum KeyAction
     White,
     Flash,
     Strobe,
-    Fade,
-    Smooth
+    Fade3,
+    Fade7,
+    TempWarmHigh,
+    TempWarmLow,
+    TempCoolLow,
+    TempCoolHigh,
+    
+    RedUp,
+    RedDown,
+    GreenUp,
+    GreenDown,
+    BlueUp,
+    BlueDown,
+    Diy1,
+    Diy2,
+    Diy3,
+    Diy4,
+    Diy5,
+    Diy6,
+    
+    SpeedUp,
+    SpeedDown,
+    
+    Auto,
 }

@@ -109,7 +109,8 @@ public static class Entrypoint
             }
         };
 
-        amb.RegisterZone(new LedZone("left", 0, 50, 200, 1080 - 50, 79, LedDirection.Vertical), 
+        //amb.RegisterZone(new LedZone("left", 0, 50, 200, 1080 - 50, 79, LedDirection.Vertical), 
+        amb.RegisterZone(new LedZone("left", 0, 50, 1920/2, 1080 - 50, 79, LedDirection.Vertical), 
             output =>
             {
                 for (var i = 0; i < output.Count; i++)
@@ -117,7 +118,8 @@ public static class Entrypoint
                     colors[i + 124] = output[i].ToUInt32();
                 }
             });
-        amb.RegisterZone(new LedZone("right", 1920 - 200, 50, 200, 1080 - 50, 79, LedDirection.Vertical), 
+        //amb.RegisterZone(new LedZone("right", 1920 - 200, 50, 200, 1080 - 50, 79, LedDirection.Vertical), 
+        amb.RegisterZone(new LedZone("right", 1920/2, 50, 1920/2, 1080 - 50, 79, LedDirection.Vertical), 
             output =>
             {
                 for (var i = 0; i < output.Count; i++)

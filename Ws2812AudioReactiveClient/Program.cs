@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using Ws2812LedController.AudioReactive.Effects.Fft;
 using Ws2812LedController.Core;
+using Ws2812LedController.Core.Effects;
 using Ws2812LedController.Core.FastLedCompatibility;
 using Ws2812LedController.Core.Model;
 using Ws2812LedController.Core.Utils;
@@ -38,6 +39,23 @@ public static class Entrypoint
         canvas.Bitmap.Clear();
         canvas.Render();
         
+        /*await mgr.Get("bed")!.SetEffectAsync(new RainbowCycle()
+        {
+            //Speed = 1000/FrameRate,
+            //Palette = new CRGBPalette16(Color.Red, Color.ForestGreen, Color.DarkOrange, Color.DodgerBlue)
+
+            // FftCBinSelector = new(4),
+            // Threshold = 15
+            //Palette = new(Color.SlateBlue),
+            //AvgSmoothingStrength = 5,
+            //Intensity = 3,
+            //EndFrequency = 120
+            //FftBinSelector = new(0)
+            //FadeStrength = 15,
+            //StartFromEdge = Edge.None
+        });
+        
+        
         await mgr.Get("bed")!.SetEffectAsync(new RipplePeakReactiveEffect()
         {
             Speed = 1000/FrameRate,
@@ -48,9 +66,9 @@ public static class Entrypoint
             // FftCBinSelector = new(4),
            // Threshold = 15
             //Palette = new(Color.SlateBlue),
-            /*AvgSmoothingStrength = 5,
-            Intensity = 3,
-            EndFrequency = 120*/
+            //AvgSmoothingStrength = 5,
+            //Intensity = 3,
+            //EndFrequency = 120
             //FftBinSelector = new(0)
             //FadeStrength = 15,
             //StartFromEdge = Edge.None
@@ -75,7 +93,7 @@ public static class Entrypoint
             //Multiplier = 0.3
             //FluentRainbow = true
         });
-        
+        */
         //mgr.MirrorTo("desk_left", "bed");
         //mgr.MirrorTo("desk_left", "heater");
         mgr.MirrorTo("desk_left", "desk_right");

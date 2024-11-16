@@ -7,8 +7,7 @@ namespace Ws2812LedController.UdpServer
         public static byte[] Encode(PacketTypeId id, byte[] payload)
         {
             var msg = new byte[sizeof(byte) + payload.Length];
-            var size = BitConverter.GetBytes((ushort)payload.Length);
-            
+
             msg[0] = (byte)id;
             Array.Copy(payload, 0, msg, 1, payload.Length);
             return msg;

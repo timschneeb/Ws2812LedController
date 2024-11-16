@@ -6,6 +6,7 @@ using Ws2812LedController.Core;
 using Ws2812LedController.Core.CancellationMethod;
 using Ws2812LedController.Core.Devices;
 using Ws2812LedController.Core.Effects;
+using Ws2812LedController.Core.Effects.Base;
 using Ws2812LedController.Core.Effects.Firework;
 using Ws2812LedController.Core.Effects.PowerEffects;
 using Ws2812LedController.Core.Model;
@@ -193,8 +194,14 @@ namespace Ws2812LedController.Console
                 case KeyAction.Red:
                     color = Color.Red;
                     break;
-                case KeyAction.Orange:
+                case KeyAction.DarkOrange:
                     color = Color.FromArgb(255, 255, 50, 0);
+                    break;
+                case KeyAction.Orange:
+                    color = Color.FromArgb(255, 255, 100, 0);
+                    break;
+                case KeyAction.LightOrange:
+                    color = Color.FromArgb(255, 255, 120, 0);
                     break;
                 case KeyAction.Yellow:
                     color = Color.Yellow;
@@ -242,6 +249,7 @@ namespace Ws2812LedController.Console
                     goto HandleSpecialButtons;
             }
             
+            _mgr.GetFull().SegmentGroup.Clear(Color.FromArgb(0,0,0,0), LayerId.ExclusiveEnetLayer);
             foreach (var segment in _mgr.Segments)
             {
                 segment.SegmentGroup.Clear(Color.FromArgb(0,0,0,0), LayerId.ExclusiveEnetLayer);
@@ -284,6 +292,9 @@ namespace Ws2812LedController.Console
             /* Handle non-color buttons */
             switch (e.Action)
             {
+                case KeyAction.PowerToggle:
+                    await _mgr.PowerAllAsync(!_mgr.IsPowered(), GetCtrls(_currentSegment));
+                    break;
                 case KeyAction.PowerOff:
                     await _mgr.PowerAllAsync(false, GetCtrls(_currentSegment));
                     break;
@@ -361,7 +372,7 @@ namespace Ws2812LedController.Console
                         await segment.SetEffectAsync(new FireFlicker());
                     }
                     break;
-                case KeyAction.Fade:
+                case KeyAction.Fade3:
                     foreach (var segment in _mgr.Segments)
                     {
                         await segment.SetEffectAsync(new Rainbow()
@@ -370,9 +381,73 @@ namespace Ws2812LedController.Console
                         });
                     }
                     break;
-                case KeyAction.Smooth:
-                    await _mgr.GetFull()!.SetEffectAsync(new RainbowCycle());
+                case KeyAction.Fade7:
+                    foreach (var segment in _mgr.Segments)
+                    {
+                        await segment.SetEffectAsync(new RainbowCycle());
+                    }
                     break;
+                case KeyAction.RedUp:
+                    TransformStaticColor(c => Color.FromArgb(Math.Min(255, c.R + 5), c.G, c.B));
+                    break;
+                case KeyAction.RedDown:
+                    TransformStaticColor(c => Color.FromArgb(Math.Max(0, c.R - 5), c.G, c.B));
+                    break;
+                case KeyAction.GreenUp:
+                    TransformStaticColor(c => Color.FromArgb(c.R, Math.Min(255, c.G + 5), c.B));
+                    break;
+                case KeyAction.GreenDown:
+                    TransformStaticColor(c => Color.FromArgb(c.R, Math.Max(0, c.G - 5), c.B));
+                    break;
+                case KeyAction.BlueUp:
+                    TransformStaticColor(c => Color.FromArgb(c.R, c.G, Math.Min(255, c.B + 5)));
+                    break;
+                case KeyAction.BlueDown:
+                    TransformStaticColor(c => Color.FromArgb(c.R, c.G, Math.Max(0, c.B - 5)));
+                    break;
+                case KeyAction.SpeedUp:
+                    foreach (var segment in _mgr.Segments)
+                    {
+                        if (segment.CurrentEffects[(int)LayerId.BaseLayer] is {} effect)
+                        {
+                            effect.Speed = Math.Min(50, effect.Speed + 2);
+                        }
+                    }
+                    break;
+                case KeyAction.SpeedDown:
+                    foreach (var segment in _mgr.Segments)
+                    {
+                        if (segment.CurrentEffects[(int)LayerId.BaseLayer] is {} effect)
+                        {
+                            effect.Speed = Math.Max(1, effect.Speed - 2);
+                        }
+                    }
+                    break;
+            }
+        }
+
+        private static void TransformStaticColor(Func<Color, Color> transform)
+        {
+            foreach (var segment in _mgr.Segments)
+            {
+                if (segment.CurrentEffects[(int)LayerId.BaseLayer] is Static staticEffect)
+                {
+                    // calculate the step level of every RGB channel for a smooth transition in requested transition time
+                    var transitionTime = 4 * (17 - (segment.SegmentGroup.Width / 40)); // every extra led add a small delay that need to be counted for transition time match
+                    staticEffect.Color = transform(staticEffect.Color);
+        
+                    for (byte i = 0; i < 3; i++)
+                    {
+                        if (segment.IsPowered)
+                        {
+                            staticEffect.StepLevel[i] = ((float)staticEffect.Color.ByIndex(i) - staticEffect.CurrentColor[i]) / transitionTime;
+                        }
+                        else
+                        {
+                            staticEffect.StepLevel[i] = (float)staticEffect.CurrentColor[i] / transitionTime;
+                        }
+                    }
+                }
             }
         }
     }
