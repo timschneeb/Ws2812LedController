@@ -13,6 +13,7 @@ Server-side software:
 * Remote control via Web API (HTTP)
 * Low-latency/real-time LED projection over the network via UDP
 * [Samsung SmartThings support](https://github.com/ThePBone/Ws2812LedController/tree/master/SmartThings)
+* Philips Hue compatible (via DiyHue)
 * Multiple layers
 * Split your strip into multiple virtual strips
     * Duplicate or mirror the LED state of one virtual strip to another
