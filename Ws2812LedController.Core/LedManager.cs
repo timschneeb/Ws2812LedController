@@ -91,7 +91,8 @@ public class LedManager
     }
 
     public bool IsPowered() => _segments.Any(x => x.IsPowered);
-    
+    public bool IsPoweredOrPoweringOn() => _segments.Any(x => x.IsPowered || x.CurrentState is PowerState.PoweringOn);
+
     public Task PowerAllAsync(bool state)
     {
         return Task.WhenAll((from seg in _segments select seg.PowerAsync(state)).ToList());

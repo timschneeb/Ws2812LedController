@@ -29,6 +29,7 @@ namespace Ws2812LedController.Console
         private static HueApiManager _hueApiManager = null!;
         private static EnetServer _enetServer = null!;
         private static SynchronizedLedReceiver _syncLedReceiver = null!;
+        private static PowerPlug _powerPlug = null!;
 
         private const int ResetTimerTimeout = 30 * 1000;
         private static System.Timers.Timer _currentSegmentResetTimer = new(ResetTimerTimeout);
@@ -67,7 +68,7 @@ namespace Ws2812LedController.Console
             _mgr.RegisterSegment("heater", segmentHeater);
             await _mgr.PowerAllAsync(false);
 
-            var tpLinkPlug = new PowerPlug(new Ref<LedManager>(() => _mgr), "192.168.178.27");
+            _powerPlug = new PowerPlug(new Ref<LedManager>(() => _mgr), "192.168.178.27");
             
             _webApiManager = new WebApiManager(new Ref<LedManager>(() => _mgr));
             _hueApiManager = new HueApiManager(new Ref<LedManager>(() => _mgr));
@@ -295,6 +296,9 @@ namespace Ws2812LedController.Console
             /* Handle non-color buttons */
             switch (e.Action)
             {
+                case KeyAction.Next:
+                    await _powerPlug.ToggleAsync();
+                    break;
                 case KeyAction.PowerToggle:
                     await _mgr.PowerAllAsync(!_mgr.IsPowered(), GetCtrls(_currentSegment));
                     break;
