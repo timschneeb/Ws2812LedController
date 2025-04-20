@@ -10,7 +10,7 @@ public class Static : BaseEffect
     public override string FriendlyName => "Static";
     public override string Description => "Static color";
     public override int Speed { get; set; } = 6;
-    public Color Color { get; set; } = Color.White;
+    public Color Color { get; set; } = Color.Orange;
     public float[] StepLevel { get; set; } = new float[3];
 
     public byte[] CurrentColor;
