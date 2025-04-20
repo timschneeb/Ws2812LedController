@@ -33,6 +33,7 @@ namespace Ws2812LedController.Simulator
         private readonly WebApiManager _webApiManager;
         private readonly HueApiManager _hueApiManager;
         private readonly EnetServer _enetServer;
+        private readonly DmxServer.DmxServer _dmxServer;
         private readonly PowerPlug _powerPlug;
         
         public MainWindow()
@@ -61,9 +62,10 @@ namespace Ws2812LedController.Simulator
             _controlSegmentA.PixelSize = PixelSize;
             _controlSegmentB.PixelSize = PixelSize;
             
-            _powerPlug = new PowerPlug(new Ref<LedManager>(() => _mgr), "192.168.178.27");
+            //_powerPlug = new PowerPlug(new Ref<LedManager>(() => _mgr), "192.168.178.27");
             _webApiManager = new WebApiManager(new Ref<LedManager>(() => _mgr));
             _hueApiManager = new HueApiManager(new Ref<LedManager>(() => _mgr));
+            _dmxServer = new DmxServer.DmxServer(new Ref<LedManager>(() => _mgr));
             _enetServer = new EnetServer();
             _enetServer.Start();
             

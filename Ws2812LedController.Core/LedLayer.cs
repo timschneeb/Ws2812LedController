@@ -122,7 +122,7 @@ public class LedLayer
         
         for (var i = 0; i < Width; i++)
         {
-            SetPixel(i, color ?? Color.Black);
+            SetPixel(i, color ?? Color.Transparent);
         }
     }
 

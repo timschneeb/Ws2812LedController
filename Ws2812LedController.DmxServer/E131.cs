@@ -30,15 +30,9 @@ public static unsafe class E131
     /// <summary>
     /// E1.31 Packet Layout: union of structured layers and raw buffer
     /// </summary>
-    [StructLayout(LayoutKind.Explicit, Pack = 1)]
-    public struct E131Packet
-    {
-        [FieldOffset(0)] public PacketLayers Layers;
-    }
-
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct PacketLayers
-    {
+    public struct E131Packet
+    {       
         public RootLayer Root;
         public FrameLayer Frame;
         public DmpLayer Dmp;
@@ -122,56 +116,17 @@ public static unsafe class E131
     #endregion
 
     #region Packet Operations
-    public static int InitPacket(E131Packet* pkt, ushort universe, ushort numSlots)
-    {
-        if (pkt == null || universe < 1 || universe > 63999 || numSlots < 1 || numSlots > 512)
-            return -1;
-        
-        // Compute lengths
-        var propCount = (ushort)(numSlots + 1);
-        var dmpLength = (ushort)(propCount + Marshal.OffsetOf<DmpLayer>(nameof(DmpLayer.PropertyValues)).ToInt32());
-        var frameLength = (ushort)(Marshal.SizeOf<FrameLayer>() + dmpLength);
-        var rootLength = (ushort)(Marshal.SizeOf<RootLayer>() - sizeof(ushort)*2 + // exclude flength fields
-                                  frameLength + sizeof(uint) + 16);
-        
-        pkt->AsSpan(638).Clear();
-
-        // Root Layer
-        pkt->Layers.Root.PreambleSize = PREAMBLE_SIZE;
-        pkt->Layers.Root.PostambleSize = POSTAMBLE_SIZE;
-        for (var i = 0; i < 12; i++)
-            pkt->Layers.Root.AcnPid[i] = ACN_PID[i];
-        pkt->Layers.Root.FlagsLength = (ushort)(0x7000 | rootLength);
-        pkt->Layers.Root.Vector = ROOT_VECTOR;
-
-        // Framing Layer
-        pkt->Layers.Frame.FlagsLength = (ushort)(0x7000 | frameLength);
-        pkt->Layers.Frame.Vector = FRAME_VECTOR;
-        pkt->Layers.Frame.Priority = DEFAULT_PRIORITY;
-        pkt->Layers.Frame.Universe = universe;
-
-        // DMP Layer
-        pkt->Layers.Dmp.FlagsLength = (ushort)(0x7000 | dmpLength);
-        pkt->Layers.Dmp.Vector = DMP_VECTOR;
-        pkt->Layers.Dmp.Type = DMP_TYPE;
-        pkt->Layers.Dmp.FirstAddress = DMP_FIRST_ADDR;
-        pkt->Layers.Dmp.AddressIncrement = DMP_ADDR_INC;
-        pkt->Layers.Dmp.PropertyValueCount = propCount;
-
-        return 0;
-    }
-
     public static bool GetOption(E131Packet* pkt, E131Option opt)
     {
         if (pkt == null) return false;
-        return (pkt->Layers.Frame.Options & (1 << ((byte)opt % 8))) != 0;
+        return (pkt->Frame.Options & (1 << ((byte)opt % 8))) != 0;
     }
 
     public static int SetOption(E131Packet* pkt, E131Option opt, bool state)
     {
         if (pkt == null) return -1;
         var mask = (byte)(1 << ((byte)opt % 8));
-        pkt->Layers.Frame.Options ^= (byte)((-Convert.ToByte(state) ^ pkt->Layers.Frame.Options) & mask);
+        pkt->Frame.Options ^= (byte)((-Convert.ToByte(state) ^ pkt->Frame.Options) & mask);
         return 0;
     }
 
@@ -187,22 +142,27 @@ public static unsafe class E131
     {
         if (pkt == null) return -1;
         EndPoint ep = new IPEndPoint(IPAddress.Any, 0);
-        return sock.ReceiveFrom(pkt->AsSpan(638), SocketFlags.None, ref ep);
+        
+        // Directly passing span causes native crash
+        var buffer = new byte[638];
+        var cnt = sock.ReceiveFrom(buffer, SocketFlags.None, ref ep);
+        buffer.CopyTo(pkt->AsSpan(638));
+        return cnt;
     }
 
     public static E131Error Validate(E131Packet* pkt)
     {
         if (pkt == null) return E131Error.NullPtr;
-        if (pkt->Layers.Root.PreambleSize.ToHostOrder() != PREAMBLE_SIZE) return E131Error.PreambleSize;
-        if (pkt->Layers.Root.PostambleSize.ToHostOrder() != POSTAMBLE_SIZE) return E131Error.PostambleSize;
+        if (pkt->Root.PreambleSize.ToHostOrder() != PREAMBLE_SIZE) return E131Error.PreambleSize;
+        if (pkt->Root.PostambleSize.ToHostOrder() != POSTAMBLE_SIZE) return E131Error.PostambleSize;
         for (var i = 0; i < 12; i++)
-            if (pkt->Layers.Root.AcnPid[i] != ACN_PID[i]) return E131Error.AcnPid;
-        if (pkt->Layers.Root.Vector.ToHostOrder() != ROOT_VECTOR) return E131Error.VectorRoot;
-        if (pkt->Layers.Frame.Vector.ToHostOrder() != FRAME_VECTOR) return E131Error.VectorFrame;
-        if (pkt->Layers.Dmp.Vector != DMP_VECTOR) return E131Error.VectorDmp;
-        if (pkt->Layers.Dmp.Type != DMP_TYPE) return E131Error.TypeDmp;
-        if (pkt->Layers.Dmp.FirstAddress.ToNetworkOrder() != DMP_FIRST_ADDR) return E131Error.FirstAddrDmp;
-        if (pkt->Layers.Dmp.AddressIncrement.ToNetworkOrder() != DMP_ADDR_INC) return E131Error.AddrIncDmp;
+            if (pkt->Root.AcnPid[i] != ACN_PID[i]) return E131Error.AcnPid;
+        if (pkt->Root.Vector.ToHostOrder() != ROOT_VECTOR) return E131Error.VectorRoot;
+        if (pkt->Frame.Vector.ToHostOrder() != FRAME_VECTOR) return E131Error.VectorFrame;
+        if (pkt->Dmp.Vector != DMP_VECTOR) return E131Error.VectorDmp;
+        if (pkt->Dmp.Type != DMP_TYPE) return E131Error.TypeDmp;
+        if (pkt->Dmp.FirstAddress.ToNetworkOrder() != DMP_FIRST_ADDR) return E131Error.FirstAddrDmp;
+        if (pkt->Dmp.AddressIncrement.ToNetworkOrder() != DMP_ADDR_INC) return E131Error.AddrIncDmp;
         return E131Error.None;
     }
 
@@ -211,8 +171,8 @@ public static unsafe class E131
         if (pkt == null)
             return true;
         
-        var diff = pkt->Layers.Frame.SequenceNumber - lastSeq;
-        return diff is <= -20 or > 0;
+        var diff = pkt->Frame.SequenceNumber - lastSeq;
+        return diff is > -20 and <= 0;
     }
     #endregion
 }

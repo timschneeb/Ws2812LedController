@@ -13,7 +13,7 @@ public class DmxServer
     private readonly Ref<LedManager> _mgr;
     private readonly Task _loop;
     private readonly CancellationTokenSource _cancelSource = new();
-    private readonly Timer _resetTimer = new(4000);
+    private readonly Timer _resetTimer = new(8000);
 
     public bool DropPackets { get; set; }
     
@@ -63,18 +63,23 @@ public class DmxServer
                 continue;
             }
 
+            if (lastSeq == packet.Frame.SequenceNumber)
+            {
+                continue;
+            }
+            
             // Discard out-of-order
             if (E131.ShouldDiscard(&packet, lastSeq))
             {
                 Console.Error.WriteLine("DMX: packet out of order received");
-                lastSeq = packet.Layers.Frame.SequenceNumber;
+                lastSeq = packet.Frame.SequenceNumber;
                 continue;
             }
-
-            lastSeq = packet.Layers.Frame.SequenceNumber;
+            
+            lastSeq = packet.Frame.SequenceNumber;
             
             // If the size is not a multiple of 3, drop the extra bytes
-            var size = ((packet.Layers.Dmp.PropertyValueCount.ToHostOrder() - 1) / 3) * 3;
+            var size = ((packet.Dmp.PropertyValueCount.ToHostOrder() - 1) / 3) * 3;
 
             // Layer may be used by ENET, drop packets if requested
             if (DropPackets)
@@ -83,13 +88,18 @@ public class DmxServer
                 continue;
             }
             
+            Console.WriteLine(packet.Dmp.PropertyValueCount.ToHostOrder());
+            Console.WriteLine(packet.Dmp.PropertyValueCount.ToNetworkOrder());
+            
             // Process DMX data
             for (var i = 1; i < size; i += 3)
             {
-                var r = packet.Layers.Dmp.PropertyValues[i];
-                var g = packet.Layers.Dmp.PropertyValues[i + 1];
-                var b = packet.Layers.Dmp.PropertyValues[i + 2];
-                _mgr.Value.GetFull().SegmentGroup.SetPixel(i - 1, Color.FromArgb(r, g, b), LayerId.ExclusiveEnetLayer);
+                var r = packet.Dmp.PropertyValues[i];
+                var g = packet.Dmp.PropertyValues[i + 1];
+                var b = packet.Dmp.PropertyValues[i + 2];
+                
+                Console.WriteLine($"\t{i}: {r}, {g}, {b}");
+                _mgr.Value.GetFull().SegmentGroup.SetPixel((i - 1)/3, Color.FromArgb(r, g, b), LayerId.ExclusiveEnetLayer);
             }
 
             if (_resetTimer.Enabled)
