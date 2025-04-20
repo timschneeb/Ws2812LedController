@@ -11,6 +11,8 @@ public class EnetServer
     private readonly Host _server;
 
     public event Func<IPacket, IPacket?>? PacketReceived;
+    public event EventHandler? ClientConnected;
+    public event EventHandler? ClientDisconnected;
     
     public EnetServer(ushort port = 32670)
     {
@@ -61,10 +63,12 @@ public class EnetServer
 
                     case EventType.Connect:
                         Console.WriteLine("EnetServer.ReceiverLoop: Client connected - ID: " + netEvent.Peer.ID + ", IP: " + netEvent.Peer.IP);
+                        ClientConnected?.Invoke(this, EventArgs.Empty);
                         break;
 
                     case EventType.Disconnect:
                         Console.WriteLine("EnetServer.ReceiverLoop: Client disconnected - ID: " + netEvent.Peer.ID + ", IP: " + netEvent.Peer.IP);
+                        ClientDisconnected?.Invoke(this, EventArgs.Empty);
                         break;
 
                     case EventType.Timeout:

@@ -45,6 +45,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ws2812LedController.HueApi"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ws2812LedController.TpLinkPlug", "Ws2812LedController.TpLinkPlug\Ws2812LedController.TpLinkPlug.csproj", "{5511BDFA-AC2F-4A25-BBB6-DD31D1D69C80}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ws2812LedController.DmxServer", "Ws2812LedController.DmxServer\Ws2812LedController.DmxServer.csproj", "{96EE4BF8-2F3B-4F9E-8024-1CDF914BFE8D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -138,5 +140,9 @@ Global
 		{5511BDFA-AC2F-4A25-BBB6-DD31D1D69C80}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5511BDFA-AC2F-4A25-BBB6-DD31D1D69C80}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5511BDFA-AC2F-4A25-BBB6-DD31D1D69C80}.Release|Any CPU.Build.0 = Release|Any CPU
+		{96EE4BF8-2F3B-4F9E-8024-1CDF914BFE8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{96EE4BF8-2F3B-4F9E-8024-1CDF914BFE8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{96EE4BF8-2F3B-4F9E-8024-1CDF914BFE8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{96EE4BF8-2F3B-4F9E-8024-1CDF914BFE8D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

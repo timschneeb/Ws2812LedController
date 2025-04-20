@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Runtime.ExceptionServices;
 using System.Timers;
@@ -12,7 +13,6 @@ using Ws2812LedController.Core.Effects.PowerEffects;
 using Ws2812LedController.Core.Model;
 using Ws2812LedController.Core.Utils;
 using Ws2812LedController.HueApi;
-using Ws2812LedController.PowerButton;
 using Ws2812LedController.Lirc;
 using Ws2812LedController.TpLinkPlug;
 using Ws2812LedController.UdpServer;
@@ -28,6 +28,7 @@ namespace Ws2812LedController.Console
         private static WebApiManager _webApiManager = null!;
         private static HueApiManager _hueApiManager = null!;
         private static EnetServer _enetServer = null!;
+        private static DmxServer.DmxServer _dmxServer = null!;
         private static SynchronizedLedReceiver _syncLedReceiver = null!;
         private static PowerPlug _powerPlug = null!;
 
@@ -46,6 +47,7 @@ namespace Ws2812LedController.Console
             };
         }
         
+        [DoesNotReturn]
         private static async Task Main(string[] args)
         {
             AppDomain.CurrentDomain.FirstChanceException += AppDomainOnFirstChanceException;
@@ -67,12 +69,14 @@ namespace Ws2812LedController.Console
             _mgr.RegisterSegment("desk_right", segmentDeskR);
             _mgr.RegisterSegment("heater", segmentHeater);
             await _mgr.PowerAllAsync(false);
-
+            
             _powerPlug = new PowerPlug(new Ref<LedManager>(() => _mgr), "192.168.178.27");
             
             _webApiManager = new WebApiManager(new Ref<LedManager>(() => _mgr));
             _hueApiManager = new HueApiManager(new Ref<LedManager>(() => _mgr));
             _syncLedReceiver = new SynchronizedLedReceiver(new Ref<LedStrip>(() => strip), new Ref<LedManager>(() => _mgr));
+            
+            _dmxServer = new DmxServer.DmxServer(new Ref<LedManager>(() => _mgr));
 
             foreach (var segment in _mgr.Segments)
             {
@@ -104,12 +108,13 @@ namespace Ws2812LedController.Console
             _enetServer.Start();
             
             _enetServer.PacketReceived += EnetServerOnPacketReceived;
+            _enetServer.ClientConnected += (_, _) => { _dmxServer.DropPackets = true; };
+            _enetServer.ClientDisconnected += (_, _) => { _dmxServer.DropPackets = false; };
             
             while(true)
             {
                 await Task.Delay(2000);
             }
-            
         }
 
         private static void AppDomainOnFirstChanceException(object? sender, FirstChanceExceptionEventArgs e)
