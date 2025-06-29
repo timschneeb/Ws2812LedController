@@ -8,19 +8,23 @@ namespace Ws2812LedController.DmxServer;
 
 public class DmxServer
 {
+    private readonly int _ledCount;
     private readonly ushort _port;
-    private readonly ushort _universe;
+    private readonly ushort _startUniverse;
     private readonly Ref<LedManager> _mgr;
     private readonly Task _loop;
     private readonly CancellationTokenSource _cancelSource = new();
     private readonly Timer _resetTimer = new(8000);
+    
+    private const ushort MaxLedsPerUniverse = 170;
 
     public bool DropPackets { get; set; }
     
-    public DmxServer(Ref<LedManager> mgr, ushort port = E131.DEFAULT_PORT, ushort universe = 1)
+    public DmxServer(Ref<LedManager> mgr, ushort port = E131.DEFAULT_PORT, ushort startUniverse = 1)
     {
+        _ledCount = mgr.Value.GetFull().SegmentGroup.Width;
         _port = port;
-        _universe = universe;
+        _startUniverse = startUniverse;
         _mgr = mgr;
         _loop = Task.Run(ServiceLoop);
         
@@ -41,8 +45,12 @@ public class DmxServer
     {
         using var sock = E131.CreateSocket();
         E131.Bind(sock, _port);
-        E131.JoinMulticast(sock, _universe);
-        Console.WriteLine($"Listening for E1.31/DMX packets on port {_port} in universe {_universe}...");
+        var universeCount = Math.Ceiling(_ledCount / (float)MaxLedsPerUniverse);
+        for (var i = 0; i < universeCount; i++)
+        {
+            E131.JoinMulticast(sock, (ushort)(_startUniverse + i));
+        }
+        Console.WriteLine($"Listening for E1.31/DMX packets on port {_port} in universe {_startUniverse} to {_startUniverse + universeCount - 1}...");
         
         // ReSharper disable once TooWideLocalVariableScope
         E131.E131Packet packet;
@@ -78,9 +86,9 @@ public class DmxServer
             
             lastSeq = packet.Frame.SequenceNumber;
             
-            // If the size is not a multiple of 3, drop the extra bytes
-            var size = ((packet.Dmp.PropertyValueCount.ToHostOrder() - 1) / 3) * 3;
-
+            // If the size is not a multiple of 3, drop the extra bytes by rounding down
+            var size = (packet.Dmp.PropertyValueCount.ToHostOrder() - 1) / 3;
+            
             // Layer may be used by ENET, drop packets if requested
             if (DropPackets)
             {
@@ -88,18 +96,24 @@ public class DmxServer
                 continue;
             }
             
-            Console.WriteLine(packet.Dmp.PropertyValueCount.ToHostOrder());
-            Console.WriteLine(packet.Dmp.PropertyValueCount.ToNetworkOrder());
+            var sector = packet.Frame.Universe.ToHostOrder() - _startUniverse;
             
             // Process DMX data
-            for (var i = 1; i < size; i += 3)
+            for (var i = 1; i < Math.Min(size, _mgr.Value.GetFull().SegmentGroup.Width - 1); i++)
             {
-                var r = packet.Dmp.PropertyValues[i];
-                var g = packet.Dmp.PropertyValues[i + 1];
-                var b = packet.Dmp.PropertyValues[i + 2];
+                var r = packet.Dmp.PropertyValues[i * 3];
+                var g = packet.Dmp.PropertyValues[i * 3 + 1];
+                var b = packet.Dmp.PropertyValues[i * 3 + 2];
+                var index = (i - 1) + sector * MaxLedsPerUniverse;
                 
-                Console.WriteLine($"\t{i}: {r}, {g}, {b}");
-                _mgr.Value.GetFull().SegmentGroup.SetPixel((i - 1)/3, Color.FromArgb(r, g, b), LayerId.ExclusiveEnetLayer);
+                try
+                {
+                    _mgr.Value.GetFull().SegmentGroup.SetPixel(index, Color.FromArgb(r, g, b), LayerId.ExclusiveEnetLayer);
+                }
+                catch (IndexOutOfRangeException e)
+                {
+                    Console.Error.WriteLine($"DMX: Pixel index out of range {e.Message}; sector: {sector}, i: {i}, resolvedIndex: {index}");
+                }
             }
 
             if (_resetTimer.Enabled)
