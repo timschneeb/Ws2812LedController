@@ -8,7 +8,8 @@ namespace Ws2812LedController.TpLinkPlug;
 public class PowerPlug
 {
     private readonly Ref<LedManager> _mgr;
-    private readonly TPLinkSmartPlug _plug;
+    private TPLinkSmartPlug? _plug;
+    private readonly string _ip;
 
     /// <summary>
     /// Returns the current power state of the plug. If the plug is unreachable, returns null.
@@ -47,7 +48,8 @@ public class PowerPlug
     public PowerPlug(Ref<LedManager> mgr, string ip)
     {
         _mgr = mgr;
-        _plug = new TPLinkSmartPlug(ip);
+        _ip = ip;
+        _plug = CreatePlug(ip);
 
         _mgr.Value.SegmentPowerStateChanged += OnLedSegmentPowerStateChanged;
         _ = SetPowerStateAsync(_mgr.Value.IsPowered());
@@ -63,15 +65,50 @@ public class PowerPlug
         _ = SetPowerStateAsync(_mgr.Value.IsPoweredOrPoweringOn());
     }
 
+    private static TPLinkSmartPlug? CreatePlug(string ip)
+    {
+        try
+        {
+            return new TPLinkSmartPlug(ip);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Failed to create TPLink plug: {e}\n");
+            return null;
+        }
+    }
+    
     public Task ToggleAsync() =>
         Task.Run(() =>
         {
-            _plug.OutletPowered = !_plug.OutletPowered;
+            try
+            {
+                _plug ??= CreatePlug(_ip);
+                if (_plug != null)
+                {
+                    _plug.OutletPowered = !_plug.OutletPowered;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Failed to toggle plug power state: {e}\n");
+            }
         });
     
     public Task SetPowerStateAsync(bool power) =>
         Task.Run(() =>
         {
-            _plug.OutletPowered = power;
+            try
+            {
+                _plug ??= CreatePlug(_ip);
+                if (_plug != null)
+                {
+                    _plug.OutletPowered = power;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Failed to set plug power state: {e}\n");
+            }
         });
 }
