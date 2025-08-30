@@ -36,6 +36,20 @@ public class RootController : ControllerBase
         return brightness;
     }
     
+    [HttpPost]
+    [Route("brightness-relative")]
+    public ActionResult<byte> PostBrightnessRelative([FromBody] int brightnessRel)
+    {
+        var current = _manager.Value.Segments.First().SourceSegment.MaxBrightness;
+        var brightness = (byte)Math.Clamp(current + brightnessRel, 0, 255);
+        foreach (var ctrl in _manager.Value.Segments)
+        {
+            ctrl.SourceSegment.MaxBrightness = brightness;
+        }
+
+        return brightness;
+    }
+
     [HttpGet]
     [Route("power")]
     public ActionResult<bool> GetPower()
@@ -51,6 +65,15 @@ public class RootController : ControllerBase
         return powered;
     }
     
+    [HttpPost]
+    [Route("togglePower")]
+    public async Task<ActionResult<bool>> PostTogglePower()
+    {
+        var powered = !_manager.Value.Segments.Any(x => x.CurrentState is PowerState.On or PowerState.PoweringOn);
+        await _manager.Value.PowerAllAsync(powered);
+        return powered;
+    }
+
     [HttpGet]
     [Route("powerConsumption")]
     public ActionResult<double> GetPowerConsumption()
